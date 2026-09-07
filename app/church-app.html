@@ -1,0 +1,555 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Bonita OPC Companion</title>
+<meta name="description" content="A light companion app for Bonita Orthodox Presbyterian Church — this Sunday, events, sign-up sheets, prayer, and the church directory.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Vollkorn:ital,wght@0,400..700;1,400..600&family=Alegreya+Sans:ital,wght@0,400;0,500;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+/* Same tokens as the website — this should read as one family. */
+:root{
+  --green:#2f4436; --green-deep:#223328; --green-soft:#47604e; --green-pale:#dfe4d6;
+  --plaster:#f3ebdd; --plaster-deep:#e8dcc7; --stock:#fbf6ec;
+  --ink:#241f19; --ink-soft:#4b4239; --muted:#7a6f61;
+  --tile:#a6432a; --tile-deep:#8a3520; --brass:#b8802a; --brass-pale:#f0e2c6;
+  --rule:#d9cdb8; --rule-strong:#b9a98d; --focus:#1f6f8b;
+  --band:#2f4436; --band-ink:#f4efe3; --band-rule:rgba(244,239,227,.22); --band-muted:rgba(244,239,227,.68);
+  --serif:"Vollkorn",Georgia,serif; --sans:"Alegreya Sans","Segoe UI",Helvetica,Arial,sans-serif;
+  --tabh:64px;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --green:#d5dfcd; --green-deep:#c2cfb8; --green-soft:#9fb098; --green-pale:#263123;
+  --plaster:#191611; --plaster-deep:#221e17; --stock:#201c15;
+  --ink:#f0e8d9; --ink-soft:#d3c8b5; --muted:#9e9282;
+  --tile:#e08059; --tile-deep:#ee9670; --brass:#ddab53; --brass-pale:#33291a;
+  --rule:#3a332a; --rule-strong:#554b3d; --band:#141811; --focus:#6fb6cf;
+}}
+:root[data-theme="dark"]{
+  --green:#d5dfcd; --green-deep:#c2cfb8; --green-soft:#9fb098; --green-pale:#263123;
+  --plaster:#191611; --plaster-deep:#221e17; --stock:#201c15;
+  --ink:#f0e8d9; --ink-soft:#d3c8b5; --muted:#9e9282;
+  --tile:#e08059; --tile-deep:#ee9670; --brass:#ddab53; --brass-pale:#33291a;
+  --rule:#3a332a; --rule-strong:#554b3d; --band:#141811; --focus:#6fb6cf;
+}
+
+*,*::before,*::after{box-sizing:border-box}
+body{margin:0;background:var(--plaster);color:var(--ink);font-family:var(--sans);
+  font-size:1.0625rem;line-height:1.55;-webkit-font-smoothing:antialiased}
+h1,h2,h3{font-family:var(--serif);font-weight:600;line-height:1.2;margin:0 0 .4em;color:var(--green)}
+p{margin:0 0 .8em}
+a{color:var(--tile)}
+:focus-visible{outline:2px solid var(--focus);outline-offset:2px}
+button{font:inherit}
+
+.phone{max-width:520px;margin-inline:auto;min-height:100vh;
+  background:var(--plaster);padding-bottom:calc(var(--tabh) + env(safe-area-inset-bottom,0px))}
+
+/* Header */
+.top{position:sticky;top:0;z-index:20;background:var(--band);color:var(--band-ink);
+  border-bottom:3px solid var(--brass);padding:.85rem 1.15rem;
+  display:flex;align-items:center;gap:.75rem}
+.top h1{font-size:1.3rem;color:var(--band-ink);margin:0;flex:1}
+.top .sub{font-family:var(--serif);font-variant-caps:small-caps;letter-spacing:.05em;
+  font-size:.92rem;color:var(--brass);display:block;line-height:1.2}
+.iconbtn{width:38px;height:38px;display:grid;place-items:center;background:transparent;
+  border:1px solid var(--band-rule);color:var(--band-ink);cursor:pointer;border-radius:2px}
+.iconbtn:hover{border-color:var(--brass);color:var(--brass)}
+.iconbtn svg{width:17px;height:17px}
+.moon{display:none}
+:root[data-theme="dark"] .moon{display:block}:root[data-theme="dark"] .sun{display:none}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .moon{display:block}
+:root:not([data-theme="light"]) .sun{display:none}}
+
+/* Screens */
+.screen{padding:1.15rem 1.15rem 2rem;display:none}
+.screen.on{display:block}
+.label{font-family:var(--serif);font-variant-caps:small-caps;font-weight:600;font-size:1rem;
+  letter-spacing:.04em;color:var(--brass);margin:0 0 .7rem;padding-bottom:.35rem;
+  border-bottom:1px solid var(--rule)}
+.muted{color:var(--muted);font-size:.95rem}
+
+/* Panels & rows */
+.panel{background:var(--stock);border:1px solid var(--rule);padding:1rem 1.1rem;margin-bottom:1rem}
+.panel.accent{border-top:4px solid var(--brass)}
+.row{padding:.85rem 0;border-bottom:1px solid var(--rule)}
+.row:last-child{border-bottom:0;padding-bottom:0}
+.when{font-weight:700;font-size:.86rem;letter-spacing:.06em;text-transform:uppercase;
+  color:var(--green-soft);display:block}
+.what{font-family:var(--serif);font-size:1.18rem;color:var(--green);margin:.1rem 0 .05rem;line-height:1.3}
+.ref{font-style:italic;color:var(--muted);margin:0;font-size:.98rem}
+
+/* Buttons */
+.btn{display:inline-block;padding:.6rem 1.1rem;font-weight:700;font-size:.98rem;line-height:1.2;
+  border:1px solid transparent;border-radius:2px;cursor:pointer;text-decoration:none;
+  transition:background-color .15s linear,color .15s linear,border-color .15s linear}
+.btn.primary{background:var(--tile);color:#fff;border-color:var(--tile)}
+.btn.primary:hover{background:var(--tile-deep);border-color:var(--tile-deep)}
+.btn.ghost{background:transparent;color:var(--ink);border-color:var(--rule-strong)}
+.btn.ghost:hover{border-color:var(--green);background:var(--green-pale);color:var(--green)}
+.btn.on{background:var(--green);color:var(--stock);border-color:var(--green)}
+.btn.sm{padding:.35rem .8rem;font-size:.9rem}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+
+/* Event */
+.ev{display:flex;gap:.9rem;padding:.95rem 0;border-bottom:1px solid var(--rule)}
+.ev:first-child{border-top:2px solid var(--rule-strong)}
+.ev .dt{flex:0 0 3.1rem;text-align:center;border-right:1px solid var(--rule-strong);padding-right:.75rem}
+.ev .dt .m{font-family:var(--serif);font-variant-caps:small-caps;font-size:.9rem;color:var(--brass);display:block}
+.ev .dt .d{font-family:var(--serif);font-size:1.55rem;color:var(--green);display:block;line-height:1.05}
+.ev .bd{flex:1;min-width:0}
+.ev h3{font-size:1.1rem;margin:0 0 .1rem}
+.ev .meta{font-size:.94rem;color:var(--muted);margin:0 0 .5rem}
+
+/* Sign-up sheet */
+.sheet{margin-top:.6rem;background:var(--brass-pale);border:1px solid var(--rule-strong);padding:.8rem .9rem}
+.sheet h4{font-family:var(--serif);font-size:1.05rem;margin:0 0 .5rem;color:var(--green)}
+.slot{display:flex;align-items:center;gap:.6rem;padding:.35rem 0;font-size:.97rem;
+  border-bottom:1px dotted var(--rule-strong)}
+.slot:last-of-type{border-bottom:0}
+.slot .nm{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.slot .taken{color:var(--green);font-weight:700}
+.slot .open{color:var(--muted);font-style:italic}
+.slot .signup{display:flex;gap:.3rem;align-items:center;flex:3 1 auto;min-width:0}
+.slot .signup input{flex:1;min-width:5rem;padding:.3rem .5rem;font-size:.95rem}
+/* While a row is being filled in, the slot name yields space to the field. */
+.slot:has(.signup) .nm{flex:0 1 auto;font-size:.9rem;color:var(--muted)}
+.slot .taken{display:inline-flex;align-items:baseline;gap:.4rem}
+.linkbtn{background:none;border:0;padding:0;cursor:pointer;font-size:.8rem;
+  font-weight:400;color:var(--muted);text-decoration:underline}
+.linkbtn:hover{color:var(--tile)}
+.btn.warn{background:var(--tile);color:#fff;border-color:var(--tile)}
+
+/* Forms */
+.field{display:block;margin-bottom:.75rem}
+.field span{font-family:var(--serif);font-variant-caps:small-caps;font-size:1.02rem;
+  letter-spacing:.03em;color:var(--green);display:block;margin-bottom:.2rem}
+input,textarea,select{font:inherit;font-size:1rem;width:100%;padding:.55rem .7rem;color:var(--ink);
+  background:var(--stock);border:1px solid var(--rule-strong);border-radius:2px}
+textarea{min-height:5.5rem;resize:vertical}
+input:focus,textarea:focus,select:focus{border-color:var(--green)}
+
+/* Prayer */
+.pray{padding:.9rem 0;border-bottom:1px solid var(--rule)}
+.pray:first-of-type{border-top:2px solid var(--rule-strong)}
+.pray p{margin:0 0 .35rem}
+.pray .by{font-size:.9rem;color:var(--muted)}
+.pill{display:inline-block;font-size:.75rem;font-weight:700;letter-spacing:.06em;
+  text-transform:uppercase;padding:.1em .45em;border:1px solid var(--brass);
+  background:var(--brass-pale);color:var(--tile-deep);margin-left:.3rem}
+
+/* Directory */
+.card{display:flex;gap:.85rem;align-items:center;padding:.8rem 0;border-bottom:1px solid var(--rule)}
+.card:first-of-type{border-top:2px solid var(--rule-strong)}
+.card img{width:52px;height:52px;object-fit:cover;border:1px solid var(--rule-strong);flex:0 0 auto}
+.card .ph{width:52px;height:52px;flex:0 0 auto;display:grid;place-items:center;
+  background:var(--green-pale);border:1px solid var(--rule-strong);
+  font-family:var(--serif);font-size:1.2rem;color:var(--green)}
+.card .info{flex:1;min-width:0}
+.card .info b{font-family:var(--serif);font-weight:600;font-size:1.08rem;color:var(--green);display:block}
+.card .info span{font-size:.92rem;color:var(--muted)}
+.card .acts{display:flex;gap:.35rem}
+
+/* Tab bar */
+.tabs{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:520px;
+  z-index:30;background:var(--band);border-top:3px solid var(--brass);display:flex;
+  padding-bottom:env(safe-area-inset-bottom,0px)}
+.tabs button{flex:1;background:transparent;border:0;color:var(--band-muted);cursor:pointer;
+  padding:.5rem .25rem .55rem;display:grid;justify-items:center;gap:.15rem;
+  font-size:.72rem;font-weight:700;letter-spacing:.04em;text-transform:uppercase;
+  border-top:3px solid transparent;margin-top:-3px}
+.tabs button svg{width:21px;height:21px}
+.tabs button[aria-selected="true"]{color:var(--brass);border-top-color:var(--brass)}
+
+.note{background:var(--brass-pale);border:1px solid var(--brass);padding:.8rem .9rem;
+  font-size:.94rem;margin-bottom:1.15rem}
+.note p:last-child{margin-bottom:0}
+.empty{color:var(--muted);font-style:italic;padding:1.25rem 0}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style>
+</head>
+<body>
+<div class="phone">
+
+  <header class="top">
+    <div style="flex:1">
+      <span class="sub">Bonita OPC</span>
+      <h1 id="screenTitle">This Sunday</h1>
+    </div>
+    <button class="iconbtn" id="theme" aria-label="Switch theme">
+      <svg class="sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
+      <svg class="moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>
+    </button>
+  </header>
+
+  <!-- ============ SUNDAY ============ -->
+  <section class="screen on" id="s-sunday" role="tabpanel" aria-label="This Sunday">
+    <div class="panel accent">
+      <p class="label" style="margin-bottom:.8rem;">The Lord&rsquo;s Day &middot; August 23, 2026</p>
+      <div class="row">
+        <span class="when">Sunday School &middot; 9:30 a.m.</span>
+        <p class="what">All ages</p>
+      </div>
+      <div class="row">
+        <span class="when">Morning Worship &middot; 11:00 a.m.</span>
+        <p class="what">&ldquo;Judgment for Turning Back&rdquo;</p>
+        <p class="ref">Zephaniah 1:1&ndash;6 &middot; John Joseph Matandika</p>
+      </div>
+      <div class="row">
+        <span class="when">Evening Worship &middot; 6:00 p.m.</span>
+        <p class="what">&ldquo;Redemption in Christ&rdquo;</p>
+        <p class="ref">Ephesians 1:1&ndash;14</p>
+      </div>
+    </div>
+
+    <p class="label">Announcements</p>
+    <div class="panel">
+      <div class="row">
+        <p class="what" style="font-size:1.08rem;">Communion next Sunday</p>
+        <p class="ref" style="font-style:normal;">Use this week to prepare your heart to receive the Lord&rsquo;s Supper.</p>
+      </div>
+      <div class="row">
+        <p class="what" style="font-size:1.08rem;">Feast Day, August 31</p>
+        <p class="ref" style="font-style:normal;">A meal together after the morning service. Sign up on the Events tab.</p>
+      </div>
+      <div class="row">
+        <p class="what" style="font-size:1.08rem;">Family Bible Study</p>
+        <p class="ref" style="font-style:normal;">Wednesday, 6&ndash;8 p.m. at Rohr Park, Gate A.</p>
+      </div>
+    </div>
+
+    <a class="btn primary" href="https://www.youtube.com/channel/UCrrn6fY_2RLzuUIH9ygQuDw" target="_blank" rel="noopener" style="width:100%;text-align:center;">Watch the livestream</a>
+  </section>
+
+  <!-- ============ EVENTS ============ -->
+  <section class="screen" id="s-events" role="tabpanel" aria-label="Events" hidden>
+    <p class="label">Coming up</p>
+    <div id="events"></div>
+  </section>
+
+  <!-- ============ PRAYER ============ -->
+  <section class="screen" id="s-prayer" role="tabpanel" aria-label="Prayer" hidden>
+    <div class="note">
+      <p>Requests posted here go on the weekly prayer sheet. Anything you would rather keep
+      between you and the elders, send to Mr.&nbsp;McMorris directly.</p>
+    </div>
+
+    <details class="panel" style="padding:0;">
+      <summary style="cursor:pointer;padding:.85rem 1.1rem;font-family:var(--serif);font-size:1.12rem;color:var(--green);">Add a request</summary>
+      <form id="prayerForm" style="padding:0 1.1rem 1.1rem;">
+        <label class="field"><span>Your name</span><input name="who" required autocomplete="name"></label>
+        <label class="field"><span>Request</span><textarea name="text" required></textarea></label>
+        <label class="field" style="display:flex;align-items:center;gap:.5rem;">
+          <input type="checkbox" name="private" style="width:auto;"> <span style="margin:0;">Elders only &mdash; keep off the printed sheet</span>
+        </label>
+        <button class="btn primary" type="submit">Post request</button>
+      </form>
+    </details>
+
+    <p class="label" style="margin-top:1.25rem;">Current requests</p>
+    <div id="prayers"></div>
+  </section>
+
+  <!-- ============ CHURCH ============ -->
+  <section class="screen" id="s-church" role="tabpanel" aria-label="Church" hidden>
+    <p class="label">Session &amp; diaconate</p>
+    <div id="directory"></div>
+
+    <p class="label" style="margin-top:1.5rem;">The church</p>
+    <div class="panel">
+      <p style="font-family:var(--serif);font-size:1.15rem;color:var(--green);margin-bottom:.3rem;">Bonita Orthodox Presbyterian Church</p>
+      <p class="muted" style="margin-bottom:.8rem;">5111 Central Avenue<br>Bonita, CA 91902</p>
+      <div style="display:flex;gap:.5rem;flex-wrap:wrap;">
+        <a class="btn ghost sm" href="tel:+16194753752">Call</a>
+        <a class="btn ghost sm" href="https://maps.google.com/?q=5111+Central+Ave,+Bonita,+CA+91902" target="_blank" rel="noopener">Directions</a>
+        <a class="btn ghost sm" href="https://www.bonitaopc.org" target="_blank" rel="noopener">Website</a>
+      </div>
+    </div>
+
+    <div class="note">
+      <p><strong>This is a prototype.</strong> Everything you type is saved on this device
+      only &mdash; nobody else can see it. Making the sign-up sheets and prayer list actually
+      shared between people is the next step, and the one worth deciding on first.</p>
+    </div>
+    <button class="btn ghost sm" id="reset">Reset the demo data</button>
+  </section>
+
+  <!-- ============ TABS ============ -->
+  <nav class="tabs" role="tablist" aria-label="Sections">
+    <button role="tab" aria-selected="true" data-go="sunday" aria-controls="s-sunday">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+      Sunday
+    </button>
+    <button role="tab" aria-selected="false" data-go="events" aria-controls="s-events">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="1"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>
+      Events
+    </button>
+    <button role="tab" aria-selected="false" data-go="prayer" aria-controls="s-prayer">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21s-7-4.4-9-8.5A5 5 0 0 1 12 7a5 5 0 0 1 9 5.5C19 16.6 12 21 12 21z"/></svg>
+      Prayer
+    </button>
+    <button role="tab" aria-selected="false" data-go="church" aria-controls="s-church">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l4 4v3l3 2v11H5V11l3-2V6z"/><path d="M12 6v6M9.5 9h5"/></svg>
+      Church
+    </button>
+  </nav>
+
+</div>
+
+<script>
+(function(){
+"use strict";
+
+/* ---- storage ---------------------------------------------------------
+   Prototype persistence: this device only. A real deployment swaps this
+   for a shared store so the whole congregation sees one sheet. */
+var KEY="bopc-app-v1";
+function load(){try{return JSON.parse(localStorage.getItem(KEY))||null}catch(e){return null}}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(state))}catch(e){}}
+
+var SEED={
+  rsvp:{},
+  sheets:{
+    feast:[
+      {slot:"Main dish",     by:"The Yorks"},
+      {slot:"Main dish",     by:""},
+      {slot:"Side or salad", by:"Sarah M."},
+      {slot:"Side or salad", by:""},
+      {slot:"Bread",         by:""},
+      {slot:"Dessert",       by:"The Welds"},
+      {slot:"Dessert",       by:""},
+      {slot:"Setup & cleanup", by:""}
+    ],
+    workday:[
+      {slot:"Grounds & trimming", by:"Scott Y."},
+      {slot:"Grounds & trimming", by:""},
+      {slot:"Interior painting",  by:""},
+      {slot:"Interior painting",  by:""},
+      {slot:"Coffee & lunch run", by:""}
+    ]
+  },
+  prayers:[
+    {who:"Sample entry", text:"Safe travel for the Skidmores as they visit family this month.", priv:false, at:"Aug 23"},
+    {who:"Sample entry", text:"Continued healing for Ruth after her surgery, and rest for those caring for her.", priv:false, at:"Aug 21"}
+  ]
+};
+
+var state = load() || JSON.parse(JSON.stringify(SEED));
+
+var EVENTS=[
+  {id:"bs1", m:"Aug", d:"26", title:"Family Bible Study & Prayer",
+   meta:"Wednesday, Aug 26 · 6:00–8:00 p.m. · Rohr Park, Gate A", sheet:null},
+  {id:"feast", m:"Aug", d:"31", title:"Feast Day Fellowship Meal",
+   meta:"Sunday, Aug 31 · after the morning service · Bonita OPC",
+   sheet:"feast", sheetTitle:"What to bring"},
+  {id:"bs2", m:"Sep", d:"02", title:"Family Bible Study & Prayer",
+   meta:"Wednesday, Sep 2 · 6:00–8:00 p.m. · Rohr Park, Gate A", sheet:null},
+  {id:"trustees", m:"Sep", d:"08", title:"Trustees Meeting",
+   meta:"Tuesday, Sep 8 · second Tuesday of the month", sheet:null},
+  {id:"workday", m:"Sep", d:"12", title:"Church Workday",
+   meta:"Saturday, Sep 12 · 9 a.m.–noon · Bonita OPC",
+   sheet:"workday", sheetTitle:"Where you can help"}
+];
+
+var PEOPLE=[
+  {n:"Mike Chism",      r:"Elder",  img:"../assets/img/chism.jpg"},
+  {n:"Lee McMorris",    r:"Elder · prayer sheet", img:"../assets/img/0d314f1f-1630-4745-9dfe-f92c20497b80_1_105_c.jpg", tel:"+16196024999"},
+  {n:"Maynard Skidmore",r:"Elder",  img:"../assets/img/skidmore.jpg"},
+  {n:"Andy Weld",       r:"Elder",  img:"../assets/img/weld.jpg"},
+  {n:"Scott York",      r:"Deacon", img:"../assets/img/york.jpg"}
+];
+
+function esc(s){return String(s).replace(/[&<>"']/g,function(c){
+  return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c];});}
+
+/* ---- events + sign-up sheets ---------------------------------------- */
+function renderEvents(){
+  document.getElementById("events").innerHTML = EVENTS.map(function(e){
+    var going = !!state.rsvp[e.id];
+    var sheet = "";
+    if(e.sheet){
+      var me = "";
+      try{ me = localStorage.getItem("bopc-me") || ""; }catch(err){}
+      var rows = state.sheets[e.sheet].map(function(s,i){
+        var cell;
+        if(editing && editing.sheet===e.sheet && editing.i===i){
+          cell = '<span class="signup">'+
+                 '<input data-name type="text" value="'+esc(me)+'" placeholder="Your name" '+
+                 'aria-label="Your name for '+esc(s.slot)+'">'+
+                 '<button class="btn primary sm" data-confirm>Add</button>'+
+                 '<button class="btn ghost sm" data-cancel aria-label="Cancel">&times;</button></span>';
+        } else if(s.by){
+          cell = '<span class="taken">'+esc(s.by)+
+                 '<button class="linkbtn" data-clear="'+e.sheet+'" data-i="'+i+'" '+
+                 'aria-label="Remove '+esc(s.by)+' from '+esc(s.slot)+'">remove</button></span>';
+        } else {
+          cell = '<button class="btn ghost sm" data-sheet="'+e.sheet+'" data-i="'+i+'">Sign up</button>';
+        }
+        return '<div class="slot"><span class="nm">'+esc(s.slot)+'</span>'+cell+'</div>';
+      }).join("");
+      var open = state.sheets[e.sheet].filter(function(s){return !s.by}).length;
+      sheet = '<div class="sheet"><h4>'+esc(e.sheetTitle)+'</h4>'+rows+
+        '<p class="muted" style="margin:.6rem 0 0;">'+open+' still open</p></div>';
+    }
+    return '<div class="ev"><div class="dt"><span class="m">'+e.m+'</span><span class="d">'+e.d+'</span></div>'+
+      '<div class="bd"><h3>'+esc(e.title)+'</h3><p class="meta">'+esc(e.meta)+'</p>'+
+      '<button class="btn '+(going?"on":"ghost")+' sm" data-rsvp="'+e.id+'">'+
+      (going?"You&rsquo;re going":"I&rsquo;ll be there")+'</button>'+sheet+'</div></div>';
+  }).join("");
+}
+
+/* Which slot is currently being filled in, so it re-renders as a form.
+   Deliberately not prompt(): browser modals are blocked inside sandboxed
+   frames, and an inline field is better on a phone anyway. */
+var editing = null;
+
+document.getElementById("events").addEventListener("click", function(ev){
+  var r = ev.target.closest("[data-rsvp]");
+  if(r){ var id=r.dataset.rsvp; state.rsvp[id] = !state.rsvp[id]; save(); renderEvents(); return; }
+
+  var s = ev.target.closest("[data-sheet]");
+  if(s){ editing = {sheet:s.dataset.sheet, i:+s.dataset.i}; renderEvents(); focusEditor(); return; }
+
+  var ok = ev.target.closest("[data-confirm]");
+  if(ok){ commitSignup(); return; }
+
+  var no = ev.target.closest("[data-cancel]");
+  if(no){ editing = null; renderEvents(); return; }
+
+  var undo = ev.target.closest("[data-clear]");
+  if(undo){
+    state.sheets[undo.dataset.clear][+undo.dataset.i].by = "";
+    save(); renderEvents(); return;
+  }
+});
+
+document.getElementById("events").addEventListener("keydown", function(ev){
+  if(ev.target.matches("[data-name]")){
+    if(ev.key === "Enter"){ ev.preventDefault(); commitSignup(); }
+    if(ev.key === "Escape"){ editing = null; renderEvents(); }
+  }
+});
+
+function focusEditor(){
+  var f = document.querySelector("[data-name]");
+  if(f) f.focus();
+}
+
+function commitSignup(){
+  var f = document.querySelector("[data-name]");
+  if(!f) return;
+  var who = f.value.trim();
+  if(!who){ f.focus(); return; }
+  state.sheets[editing.sheet][editing.i].by = who;
+  try{ localStorage.setItem("bopc-me", who); }catch(e){}
+  editing = null; save(); renderEvents();
+}
+
+/* ---- prayer ---------------------------------------------------------- */
+function renderPrayers(){
+  var el = document.getElementById("prayers");
+  if(!state.prayers.length){ el.innerHTML = '<p class="empty">Nothing on the list right now.</p>'; return; }
+  el.innerHTML = state.prayers.map(function(p){
+    return '<div class="pray"><p>'+esc(p.text)+'</p><p class="by">'+esc(p.who)+' &middot; '+esc(p.at)+
+      (p.priv?'<span class="pill">Elders only</span>':'')+'</p></div>';
+  }).join("");
+}
+document.getElementById("prayerForm").addEventListener("submit", function(e){
+  e.preventDefault();
+  var f = e.target;
+  var months=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+  var now = new Date();
+  state.prayers.unshift({
+    who: f.who.value.trim(), text: f.text.value.trim(), priv: f.private.checked,
+    at: months[now.getMonth()]+" "+now.getDate()
+  });
+  save(); renderPrayers(); f.reset();
+  f.closest("details").open = false;
+});
+
+/* ---- directory ------------------------------------------------------- */
+function renderDirectory(){
+  document.getElementById("directory").innerHTML = PEOPLE.map(function(p){
+    var initials = p.n.split(" ").map(function(w){return w[0]}).join("");
+    var pic = p.img ? '<img src="'+p.img+'" alt="" onerror="this.outerHTML=\'<div class=&quot;ph&quot;>'+initials+'</div>\'">'
+                    : '<div class="ph">'+initials+'</div>';
+    return '<div class="card">'+pic+'<div class="info"><b>'+esc(p.n)+'</b><span>'+esc(p.r)+'</span></div>'+
+      '<div class="acts">'+(p.tel?'<a class="btn ghost sm" href="tel:'+p.tel+'">Call</a>':'')+'</div></div>';
+  }).join("");
+}
+
+/* ---- tabs ------------------------------------------------------------ */
+var TITLES={sunday:"This Sunday",events:"Events",prayer:"Prayer",church:"Church"};
+function goTo(go, push){
+  if(!TITLES[go]) go = "sunday";
+  document.querySelectorAll(".tabs [data-go]").forEach(function(t){
+    t.setAttribute("aria-selected", String(t.dataset.go===go));
+  });
+  document.querySelectorAll(".screen").forEach(function(s){
+    var on = s.id === "s-"+go;
+    s.classList.toggle("on", on); s.hidden = !on;
+  });
+  document.getElementById("screenTitle").textContent = TITLES[go];
+  if(push && location.hash !== "#"+go) history.replaceState(null,"","#"+go);
+  window.scrollTo(0,0);
+}
+
+/* Deep links: #events sends someone straight to the sign-up sheets, so a
+   reminder email can point at the thing it is asking them to do. */
+window.addEventListener("hashchange", function(){ goTo(location.hash.slice(1), false); });
+
+document.querySelector(".tabs").addEventListener("click", function(e){
+  var b = e.target.closest("[data-go]"); if(!b) return;
+  goTo(b.dataset.go, true);
+});
+
+document.querySelector(".tabs").addEventListener("click", function(e){
+  var b = e.target.closest("[data-go]"); if(!b) return;
+  var go = b.dataset.go;
+  document.querySelectorAll(".tabs [data-go]").forEach(function(t){
+    t.setAttribute("aria-selected", String(t.dataset.go===go));
+  });
+  document.querySelectorAll(".screen").forEach(function(s){
+    var on = s.id === "s"+"-"+go;
+    s.classList.toggle("on", on); s.hidden = !on;
+  });
+});
+
+/* ---- theme ----------------------------------------------------------- */
+var root=document.documentElement;
+try{var t=localStorage.getItem("bopc-theme"); if(t) root.setAttribute("data-theme",t);}catch(e){}
+document.getElementById("theme").addEventListener("click", function(){
+  var cur = root.getAttribute("data-theme") ||
+    (matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+  var next = cur==="dark" ? "light" : "dark";
+  root.setAttribute("data-theme", next);
+  try{localStorage.setItem("bopc-theme", next);}catch(e){}
+});
+
+/* Two-step instead of confirm(), for the same sandbox reason. */
+var armed = false, armTimer = null;
+document.getElementById("reset").addEventListener("click", function(){
+  var b = this;
+  if(!armed){
+    armed = true; b.textContent = "Tap again to erase everything";
+    b.classList.add("warn");
+    armTimer = setTimeout(function(){
+      armed = false; b.textContent = "Reset the demo data"; b.classList.remove("warn");
+    }, 4000);
+    return;
+  }
+  clearTimeout(armTimer); armed = false;
+  b.textContent = "Reset the demo data"; b.classList.remove("warn");
+  state = JSON.parse(JSON.stringify(SEED));
+  try{ localStorage.removeItem("bopc-me"); }catch(e){}
+  save(); renderEvents(); renderPrayers();
+});
+
+renderEvents(); renderPrayers(); renderDirectory();
+if(location.hash) goTo(location.hash.slice(1), false);
+})();
+</script>
+</body>
+</html>
