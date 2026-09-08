@@ -1,0 +1,309 @@
+<!doctype html>
+<html lang="en" data-theme="light" data-theme-preview="a">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Colorway review — Bonita OPC</title>
+<meta name="robots" content="noindex, nofollow">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400..700&family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@500;600;700&family=Source+Sans+3:wght@400;500;600;700&family=Lora:ital,wght@0,400..700;1,400..600&family=Work+Sans:wght@400;500;600;700&family=Vollkorn:ital,wght@0,400..700;1,400..600&family=Alegreya+Sans:ital,wght@0,400;0,500;0,700;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/css/site.css">
+
+<style>
+/* ==========================================================================
+   Three candidate colorways. Each block re-declares the same tokens
+   site.css already reads everywhere — no component markup changes, no new
+   classes. Picking a winner is a five-minute job: copy its block into the
+   :root of site.css and delete this file.
+   ========================================================================== */
+
+html[data-theme-preview="a"] {
+  --green:#2c3e4a; --green-deep:#1b2830; --green-soft:#587280; --green-pale:#dbe4e6;
+  --plaster:#f0eee7; --plaster-deep:#e2ded2; --stock:#f8f6f0;
+  --ink:#21201d; --ink-soft:#4a4844; --muted:#7d7a72;
+  --tile:#b1502c; --tile-deep:#8f3e20; --brass:#b8862c; --brass-pale:#efe6d2;
+  --rule:#d7dcdb; --rule-strong:#b7c1c2;
+  --font-display:"Fraunces", Georgia, "Times New Roman", serif;
+  --font-body:"Inter", "Segoe UI", Helvetica, Arial, sans-serif;
+  --band-ground:#2c3e4a; --band-ink:#f2f4f2; --band-rule:rgba(242,244,242,.22); --band-muted:rgba(242,244,242,.68);
+}
+html[data-theme-preview="b"] {
+  --green:#5c2331; --green-deep:#3d1620; --green-soft:#85505c; --green-pale:#ecdde0;
+  --plaster:#f6efe6; --plaster-deep:#ecdfd0; --stock:#fbf7f0;
+  --ink:#241a1c; --ink-soft:#4d3e40; --muted:#8a7a7a;
+  --tile:#8f2f3a; --tile-deep:#74232c; --brass:#c79a3f; --brass-pale:#f2e6c9;
+  --rule:#e3d3d0; --rule-strong:#c7a9a6;
+  --font-display:"Playfair Display", Georgia, "Times New Roman", serif;
+  --font-body:"Source Sans 3", "Segoe UI", Helvetica, Arial, sans-serif;
+  --band-ground:#5c2331; --band-ink:#f6ede7; --band-rule:rgba(246,237,231,.22); --band-muted:rgba(246,237,231,.68);
+}
+html[data-theme-preview="c"] {
+  --green:#445c46; --green-deep:#2c3d2e; --green-soft:#6f8a71; --green-pale:#e2e8de;
+  --plaster:#f5f2ea; --plaster-deep:#e9e3d3; --stock:#fcfaf4;
+  --ink:#23231e; --ink-soft:#4b4a42; --muted:#7d7c70;
+  --tile:#c1602d; --tile-deep:#a04e22; --brass:#a98a3f; --brass-pale:#f0e7c8;
+  --rule:#dbe0d2; --rule-strong:#bcc4ac;
+  --font-display:"Lora", Georgia, "Times New Roman", serif;
+  --font-body:"Work Sans", "Segoe UI", Helvetica, Arial, sans-serif;
+  --band-ground:#445c46; --band-ink:#f6f4ec; --band-rule:rgba(246,244,236,.22); --band-muted:rgba(246,244,236,.68);
+}
+
+/* Switcher chrome — deliberately outside the theme system (fixed dark
+   neutral) so it never gets restyled by the thing it is switching. */
+.switcher { position: sticky; top: 0; z-index: 200; background: #15181a; color: #eee; }
+.switcher__intro {
+  padding: .9rem var(--gutter) .4rem; font-family: "Inter", system-ui, sans-serif;
+  font-size: .92rem; color: #a9adaf; max-width: 1120px; margin-inline: auto;
+}
+.switcher__intro strong { color: #fff; }
+.switcher__row {
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px;
+  background: #2a2e30; max-width: 1120px; margin-inline: auto;
+  padding: 0 var(--gutter) .9rem;
+}
+.swatch {
+  font-family: "Inter", system-ui, sans-serif; text-align: left; cursor: pointer;
+  background: #1d2022; color: #eee; border: 2px solid transparent;
+  padding: .85rem .9rem; display: grid; gap: .4rem;
+}
+.swatch:hover { background: #24282a; }
+.swatch[aria-pressed="true"] { border-color: #fff; background: #24282a; }
+.swatch__dots { display: flex; gap: .3rem; }
+.swatch__dots span { width: 18px; height: 18px; border-radius: 50%; display: block; border: 1px solid rgba(255,255,255,.25); }
+.swatch__name { font-weight: 700; font-size: 1.02rem; }
+.swatch__vibe { font-size: .84rem; color: #b7bbbd; line-height: 1.4; }
+.swatch__fonts { font-size: .78rem; color: #8d9294; letter-spacing: .02em; }
+.swatch[aria-pressed="true"] .swatch__name::after { content: " — selected"; font-weight: 400; color: #9fe0a5; }
+
+@media (max-width: 760px) {
+  .switcher__row { grid-template-columns: 1fr; }
+}
+
+/* A visible label on the mockup itself, since this page never ships. */
+.demo-flag {
+  background: #15181a; color: #fff; text-align: center; font-family: "Inter", system-ui, sans-serif;
+  font-size: .82rem; letter-spacing: .04em; padding: .4rem; text-transform: uppercase;
+}
+</style>
+</head>
+<body>
+
+<div class="demo-flag">Internal review only &mdash; not part of the live site</div>
+
+<div class="switcher">
+  <p class="switcher__intro">
+    <strong>Bonita OPC &mdash; three colorway directions.</strong>
+    Click one to re-skin the mockup below with real components: header, hero, this week&rsquo;s
+    order of service, sermons, leadership, footer. Same layout, same photos, same copy &mdash;
+    only color and type change.
+  </p>
+  <div class="switcher__row" role="group" aria-label="Colorway">
+    <button class="swatch" type="button" data-theme-btn="a" aria-pressed="true">
+      <span class="swatch__dots"><span style="background:#2c3e4a"></span><span style="background:#b1502c"></span><span style="background:#b8862c"></span></span>
+      <span class="swatch__name">Chapel Slate</span>
+      <span class="swatch__vibe">Deep slate-navy with brass and copper. Cool, quiet, boardroom-elegant &mdash; the least &ldquo;churchy&rdquo; of the three without losing dignity.</span>
+      <span class="swatch__fonts">Fraunces + Inter</span>
+    </button>
+    <button class="swatch" type="button" data-theme-btn="b" aria-pressed="false">
+      <span class="swatch__dots"><span style="background:#5c2331"></span><span style="background:#8f2f3a"></span><span style="background:#c79a3f"></span></span>
+      <span class="swatch__name">Burgundy Vespers</span>
+      <span class="swatch__vibe">Wine and gold, like a stained-glass window. The most traditional-feeling of the three, and the most dramatic.</span>
+      <span class="swatch__fonts">Playfair Display + Source Sans 3</span>
+    </button>
+    <button class="swatch" type="button" data-theme-btn="c" aria-pressed="false">
+      <span class="swatch__dots"><span style="background:#445c46"></span><span style="background:#c1602d"></span><span style="background:#a98a3f"></span></span>
+      <span class="swatch__name">Sage Modern</span>
+      <span class="swatch__vibe">The current green and terracotta, lightened and cooled &mdash; keeps the site&rsquo;s identity but drops the sandy/brown cast. Safest, freshest evolution.</span>
+      <span class="swatch__fonts">Lora + Work Sans</span>
+    </button>
+  </div>
+</div>
+
+<header class="site-header">
+  <div class="wrap site-header__inner">
+    <a class="brand" href="#" aria-label="Bonita Orthodox Presbyterian Church — home" onclick="return false">
+      <img src="assets/img/Bonita-Logo-w.png" alt="Bonita Orthodox Presbyterian Church" width="640" height="124">
+    </a>
+    <nav class="nav" aria-label="Primary">
+      <a class="nav__link" href="#" aria-current="page" onclick="return false">Home</a>
+      <a class="nav__link" href="#" onclick="return false">Plan Your Visit</a>
+      <a class="nav__link" href="#" onclick="return false">About</a>
+      <a class="nav__link" href="#" onclick="return false">Sermons</a>
+      <a class="nav__link" href="#" onclick="return false">Events &amp; News</a>
+      <a class="nav__link" href="#" onclick="return false">Contact</a>
+      <a class="btn btn--primary btn--sm" href="#" onclick="return false">Plan your visit</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+
+<section class="hero">
+  <div class="hero__media">
+    <img src="assets/img/church-building-t.jpg" alt="" aria-hidden="true" width="1000" height="750">
+  </div>
+  <div class="wrap hero__inner">
+    <h1>Gathered in Bonita since 1972</h1>
+    <blockquote class="hero__verse">
+      I was glad when they said to me, &ldquo;Let us go to the house of the L<span style="font-variant-caps:small-caps;">ord</span>!&rdquo;
+      <cite>Psalm 122:1</cite>
+    </blockquote>
+    <div class="hero__cta">
+      <a class="btn btn--primary" href="#" onclick="return false">Visit this Sunday</a>
+      <a class="btn btn--onDark" href="#" onclick="return false">Hear a sermon</a>
+    </div>
+  </div>
+</section>
+
+<section class="section section--tight section--stock">
+  <div class="wrap">
+    <div class="split-major">
+      <div class="order">
+        <p class="order__date">The Lord&rsquo;s Day &middot; August 23, 2026</p>
+        <div class="order__item">
+          <span class="order__when">Sunday School &middot; 9:30 a.m.</span>
+          <p class="order__what">All ages</p>
+        </div>
+        <div class="order__item">
+          <span class="order__when">Morning Worship &middot; 11:00 a.m.</span>
+          <p class="order__what">&ldquo;Judgment for Turning Back&rdquo;</p>
+          <p class="order__ref">Zephaniah 1:1&ndash;6 &middot; John Joseph Matandika</p>
+        </div>
+        <div class="order__item">
+          <span class="order__when">Evening Worship &middot; 6:00 p.m.</span>
+          <p class="order__what">&ldquo;Redemption in Christ&rdquo;</p>
+          <p class="order__ref">Ephesians 1:1&ndash;14</p>
+        </div>
+      </div>
+      <div>
+        <p class="label">Through the week</p>
+        <p>Besides the Lord&rsquo;s Day we meet on Wednesday evenings at Rohr Park, Gate A,
+        for Family Bible Study and Prayer &mdash; 6:00 to 8:00 p.m., all ages.</p>
+        <p>The Trustees meet the second Tuesday of each month; the Deacons meet every
+        other month on the same evening.</p>
+        <hr class="rule-double" style="margin-block:1.75rem;">
+        <p class="label">Buttons, for reference</p>
+        <div class="hero__cta">
+          <a class="btn btn--primary" href="#" onclick="return false">Primary</a>
+          <a class="btn btn--ghost" href="#" onclick="return false">Ghost</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="wrap">
+    <div class="section-head">
+      <p class="label">If you have never been</p>
+      <h2>What Sunday morning is actually like</h2>
+      <p class="lede">Plain answers to the things people wonder about before they walk in
+      the first time.</p>
+    </div>
+    <dl class="facts">
+      <div class="facts__row">
+        <dt class="facts__term">Getting there</dt>
+        <dd class="facts__def">There is a lot in front of the building on Central Avenue,
+        with accessible spaces near the front doors.</dd>
+      </div>
+      <div class="facts__row">
+        <dt class="facts__term">What to wear</dt>
+        <dd class="facts__def">Whatever you have. On a given Sunday you will see suits and
+        you will see jeans, and nobody counts.</dd>
+      </div>
+      <div class="facts__row">
+        <dt class="facts__term">The service itself</dt>
+        <dd class="facts__def">We sing, we pray, we read the Scriptures together, and we
+        sit under the preaching of the Word.</dd>
+      </div>
+    </dl>
+  </div>
+</section>
+
+<section class="section section--deep">
+  <div class="wrap">
+    <div class="split-minor">
+      <div>
+        <p class="label">Recent preaching</p>
+        <h2>Sermons</h2>
+        <p>Every service is recorded and kept. Nothing is behind a login.</p>
+        <p style="margin-top:1.5rem;"><a class="btn btn--onDark" href="#" onclick="return false">The whole archive</a></p>
+      </div>
+      <div>
+        <ul class="sermon-list" style="border-top-color:var(--band-rule);">
+          <li><a href="#" onclick="return false">
+            <span class="title">Judgment for Turning Back</span>
+            <span class="meta">Aug 23, 2026 &middot; John Joseph Matandika &middot; Zephaniah 1:1-6</span>
+          </a></li>
+          <li><a href="#" onclick="return false">
+            <span class="title">Therefore, Comfort One Another with These Words</span>
+            <span class="meta">Aug 16, 2026 &middot; Sam Phillips, Intern &middot; 1 Thessalonians 4:13-18</span>
+          </a></li>
+          <li><a href="#" onclick="return false">
+            <span class="title">Distress, Reassurance, and Faith</span>
+            <span class="meta">Aug 9, 2026 &middot; Francis Lennartz &middot; Genesis 15:1-6</span>
+          </a></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section section--stock">
+  <div class="wrap">
+    <div class="section-head" style="margin-bottom:2rem;">
+      <p class="label">Session and diaconate</p>
+      <h2>Our leadership</h2>
+    </div>
+    <div class="people">
+      <div class="person"><img src="assets/img/chism.jpg" alt="Mike Chism" width="276" height="276"><h3>Mike Chism</h3><p class="role">Elder</p></div>
+      <div class="person"><img src="assets/img/skidmore.jpg" alt="Maynard Skidmore" width="276" height="276"><h3>Maynard Skidmore</h3><p class="role">Elder</p></div>
+      <div class="person"><img src="assets/img/weld.jpg" alt="Andy Weld" width="276" height="276"><h3>Andy Weld</h3><p class="role">Elder</p></div>
+      <div class="person"><img src="assets/img/york.jpg" alt="Scott York" width="276" height="276"><h3>Scott York</h3><p class="role">Deacon</p></div>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <div class="site-footer__grid">
+      <div class="site-footer__brand">
+        <img src="assets/img/Bonita-Logo-w.png" alt="Bonita Orthodox Presbyterian Church" width="640" height="124">
+        <p class="site-footer__note">A congregation of the Orthodox Presbyterian Church,
+        gathered in Bonita since 1972.</p>
+      </div>
+      <div>
+        <h2>Lord&rsquo;s Day</h2>
+        <ul>
+          <li>Sunday School &mdash; 9:30 a.m.</li>
+          <li>Morning Worship &mdash; 11:00 a.m.</li>
+          <li>Evening Worship &mdash; 6:00 p.m.</li>
+        </ul>
+      </div>
+      <div>
+        <h2>Find us</h2>
+        <address>5111 Central Avenue<br>Bonita, CA 91902</address>
+      </div>
+    </div>
+    <div class="site-footer__bottom">
+      <p style="margin:0;">&copy; 2026 Bonita Orthodox Presbyterian Church.</p>
+    </div>
+  </div>
+</footer>
+
+<script>
+document.querySelectorAll("[data-theme-btn]").forEach(function (btn) {
+  btn.addEventListener("click", function () {
+    document.documentElement.setAttribute("data-theme-preview", btn.dataset.themeBtn);
+    document.querySelectorAll("[data-theme-btn]").forEach(function (b) {
+      b.setAttribute("aria-pressed", String(b === btn));
+    });
+  });
+});
+</script>
+</body>
+</html>

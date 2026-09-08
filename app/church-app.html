@@ -5,6 +5,19 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Bonita OPC Companion</title>
 <meta name="description" content="A light companion app for Bonita Orthodox Presbyterian Church — this Sunday, events, sign-up sheets, prayer, and the church directory.">
+
+<!-- Add to Home Screen: this is the whole trick. A manifest + a service
+     worker + these meta tags is what turns a web page into something that
+     installs like an app, on Android and iOS alike. -->
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#2f4436">
+<link rel="icon" href="icons/icon-192.png">
+<link rel="apple-touch-icon" href="../assets/img/apple-touch-icon.png">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Bonita OPC">
+
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Vollkorn:ital,wght@0,400..700;1,400..600&family=Alegreya+Sans:ital,wght@0,400;0,500;0,700;1,400&display=swap" rel="stylesheet">
@@ -549,7 +562,68 @@ document.getElementById("reset").addEventListener("click", function(){
 
 renderEvents(); renderPrayers(); renderDirectory();
 if(location.hash) goTo(location.hash.slice(1), false);
+
+/* ---- install prompt --------------------------------------------------
+   Chrome/Android hold the install prompt back until asked; iOS Safari has
+   no prompt at all and only installs via Share -> Add to Home Screen. This
+   surfaces both without nagging: Android gets a real one-tap install,
+   iOS gets the instructions, and it never shows twice a week. */
+var deferredPrompt = null;
+var isStandalone = matchMedia("(display-mode: standalone)").matches || navigator.standalone === true;
+var isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent);
+var dismissedAt = 0;
+try{ dismissedAt = +localStorage.getItem("bopc-install-dismissed") || 0; }catch(e){}
+var shownThisSession = false;
+
+function showInstallBanner(mode){
+  if(isStandalone || shownThisSession) return;
+  shownThisSession = true;
+  var b = document.createElement("div");
+  b.className = "installbar";
+  b.innerHTML = mode === "ios"
+    ? '<span>Add this to your home screen: tap <strong>Share</strong>, then <strong>Add to Home Screen</strong>.</span>'
+      + '<button class="btn ghost sm" type="button" data-dismiss>Got it</button>'
+    : '<span>Install the Bonita OPC companion for one-tap access.</span>'
+      + '<button class="btn primary sm" type="button" data-install>Install</button>'
+      + '<button class="btn ghost sm" type="button" data-dismiss>Not now</button>';
+  document.body.appendChild(b);
+  b.addEventListener("click", function(ev){
+    if(ev.target.closest("[data-install]") && deferredPrompt){
+      deferredPrompt.prompt();
+      deferredPrompt.userChoice.finally(function(){ deferredPrompt = null; b.remove(); });
+      return;
+    }
+    if(ev.target.closest("[data-dismiss]")){
+      try{ localStorage.setItem("bopc-install-dismissed", "1"); }catch(e){}
+      b.remove();
+    }
+  });
+}
+
+window.addEventListener("beforeinstallprompt", function(e){
+  e.preventDefault();
+  deferredPrompt = e;
+  if(!dismissedAt) showInstallBanner("android");
+});
+
+if(isIOS && !dismissedAt) showInstallBanner("ios");
+
+if("serviceWorker" in navigator){
+  window.addEventListener("load", function(){
+    navigator.serviceWorker.register("service-worker.js").catch(function(){ /* offline shell is a bonus, not a requirement */ });
+  });
+}
 })();
 </script>
+
+<style>
+.installbar{
+  position:fixed; left:.75rem; right:.75rem; bottom:calc(var(--tabh) + env(safe-area-inset-bottom,0px) + .75rem);
+  z-index:40; background:var(--band); color:var(--band-ink); border:1px solid var(--brass);
+  border-radius:2px; padding:.75rem .9rem; display:flex; flex-wrap:wrap; gap:.6rem; align-items:center;
+  font-size:.94rem; max-width:520px; margin-inline:auto;
+}
+.installbar span{ flex:1 1 14rem; }
+</style>
 </body>
 </html>
