@@ -99,6 +99,43 @@
     apply();
   }
 
+  /* --- Contact form fallback ------------------------------------------------
+     Runs only while the form's action is still the unconfigured "#" (see the
+     comment in contact.html). Once a real endpoint (Formspree, Netlify Forms,
+     the church's CMS) is wired up, this hands off automatically because the
+     action check fails and the browser's normal submit takes over. */
+  var form = document.querySelector("form[data-fallback-email]");
+  if (form && form.getAttribute("action") === "#") {
+    var status = form.querySelector("[data-form-status]");
+    form.addEventListener("submit", function (e) {
+      e.preventDefault();
+      if (!form.reportValidity()) return;
+
+      var data = new FormData(form);
+      var name = [data.get("first"), data.get("last")].filter(Boolean).join(" ");
+      var subject = "Message from " + (name || "the Bonita OPC website");
+      var lines = [
+        "Name: " + name,
+        "Email: " + (data.get("email") || ""),
+        data.get("phone") ? "Phone: " + data.get("phone") : null,
+        "",
+        data.get("message") || ""
+      ].filter(function (l) { return l !== null; });
+
+      var to = form.getAttribute("data-fallback-email");
+      var mailto = "mailto:" + encodeURIComponent(to) +
+        "?subject=" + encodeURIComponent(subject) +
+        "&body=" + encodeURIComponent(lines.join("\n"));
+
+      window.location.href = mailto;
+
+      if (status) {
+        status.hidden = false;
+        status.textContent = "Opening your email app to send this to us — if nothing opens, email " + to + " directly.";
+      }
+    });
+  }
+
   /* --- Mark the current page in the nav ------------------------------------ */
   var here = location.pathname.replace(/index\.html$/, "").replace(/\/$/, "");
   document.querySelectorAll(".nav__link").forEach(function (a) {

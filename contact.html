@@ -110,10 +110,15 @@
         <h2>Send us a message</h2>
         <p>Fill this in and one of the elders will get back to you.</p>
 
-        <!-- The form posts nowhere until it is wired up. See README, "Making the
-             contact form work" — it takes about five minutes with Formspree or
-             Netlify Forms, or the church's own CMS. -->
-        <form class="form-grid" action="#" method="post" style="margin-top:1.5rem;">
+        <!-- Not wired to a form backend yet. See README, "Making the contact
+             form work" — five minutes with Formspree or Netlify Forms. Until
+             then, site.js intercepts the submit (because action="#") and
+             opens the visitor's email client instead, addressed to
+             data-fallback-email below, so the form is never a dead end.
+             Swap the action to a real endpoint and delete data-fallback-email
+             once one is set up; site.js only takes over while action="#". -->
+        <form class="form-grid" action="#" method="post" data-fallback-email="info@bonitaopc.org" style="margin-top:1.5rem;">
+          <p class="form-status" data-form-status hidden role="status"></p>
           <div class="field">
             <label for="first">First name</label>
             <input id="first" name="first" type="text" autocomplete="given-name" required>
