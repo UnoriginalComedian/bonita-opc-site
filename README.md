@@ -80,6 +80,16 @@ the project root keeps the live embeds.
 
 ---
 
+## Brand guide & next steps
+
+- `docs/BRAND-GUIDE.md` — the identity system (palette, type, signature details,
+  voice) written down so it transfers to print, social, and anything else the
+  church needs beyond the site. `docs/brand-guide-artifact.html` is the same
+  content as a standalone, shareable page for the elders.
+- `docs/MODERNIZATION-ROADMAP.md` — what else is worth doing, ordered by value
+  for effort: online giving, a real contact-form backend, claiming the Google
+  Business Profile, a church-management system, and more.
+
 ## Before launch
 
 Search the HTML for `class="todo"`. Every one is a **CONFIRM** chip on a piece of
