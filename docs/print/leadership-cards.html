@@ -53,21 +53,21 @@
   /* ---------- shared card faces (used by both the mockup and the print sheets) ---------- */
   .card-face { width: 3.5in; height: 2in; position: relative; overflow: hidden; }
 
-  /* Front: the church building, full-bleed, darkened — an invitation,
-     not just an ID. Same two-layer scrim recipe as the site's own
-     hero photo (see BRAND-GUIDE.md, "Photography"). */
+  /* Front: the church building, one full-bleed photo edge to edge — no
+     frame, no boxed-off panel — with a single even wash over the
+     whole image (not a bottom-heavy gradient) so it still reads as
+     a photograph, just toned down enough to carry white type. */
   .card-face--front {
     display: flex; flex-direction: column; justify-content: flex-end;
-    padding: .18in .22in; color: var(--stock);
+    padding: .2in .24in; color: var(--stock);
   }
   .front-photo {
-    position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; z-index: 0;
+    position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover;
+    object-position: 50% 90%; z-index: 0; /* crop out almost all sky — that hard skyline was the "seam" */
   }
   .card-face--front::before {
     content: ""; position: absolute; inset: 0; z-index: 1;
-    background:
-      linear-gradient(0deg, rgba(19,29,22,.93) 0%, rgba(19,29,22,.62) 50%, rgba(19,29,22,.42) 100%),
-      linear-gradient(100deg, rgba(19,29,22,.4) 0%, rgba(19,29,22,.05) 60%);
+    background: rgba(15,22,17,.72); /* one flat, even wash — no gradient banding */
   }
   .front-photo, .front-eyebrow, .front-invite, .front-verse, .front-meta { position: relative; z-index: 2; }
   .front-eyebrow {
