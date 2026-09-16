@@ -89,6 +89,12 @@ the project root keeps the live embeds.
 - `docs/MODERNIZATION-ROADMAP.md` — what else is worth doing, ordered by value
   for effort: online giving, a real contact-form backend, claiming the Google
   Business Profile, a church-management system, and more.
+- `docs/print/` — print-ready templates built on the same palette and type:
+  `bulletin.html` (a weekly two-page Sunday bulletin, order of worship and all —
+  open it and print with Cmd/Ctrl+P) and `leadership-cards.html` (a sheet of six
+  business-card-sized contact cards for the session, diaconate, and whoever is
+  preaching that week). Both explain how to edit and print them in a comment at
+  the top of the file.
 
 ## Before launch
 
