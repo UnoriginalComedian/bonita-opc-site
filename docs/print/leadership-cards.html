@@ -8,136 +8,228 @@
 <!-- ============================================================
      LEADERSHIP CONTACT CARDS — how to use it
      ------------------------------------------------------------
-     Six standard US business cards (3.5in x 2in) on one letter
-     sheet: the five Session/Diaconate members from about.html, plus
-     one blank "Guest Preacher" card — Bonita currently calls in
-     pulpit supply rather than a settled pastor (see the varied
-     preacher names in sermons.html), so the sixth card is a
-     fill-in-by-hand slot for whoever is preaching that week rather
-     than a fabricated "Pastor" title.
+     Double-sided US business cards (3.5in x 2in): a colored front
+     with the photo and role, a quieter back with the church's
+     contact details. Six people — the five Session/Diaconate
+     members from about.html, plus a blank "Guest Preacher" slot,
+     since Bonita currently runs on pulpit supply rather than a
+     settled pastor (see the varied preacher names in sermons.html).
 
-     Print at 100% scale (no "fit to page"), letter size, then cut
-     along the dashed lines. Card stock (80-110lb) recommended.
+     On screen: a tilted preview of every front/back pair first, for
+     reviewing the design — then two flat, precisely-sized print
+     sheets below it (fronts, then backs). Only the print sheets
+     print; the preview is hidden in the print stylesheet.
+
+     TO PRINT: run the front sheet through the printer first, then
+     feed the same paper back in and run the back sheet. The back
+     sheet's card order is column-mirrored so it lines up correctly
+     if your printer's duplex flips on the LONG edge (the common
+     default). If yours flips on the short edge instead, set
+     MIRROR_BACK to false below and reprint. Test with one sheet of
+     scrap paper before running actual card stock.
+
+     CONFIRM before printing: the email address on the back is a
+     placeholder (info@bonitaopc.org) — swap it for the church's
+     real inbox, the same way the site marks unconfirmed content
+     elsewhere (see README.md).
      ============================================================ -->
 
 <style>
   :root {
     --green: #2f4436; --green-deep: #223328; --brass: #b8802a; --brass-bright: #d9a13d; --tile: #a6432a;
-    --ink: #241f19; --muted: #7a6f61; --rule: #d9cdb8; --stock: #fbf6ec; --plaster: #f3ebdd;
+    --ink: #241f19; --ink-soft: #4b4239; --muted: #7a6f61; --rule: #d9cdb8; --rule-strong: #b9a98d;
+    --stock: #fbf6ec; --plaster: #f3ebdd;
     --band-ink: #f4efe3; --band-muted: rgba(244,239,227,.72);
     --font-display: "Vollkorn", Georgia, "Times New Roman", serif;
     --font-body: "Alegreya Sans", "Segoe UI", Helvetica, Arial, sans-serif;
   }
   * { box-sizing: border-box; }
-  html { background: #77705f; }
+  html { background: #57544a; }
   body { margin: 0; font-family: var(--font-body); color: var(--ink); }
 
-  .sheet {
-    width: 8.5in; height: 11in; margin: 1.5rem auto; background: #fff;
-    padding: .75in .75in; display: grid;
-    grid-template-columns: repeat(2, 3.5in); grid-template-rows: repeat(3, 2in);
-    justify-content: center; gap: 0;
-  }
-  @media screen { .sheet { box-shadow: 0 6px 24px rgba(0,0,0,.35); } }
-  @page { size: letter; margin: 0; }
-  @media print { html, body { background: #fff; } .sheet { box-shadow: none; margin: 0; } }
+  /* ---------- shared card faces (used by both the mockup and the print sheets) ---------- */
+  .card-face { width: 3.5in; height: 2in; position: relative; overflow: hidden; }
 
-  /* Deep green ground (the same surface the masthead/footer use), a brass
-     top border like the order-of-service panel, and a tile-colored role
-     pill for a real point of color — not just ink on stock. */
-  .card {
-    width: 3.5in; height: 2in; border: 1px dashed var(--rule);
-    padding: .22in .24in; display: flex; align-items: center; gap: .2in;
-    position: relative; overflow: hidden;
-    background:
-      radial-gradient(120% 140% at 100% 0%, rgba(184,128,42,.22), transparent 55%),
-      var(--green-deep);
+  .card-face--front {
+    display: flex; align-items: center; gap: .2in; padding: .22in .24in;
+    background: radial-gradient(120% 140% at 100% 0%, rgba(184,128,42,.22), transparent 55%), var(--green-deep);
     color: var(--band-ink);
   }
-  .card::before {
+  .card-face--front::before {
     content: ""; position: absolute; left: 0; right: 0; top: 0; height: 5px;
     background: linear-gradient(90deg, var(--brass), var(--brass-bright) 55%, var(--tile));
   }
-  .card__photo {
+  .card-face--front::after {
+    content: ""; position: absolute; right: -.5in; bottom: -.6in; width: 1.6in; height: 1.6in;
+    border-radius: 50%; border: 1px solid rgba(244,239,227,.12); pointer-events: none;
+  }
+  .photo {
     width: 1in; height: 1in; border-radius: 50%; object-fit: cover;
     flex-shrink: 0; border: 3px solid var(--brass-bright); background: var(--plaster);
-    box-shadow: 0 0 0 1px var(--green-deep);
+    box-shadow: 0 0 0 1px var(--green-deep); position: relative; z-index: 1;
   }
-  .card__photo--blank {
+  .photo--blank {
     display: grid; place-items: center; color: var(--band-muted); font-size: .62rem;
     text-align: center; line-height: 1.2; font-style: italic; background: rgba(244,239,227,.08);
   }
-  .card__body { min-width: 0; }
-  .card__name { font-family: var(--font-display); font-weight: 600; font-size: 1.08rem; color: #fff; line-height: 1.15; margin: 0 0 .1in; }
-  .card__role {
+  .front-body { min-width: 0; position: relative; z-index: 1; }
+  .front-name { font-family: var(--font-display); font-weight: 600; font-size: 1.08rem; color: #fff; line-height: 1.15; margin: 0 0 .1in; }
+  .front-role {
     display: inline-block; font-family: var(--font-body); font-weight: 700;
     letter-spacing: .04em; text-transform: uppercase; font-size: .62rem;
     color: #fff; background: var(--tile); padding: .1em .55em; border-radius: 2px; margin: 0 0 .14in;
   }
-  .card__org { font-size: .68rem; color: var(--band-muted); line-height: 1.45; }
-  .card__org strong { color: var(--brass-bright); font-weight: 700; }
+  .front-org { font-size: .68rem; color: var(--band-muted); line-height: 1.45; }
+
+  .card-face--back {
+    display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center;
+    background: var(--stock); padding: .2in .3in; border: 6px solid var(--green-deep);
+  }
+  .card-face--back::before {
+    content: ""; position: absolute; inset: 5px; border: 1px solid var(--brass); pointer-events: none;
+  }
+  .card-face--back::after {
+    content: ""; position: absolute; left: -.4in; top: -.55in; width: 1.3in; height: 1.3in;
+    border-radius: 50%; background: var(--tile); opacity: .1; pointer-events: none;
+  }
+  .back-logo { height: 20px; width: auto; filter: brightness(0); margin-bottom: .07in; position: relative; z-index: 1; }
+  .back-name { font-family: var(--font-display); font-variant-caps: small-caps; letter-spacing: .03em; font-size: .82rem; color: var(--green); margin: 0 0 .08in; }
+  .back-rule { border: 0; border-top: 2px double var(--rule-strong); width: 1.3in; margin: 0 0 .09in; }
+  .back-line { font-size: .65rem; color: var(--ink-soft); line-height: 1.55; margin: 0; }
+  .back-line strong { color: var(--green); font-weight: 700; }
+  .back-todo {
+    display: inline-block; margin-top: .08in; background: var(--brass); color: #3a2a08;
+    font-weight: 700; font-size: .52rem; letter-spacing: .03em; padding: .04em .35em; border-radius: 2px;
+  }
+  .back-verse { font-family: var(--font-display); font-style: italic; font-size: .64rem; color: var(--muted); margin-top: .1in; }
+
+  /* ---------- on-screen mockup preview (hidden in print) ---------- */
+  .mockups { padding: 2.5rem 1.5rem 1rem; max-width: 980px; margin: 0 auto; }
+  .mockups h1 { font-family: var(--font-display); color: var(--band-ink); font-size: 1.4rem; text-align: center; margin: 0 0 .3rem; }
+  .mockups p.sub { text-align: center; color: rgba(244,239,227,.65); font-family: var(--font-body); font-size: .92rem; margin: 0 0 2.2rem; }
+  .mockup-row {
+    display: flex; justify-content: center; align-items: center; gap: 2.6rem;
+    padding: 2.2rem 1rem; margin-bottom: 1rem;
+  }
+  .mockup-row .card-face { border-radius: 6px; box-shadow: 0 18px 34px rgba(0,0,0,.45), 0 2px 6px rgba(0,0,0,.3); }
+  .mockup-row .card-face--front { transform: rotate(-4deg) translateY(4px); }
+  .mockup-row .card-face--back { transform: rotate(3deg) translateY(-4px); }
+  .mockup-label { text-align: center; color: rgba(244,239,227,.55); font-size: .78rem; letter-spacing: .04em; text-transform: uppercase; margin-top: -.6rem; margin-bottom: 1.8rem; }
+
+  /* ---------- print sheets ---------- */
+  .sheet-label { text-align: center; color: rgba(244,239,227,.7); font-family: var(--font-body); font-size: .85rem; letter-spacing: .03em; text-transform: uppercase; margin: 2.5rem 0 .5rem; }
+  .sheet {
+    width: 8.5in; height: 11in; margin: 0 auto 1.5rem; background: #fff;
+    padding: .75in .75in; display: grid;
+    grid-template-columns: repeat(2, 3.5in); grid-template-rows: repeat(3, 2in);
+    justify-content: center; gap: 0;
+  }
+  .sheet .card-face { border: 1px dashed var(--rule); }
+  @media screen { .sheet { box-shadow: 0 6px 24px rgba(0,0,0,.35); } }
+  @page { size: letter; margin: 0; }
+  @media print {
+    html, body { background: #fff; }
+    .mockups, .sheet-label { display: none; }
+    .sheet { box-shadow: none; margin: 0; page-break-after: always; }
+    .sheet:last-of-type { page-break-after: auto; }
+  }
 </style>
 </head>
 <body>
 
-<div class="sheet">
-
-  <div class="card">
-    <img class="card__photo" src="../../assets/img/chism.jpg" alt="Mike Chism">
-    <div class="card__body">
-      <p class="card__name">Mike Chism</p>
-      <p class="card__role">Elder</p>
-      <p class="card__org">Bonita Orthodox Presbyterian Church<br>(619) 475-3752</p>
-    </div>
-  </div>
-
-  <div class="card">
-    <img class="card__photo" src="../../assets/img/0d314f1f-1630-4745-9dfe-f92c20497b80_1_105_c.jpg" alt="Lee McMorris">
-    <div class="card__body">
-      <p class="card__name">Lee McMorris</p>
-      <p class="card__role">Elder</p>
-      <p class="card__org">Bonita Orthodox Presbyterian Church<br>(619) 475-3752</p>
-    </div>
-  </div>
-
-  <div class="card">
-    <img class="card__photo" src="../../assets/img/skidmore.jpg" alt="Maynard Skidmore">
-    <div class="card__body">
-      <p class="card__name">Maynard Skidmore</p>
-      <p class="card__role">Elder</p>
-      <p class="card__org">Bonita Orthodox Presbyterian Church<br>(619) 475-3752</p>
-    </div>
-  </div>
-
-  <div class="card">
-    <img class="card__photo" src="../../assets/img/weld.jpg" alt="Andy Weld">
-    <div class="card__body">
-      <p class="card__name">Andy Weld</p>
-      <p class="card__role">Elder</p>
-      <p class="card__org">Bonita Orthodox Presbyterian Church<br>(619) 475-3752</p>
-    </div>
-  </div>
-
-  <div class="card">
-    <img class="card__photo" src="../../assets/img/york.jpg" alt="Scott York">
-    <div class="card__body">
-      <p class="card__name">Scott York</p>
-      <p class="card__role">Deacon</p>
-      <p class="card__org">Bonita Orthodox Presbyterian Church<br>(619) 475-3752</p>
-    </div>
-  </div>
-
-  <!-- Blank slot: hand-write the guest preacher for weeks the pulpit is supplied. -->
-  <div class="card">
-    <div class="card__photo card__photo--blank">write<br>in</div>
-    <div class="card__body">
-      <p class="card__name">&nbsp;</p>
-      <p class="card__role">This week&rsquo;s preacher</p>
-      <p class="card__org">Bonita Orthodox Presbyterian Church<br>(619) 475-3752</p>
-    </div>
-  </div>
-
+<div class="mockups">
+  <h1>Session &amp; Diaconate Cards</h1>
+  <p class="sub">Front and back, for review — the print-ready sheets follow below</p>
+  <div id="mockup-target"></div>
 </div>
+
+<p class="sheet-label">Print sheet 1 of 2 — fronts</p>
+<div class="sheet" id="front-sheet"></div>
+
+<p class="sheet-label">Print sheet 2 of 2 — backs (column-mirrored to align when flipped on the long edge)</p>
+<div class="sheet" id="back-sheet"></div>
+
+<script>
+(function () {
+  "use strict";
+  var MIRROR_BACK = true; // set false if your printer's duplex flips on the short edge
+
+  var PEOPLE = [
+    { name: "Mike Chism", role: "Elder", photo: "../../assets/img/chism.jpg" },
+    { name: "Lee McMorris", role: "Elder", photo: "../../assets/img/0d314f1f-1630-4745-9dfe-f92c20497b80_1_105_c.jpg" },
+    { name: "Maynard Skidmore", role: "Elder", photo: "../../assets/img/skidmore.jpg" },
+    { name: "Andy Weld", role: "Elder", photo: "../../assets/img/weld.jpg" },
+    { name: "Scott York", role: "Deacon", photo: "../../assets/img/york.jpg" },
+    { name: null, role: "This week’s preacher", photo: null }
+  ];
+
+  function frontFace(p) {
+    var face = document.createElement("div");
+    face.className = "card-face card-face--front";
+    var photoEl;
+    if (p.photo) {
+      photoEl = document.createElement("img");
+      photoEl.className = "photo";
+      photoEl.src = p.photo;
+      photoEl.alt = p.name;
+    } else {
+      photoEl = document.createElement("div");
+      photoEl.className = "photo photo--blank";
+      photoEl.innerHTML = "write<br>in";
+    }
+    face.appendChild(photoEl);
+    var body = document.createElement("div");
+    body.className = "front-body";
+    body.innerHTML =
+      '<p class="front-name">' + (p.name || "&nbsp;") + '</p>' +
+      '<p class="front-role">' + p.role + '</p>' +
+      '<p class="front-org">Bonita Orthodox Presbyterian Church<br>(619) 475-3752</p>';
+    face.appendChild(body);
+    return face;
+  }
+
+  function backFace() {
+    var face = document.createElement("div");
+    face.className = "card-face card-face--back";
+    face.innerHTML =
+      '<img class="back-logo" src="../../assets/img/Bonita-Logo-w.png" alt="">' +
+      '<p class="back-name">Bonita Orthodox Presbyterian Church</p>' +
+      '<hr class="back-rule">' +
+      '<p class="back-line"><strong>5111 Central Avenue</strong><br>Bonita, CA 91902</p>' +
+      '<p class="back-line">(619) 475-3752 &middot; bonitaopc.org</p>' +
+      '<p class="back-line">[info@bonitaopc.org] <span class="back-todo">confirm</span></p>' +
+      '<p class="back-verse">Gathered in Bonita since 1972</p>';
+    return face;
+  }
+
+  // Mockup preview: one front + back pair per person, tilted.
+  var mockTarget = document.getElementById("mockup-target");
+  PEOPLE.forEach(function (p) {
+    var row = document.createElement("div");
+    row.className = "mockup-row";
+    row.appendChild(frontFace(p));
+    row.appendChild(backFace());
+    mockTarget.appendChild(row);
+    var label = document.createElement("p");
+    label.className = "mockup-label";
+    label.textContent = p.name || "Guest preacher (blank)";
+    mockTarget.appendChild(label);
+  });
+
+  // Print sheet 1: fronts, natural left-to-right order.
+  var frontSheet = document.getElementById("front-sheet");
+  PEOPLE.forEach(function (p) { frontSheet.appendChild(frontFace(p)); });
+
+  // Print sheet 2: backs, column-mirrored per row so a long-edge duplex
+  // flip lines each back up behind its matching front.
+  var backSheet = document.getElementById("back-sheet");
+  var rows = [[PEOPLE[0], PEOPLE[1]], [PEOPLE[2], PEOPLE[3]], [PEOPLE[4], PEOPLE[5]]];
+  rows.forEach(function (pair) {
+    var ordered = MIRROR_BACK ? [pair[1], pair[0]] : pair;
+    ordered.forEach(function () { backSheet.appendChild(backFace()); });
+  });
+})();
+</script>
 
 </body>
 </html>
