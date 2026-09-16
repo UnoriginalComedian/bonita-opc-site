@@ -8,12 +8,14 @@
 <!-- ============================================================
      LEADERSHIP CONTACT CARDS — how to use it
      ------------------------------------------------------------
-     Double-sided US business cards (3.5in x 2in): a colored front
-     with the photo and role, a quieter back with the church's
-     contact details. Six people — the five Session/Diaconate
-     members from about.html, plus a blank "Guest Preacher" slot,
-     since Bonita currently runs on pulpit supply rather than a
-     settled pastor (see the varied preacher names in sermons.html).
+     Double-sided US business cards (3.5in x 2in): a quiet textured
+     front (mark, name, role — no photo, the way a clergy/elder card
+     usually reads), a back with contact details on the left and the
+     person's photo bleeding to the edge on the right. Six people —
+     the five Session/Diaconate members from about.html, plus a
+     blank "Guest Preacher" slot, since Bonita currently runs on
+     pulpit supply rather than a settled pastor (see the varied
+     preacher names in sermons.html).
 
      On screen: a tilted preview of every front/back pair first, for
      reviewing the design — then two flat, precisely-sized print
@@ -36,88 +38,84 @@
 
 <style>
   :root {
-    --green: #2f4436; --green-deep: #223328; --brass: #b8802a; --brass-bright: #d9a13d; --tile: #a6432a;
+    --green: #2f4436; --green-deep: #1c2a20; --green-deepest: #131d16;
+    --brass: #b8802a; --brass-bright: #e0ac52; --tile: #a6432a;
     --ink: #241f19; --ink-soft: #4b4239; --muted: #7a6f61; --rule: #d9cdb8; --rule-strong: #b9a98d;
     --stock: #fbf6ec; --plaster: #f3ebdd;
-    --band-ink: #f4efe3; --band-muted: rgba(244,239,227,.72);
     --font-display: "Vollkorn", Georgia, "Times New Roman", serif;
     --font-body: "Alegreya Sans", "Segoe UI", Helvetica, Arial, sans-serif;
   }
   * { box-sizing: border-box; }
-  html { background: #57544a; }
+  html { background: #3a362f; }
   body { margin: 0; font-family: var(--font-body); color: var(--ink); }
 
   /* ---------- shared card faces (used by both the mockup and the print sheets) ---------- */
   .card-face { width: 3.5in; height: 2in; position: relative; overflow: hidden; }
 
+  /* Front: dark, quiet, textured — a mark, a name, a role. No photo,
+     no clutter, the way a clergy card is usually cut. */
   .card-face--front {
-    display: flex; align-items: center; gap: .2in; padding: .22in .24in;
-    background: radial-gradient(120% 140% at 100% 0%, rgba(184,128,42,.22), transparent 55%), var(--green-deep);
-    color: var(--band-ink);
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    text-align: center; padding: .2in;
+    background:
+      repeating-linear-gradient(135deg, rgba(255,255,255,.025) 0 1px, transparent 1px 3px),
+      radial-gradient(160% 120% at 50% -20%, rgba(184,128,42,.16), transparent 60%),
+      radial-gradient(140% 140% at 50% 120%, var(--green-deepest), var(--green-deep) 55%);
   }
-  .card-face--front::before {
-    content: ""; position: absolute; left: 0; right: 0; top: 0; height: 5px;
-    background: linear-gradient(90deg, var(--brass), var(--brass-bright) 55%, var(--tile));
+  .front-icon { width: 22px; height: 30px; margin-bottom: .14in; opacity: .95; }
+  .front-name {
+    font-family: var(--font-display); font-weight: 600; font-size: .98rem; color: var(--stock);
+    letter-spacing: .1em; text-transform: uppercase; margin: 0 0 .07in; line-height: 1.3;
   }
-  .card-face--front::after {
-    content: ""; position: absolute; right: -.5in; bottom: -.6in; width: 1.6in; height: 1.6in;
-    border-radius: 50%; border: 1px solid rgba(244,239,227,.12); pointer-events: none;
-  }
-  .photo {
-    width: 1in; height: 1in; border-radius: 50%; object-fit: cover;
-    flex-shrink: 0; border: 3px solid var(--brass-bright); background: var(--plaster);
-    box-shadow: 0 0 0 1px var(--green-deep); position: relative; z-index: 1;
-  }
-  .photo--blank {
-    display: grid; place-items: center; color: var(--band-muted); font-size: .62rem;
-    text-align: center; line-height: 1.2; font-style: italic; background: rgba(244,239,227,.08);
-  }
-  .front-body { min-width: 0; position: relative; z-index: 1; }
-  .front-name { font-family: var(--font-display); font-weight: 600; font-size: 1.08rem; color: #fff; line-height: 1.15; margin: 0 0 .1in; }
   .front-role {
-    display: inline-block; font-family: var(--font-body); font-weight: 700;
-    letter-spacing: .04em; text-transform: uppercase; font-size: .62rem;
-    color: #fff; background: var(--tile); padding: .1em .55em; border-radius: 2px; margin: 0 0 .14in;
+    font-family: var(--font-display); font-style: italic; font-weight: 400;
+    font-size: .82rem; color: var(--brass-bright); margin: 0;
   }
-  .front-org { font-size: .68rem; color: var(--band-muted); line-height: 1.45; }
+  .front-rule { border: 0; border-top: 1px solid rgba(224,172,82,.35); width: .5in; margin: .13in 0 0; }
+  .front-name--blank { border-bottom: 1px dashed rgba(251,246,236,.4); width: 1.6in; height: 1em; }
 
-  .card-face--back {
-    display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center;
-    background: var(--stock); padding: .2in .3in; border: 6px solid var(--green-deep);
+  /* Back: contact details left, photo bleeding to the card edge right. */
+  .card-face--back { display: flex; background: var(--stock); }
+  .back-info {
+    flex: 1 1 auto; min-width: 0; padding: .22in .2in; display: flex; flex-direction: column; justify-content: center;
   }
-  .card-face--back::before {
-    content: ""; position: absolute; inset: 5px; border: 1px solid var(--brass); pointer-events: none;
-  }
-  .card-face--back::after {
-    content: ""; position: absolute; left: -.4in; top: -.55in; width: 1.3in; height: 1.3in;
-    border-radius: 50%; background: var(--tile); opacity: .1; pointer-events: none;
-  }
-  .back-logo { height: 20px; width: auto; filter: brightness(0); margin-bottom: .07in; position: relative; z-index: 1; }
-  .back-name { font-family: var(--font-display); font-variant-caps: small-caps; letter-spacing: .03em; font-size: .82rem; color: var(--green); margin: 0 0 .08in; }
-  .back-rule { border: 0; border-top: 2px double var(--rule-strong); width: 1.3in; margin: 0 0 .09in; }
-  .back-line { font-size: .65rem; color: var(--ink-soft); line-height: 1.55; margin: 0; }
-  .back-line strong { color: var(--green); font-weight: 700; }
+  .back-name { font-family: var(--font-display); font-weight: 700; font-size: .92rem; color: var(--green); margin: 0 0 .02in; line-height: 1.25; }
+  .back-role { font-family: var(--font-display); font-style: italic; font-size: .74rem; color: var(--tile); margin: 0 0 .11in; }
+  .back-org { font-family: var(--font-body); font-variant-caps: small-caps; letter-spacing: .02em; font-size: .68rem; color: var(--ink-soft); margin: 0 0 .09in; }
+  .back-line { font-size: .63rem; color: var(--ink-soft); line-height: 1.6; margin: 0; }
   .back-todo {
-    display: inline-block; margin-top: .08in; background: var(--brass); color: #3a2a08;
-    font-weight: 700; font-size: .52rem; letter-spacing: .03em; padding: .04em .35em; border-radius: 2px;
+    display: inline-block; background: var(--brass); color: #3a2a08;
+    font-weight: 700; font-size: .5rem; letter-spacing: .03em; padding: .03em .32em; border-radius: 2px;
   }
-  .back-verse { font-family: var(--font-display); font-style: italic; font-size: .64rem; color: var(--muted); margin-top: .1in; }
+  .back-photo-wrap {
+    flex: 0 0 1.35in; height: 100%; position: relative; overflow: hidden;
+    border-left: 3px solid var(--brass);
+  }
+  .back-photo-wrap img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .back-photo-wrap.is-blank {
+    display: grid; place-items: center;
+    background: radial-gradient(140% 140% at 50% 120%, var(--green-deepest), var(--green-deep) 60%);
+  }
+  .back-photo-wrap.is-blank span {
+    color: rgba(251,246,236,.55); font-family: var(--font-display); font-style: italic; font-size: .68rem;
+    text-align: center; line-height: 1.3; padding: 0 .1in;
+  }
 
   /* ---------- on-screen mockup preview (hidden in print) ---------- */
   .mockups { padding: 2.5rem 1.5rem 1rem; max-width: 980px; margin: 0 auto; }
-  .mockups h1 { font-family: var(--font-display); color: var(--band-ink); font-size: 1.4rem; text-align: center; margin: 0 0 .3rem; }
-  .mockups p.sub { text-align: center; color: rgba(244,239,227,.65); font-family: var(--font-body); font-size: .92rem; margin: 0 0 2.2rem; }
+  .mockups h1 { font-family: var(--font-display); color: var(--stock); font-size: 1.4rem; text-align: center; margin: 0 0 .3rem; }
+  .mockups p.sub { text-align: center; color: rgba(251,246,236,.55); font-family: var(--font-body); font-size: .92rem; margin: 0 0 2.2rem; }
   .mockup-row {
     display: flex; justify-content: center; align-items: center; gap: 2.6rem;
     padding: 2.2rem 1rem; margin-bottom: 1rem;
   }
-  .mockup-row .card-face { border-radius: 6px; box-shadow: 0 18px 34px rgba(0,0,0,.45), 0 2px 6px rgba(0,0,0,.3); }
+  .mockup-row .card-face { border-radius: 5px; box-shadow: 0 20px 38px rgba(0,0,0,.5), 0 2px 6px rgba(0,0,0,.35); }
   .mockup-row .card-face--front { transform: rotate(-4deg) translateY(4px); }
   .mockup-row .card-face--back { transform: rotate(3deg) translateY(-4px); }
-  .mockup-label { text-align: center; color: rgba(244,239,227,.55); font-size: .78rem; letter-spacing: .04em; text-transform: uppercase; margin-top: -.6rem; margin-bottom: 1.8rem; }
+  .mockup-label { text-align: center; color: rgba(251,246,236,.4); font-size: .78rem; letter-spacing: .04em; text-transform: uppercase; margin-top: -.6rem; margin-bottom: 1.8rem; }
 
   /* ---------- print sheets ---------- */
-  .sheet-label { text-align: center; color: rgba(244,239,227,.7); font-family: var(--font-body); font-size: .85rem; letter-spacing: .03em; text-transform: uppercase; margin: 2.5rem 0 .5rem; }
+  .sheet-label { text-align: center; color: rgba(251,246,236,.6); font-family: var(--font-body); font-size: .85rem; letter-spacing: .03em; text-transform: uppercase; margin: 2.5rem 0 .5rem; }
   .sheet {
     width: 8.5in; height: 11in; margin: 0 auto 1.5rem; background: #fff;
     padding: .75in .75in; display: grid;
@@ -154,6 +152,8 @@
   "use strict";
   var MIRROR_BACK = true; // set false if your printer's duplex flips on the short edge
 
+  var CROSS_SVG = '<svg class="front-icon" viewBox="0 0 24 32" fill="none" stroke="#e0ac52" stroke-width="1.6" stroke-linecap="round"><path d="M12 2v28M4 11h16"/></svg>';
+
   var PEOPLE = [
     { name: "Mike Chism", role: "Elder", photo: "../../assets/img/chism.jpg" },
     { name: "Lee McMorris", role: "Elder", photo: "../../assets/img/0d314f1f-1630-4745-9dfe-f92c20497b80_1_105_c.jpg" },
@@ -166,39 +166,42 @@
   function frontFace(p) {
     var face = document.createElement("div");
     face.className = "card-face card-face--front";
-    var photoEl;
-    if (p.photo) {
-      photoEl = document.createElement("img");
-      photoEl.className = "photo";
-      photoEl.src = p.photo;
-      photoEl.alt = p.name;
-    } else {
-      photoEl = document.createElement("div");
-      photoEl.className = "photo photo--blank";
-      photoEl.innerHTML = "write<br>in";
-    }
-    face.appendChild(photoEl);
-    var body = document.createElement("div");
-    body.className = "front-body";
-    body.innerHTML =
-      '<p class="front-name">' + (p.name || "&nbsp;") + '</p>' +
-      '<p class="front-role">' + p.role + '</p>' +
-      '<p class="front-org">Bonita Orthodox Presbyterian Church<br>(619) 475-3752</p>';
-    face.appendChild(body);
+    var nameHtml = p.name
+      ? '<p class="front-name">' + p.name + '</p>'
+      : '<p class="front-name front-name--blank">&nbsp;</p>';
+    face.innerHTML =
+      CROSS_SVG +
+      nameHtml +
+      '<hr class="front-rule">' +
+      '<p class="front-role">' + p.role + '</p>';
     return face;
   }
 
-  function backFace() {
+  function backFace(p) {
     var face = document.createElement("div");
     face.className = "card-face card-face--back";
-    face.innerHTML =
-      '<img class="back-logo" src="../../assets/img/Bonita-Logo-w.png" alt="">' +
-      '<p class="back-name">Bonita Orthodox Presbyterian Church</p>' +
-      '<hr class="back-rule">' +
-      '<p class="back-line"><strong>5111 Central Avenue</strong><br>Bonita, CA 91902</p>' +
-      '<p class="back-line">(619) 475-3752 &middot; bonitaopc.org</p>' +
+
+    var info = document.createElement("div");
+    info.className = "back-info";
+    info.innerHTML =
+      '<p class="back-name">' + (p.name || "Guest Preacher") + '</p>' +
+      '<p class="back-role">' + p.role + '</p>' +
+      '<p class="back-org">Bonita Orthodox Presbyterian Church</p>' +
+      '<p class="back-line">(619) 475-3752</p>' +
       '<p class="back-line">[info@bonitaopc.org] <span class="back-todo">confirm</span></p>' +
-      '<p class="back-verse">Gathered in Bonita since 1972</p>';
+      '<p class="back-line">bonitaopc.org<br>Bonita, California</p>';
+    face.appendChild(info);
+
+    var photoWrap = document.createElement("div");
+    photoWrap.className = "back-photo-wrap";
+    if (p.photo) {
+      photoWrap.innerHTML = '<img src="' + p.photo + '" alt="' + p.name + '">';
+    } else {
+      photoWrap.classList.add("is-blank");
+      photoWrap.innerHTML = '<span>photo<br>on file</span>';
+    }
+    face.appendChild(photoWrap);
+
     return face;
   }
 
@@ -208,7 +211,7 @@
     var row = document.createElement("div");
     row.className = "mockup-row";
     row.appendChild(frontFace(p));
-    row.appendChild(backFace());
+    row.appendChild(backFace(p));
     mockTarget.appendChild(row);
     var label = document.createElement("p");
     label.className = "mockup-label";
@@ -226,7 +229,7 @@
   var rows = [[PEOPLE[0], PEOPLE[1]], [PEOPLE[2], PEOPLE[3]], [PEOPLE[4], PEOPLE[5]]];
   rows.forEach(function (pair) {
     var ordered = MIRROR_BACK ? [pair[1], pair[0]] : pair;
-    ordered.forEach(function () { backSheet.appendChild(backFace()); });
+    ordered.forEach(function (p) { backSheet.appendChild(backFace(p)); });
   });
 })();
 </script>
