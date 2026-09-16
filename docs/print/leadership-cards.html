@@ -8,10 +8,11 @@
 <!-- ============================================================
      LEADERSHIP CONTACT CARDS — how to use it
      ------------------------------------------------------------
-     Double-sided US business cards (3.5in x 2in): a quiet textured
-     front (mark, name, role — no photo, the way a clergy/elder card
-     usually reads), a back with contact details on the left and the
-     person's photo bleeding to the edge on the right. Six people —
+     Double-sided US business cards (3.5in x 2in): a front that's the
+     same on every card — the church building, darkened, with an
+     invitation and service times, so whoever hands the card out is
+     also inviting someone — and a back with that person's photo
+     bleeding to the edge and their contact details. Six people —
      the five Session/Diaconate members from about.html, plus a
      blank "Guest Preacher" slot, since Bonita currently runs on
      pulpit supply rather than a settled pastor (see the varied
@@ -52,27 +53,39 @@
   /* ---------- shared card faces (used by both the mockup and the print sheets) ---------- */
   .card-face { width: 3.5in; height: 2in; position: relative; overflow: hidden; }
 
-  /* Front: dark, quiet, textured — a mark, a name, a role. No photo,
-     no clutter, the way a clergy card is usually cut. */
+  /* Front: the church building, full-bleed, darkened — an invitation,
+     not just an ID. Same two-layer scrim recipe as the site's own
+     hero photo (see BRAND-GUIDE.md, "Photography"). */
   .card-face--front {
-    display: flex; flex-direction: column; align-items: center; justify-content: center;
-    text-align: center; padding: .2in;
+    display: flex; flex-direction: column; justify-content: flex-end;
+    padding: .18in .22in; color: var(--stock);
+  }
+  .front-photo {
+    position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; z-index: 0;
+  }
+  .card-face--front::before {
+    content: ""; position: absolute; inset: 0; z-index: 1;
     background:
-      repeating-linear-gradient(135deg, rgba(255,255,255,.025) 0 1px, transparent 1px 3px),
-      radial-gradient(160% 120% at 50% -20%, rgba(184,128,42,.16), transparent 60%),
-      radial-gradient(140% 140% at 50% 120%, var(--green-deepest), var(--green-deep) 55%);
+      linear-gradient(0deg, rgba(19,29,22,.93) 0%, rgba(19,29,22,.62) 50%, rgba(19,29,22,.42) 100%),
+      linear-gradient(100deg, rgba(19,29,22,.4) 0%, rgba(19,29,22,.05) 60%);
   }
-  .front-icon { width: 22px; height: 30px; margin-bottom: .14in; opacity: .95; }
-  .front-name {
-    font-family: var(--font-display); font-weight: 600; font-size: .98rem; color: var(--stock);
-    letter-spacing: .1em; text-transform: uppercase; margin: 0 0 .07in; line-height: 1.3;
+  .front-photo, .front-eyebrow, .front-invite, .front-verse, .front-meta { position: relative; z-index: 2; }
+  .front-eyebrow {
+    font-family: var(--font-body); font-weight: 700; letter-spacing: .12em; text-transform: uppercase;
+    font-size: .56rem; color: var(--brass-bright); margin: 0 0 .09in;
   }
-  .front-role {
-    font-family: var(--font-display); font-style: italic; font-weight: 400;
-    font-size: .82rem; color: var(--brass-bright); margin: 0;
+  .front-invite {
+    font-family: var(--font-display); font-weight: 600; font-size: 1.14rem; color: #fff;
+    letter-spacing: .01em; line-height: 1.15; margin: 0 0 .05in;
   }
-  .front-rule { border: 0; border-top: 1px solid rgba(224,172,82,.35); width: .5in; margin: .13in 0 0; }
-  .front-name--blank { border-bottom: 1px dashed rgba(251,246,236,.4); width: 1.6in; height: 1em; }
+  .front-verse {
+    font-family: var(--font-display); font-style: italic; font-size: .68rem;
+    color: var(--brass-bright); margin: 0 0 .1in;
+  }
+  .front-meta {
+    font-size: .62rem; color: rgba(251,246,236,.85); line-height: 1.5;
+    border-top: 1px solid rgba(224,172,82,.4); padding-top: .08in; margin: 0;
+  }
 
   /* Back: contact details left, photo bleeding to the card edge right. */
   .card-face--back { display: flex; background: var(--stock); }
@@ -152,8 +165,6 @@
   "use strict";
   var MIRROR_BACK = true; // set false if your printer's duplex flips on the short edge
 
-  var CROSS_SVG = '<svg class="front-icon" viewBox="0 0 24 32" fill="none" stroke="#e0ac52" stroke-width="1.6" stroke-linecap="round"><path d="M12 2v28M4 11h16"/></svg>';
-
   var PEOPLE = [
     { name: "Mike Chism", role: "Elder", photo: "../../assets/img/chism.jpg" },
     { name: "Lee McMorris", role: "Elder", photo: "../../assets/img/0d314f1f-1630-4745-9dfe-f92c20497b80_1_105_c.jpg" },
@@ -163,17 +174,18 @@
     { name: null, role: "This week’s preacher", photo: null }
   ];
 
-  function frontFace(p) {
+  // One shared "invite" front — the church building, not a person —
+  // so every card in the set doubles as an invitation, whoever hands
+  // it out. The person's identity lives on the back.
+  function frontFace() {
     var face = document.createElement("div");
     face.className = "card-face card-face--front";
-    var nameHtml = p.name
-      ? '<p class="front-name">' + p.name + '</p>'
-      : '<p class="front-name front-name--blank">&nbsp;</p>';
     face.innerHTML =
-      CROSS_SVG +
-      nameHtml +
-      '<hr class="front-rule">' +
-      '<p class="front-role">' + p.role + '</p>';
+      '<img class="front-photo" src="../../assets/img/church-building-t.jpg" alt="">' +
+      '<p class="front-eyebrow">Bonita Orthodox Presbyterian Church</p>' +
+      '<p class="front-invite">Join us this Sunday</p>' +
+      '<p class="front-verse">&ldquo;Let us go to the house of the Lord.&rdquo;</p>' +
+      '<p class="front-meta">Morning 11:00 &middot; Evening 6:00<br>5111 Central Avenue, Bonita, CA</p>';
     return face;
   }
 
