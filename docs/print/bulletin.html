@@ -13,8 +13,10 @@
         announcements, and the prayer list.
      2. Open this file in a browser and print (Cmd/Ctrl+P), letter
         size, two-sided ("flip on long edge"), no margins scaling.
-        Page 1 of the print is the front of the bulletin; page 2 is
-        the back.
+        Three pages print as two sheets: sheet one is cover/order of
+        worship, sheet two is the announcements page with a blank
+        back. Print single-sided instead if that is easier to hand
+        out as loose sheets.
      3. Anything still bracketed when the file leaves the office is
         a mistake, not a placeholder — same rule the website uses
         for the amber "confirm" markers (see README.md).
@@ -60,6 +62,28 @@
   .todo {
     background: var(--brass); color: #3a2a08; font-weight: 700; font-size: .78em;
     letter-spacing: .04em; padding: .05em .4em; border-radius: 2px; white-space: nowrap;
+  }
+
+  /* --- Cover --- */
+  .cover-sheet { display: flex; flex-direction: column; align-items: center; justify-content: flex-start; text-align: center; padding-top: 1.1in; }
+  .cover-sheet .cover-logo { height: 62px; width: auto; filter: brightness(0); margin-bottom: .55in; }
+  .cover-sheet .cover-photo {
+    width: 5.2in; aspect-ratio: 4 / 3; object-fit: cover;
+    border: 1px solid var(--rule-strong); margin-bottom: .45in;
+  }
+  .cover-sheet .cover-verse {
+    font-family: var(--font-display); font-style: italic; font-size: 1.15rem;
+    color: var(--ink-soft); max-width: 4.6in; line-height: 1.55; margin: 0 0 .12in;
+  }
+  .cover-sheet .cover-verse cite {
+    display: block; font-style: normal; font-variant-caps: small-caps;
+    letter-spacing: .04em; color: var(--brass); margin-top: .3rem; font-size: 1rem;
+  }
+  .cover-sheet .cover-rule { border: 0; border-top: 1px solid var(--rule); width: 1.6in; margin: .5in auto; }
+  .cover-sheet .cover-date { font-size: 1.15rem; color: var(--green); margin-bottom: .06in; }
+  .cover-sheet .cover-sub { font-size: .85rem; color: var(--muted); }
+  .cover-sheet .cover-foot {
+    margin-top: auto; padding-top: .4in; font-size: .82rem; color: var(--muted); line-height: 1.5;
   }
 
   /* --- Masthead --- */
@@ -115,7 +139,18 @@
 </head>
 <body>
 
-<!-- ============================= PAGE 1 — FRONT ============================= -->
+<!-- ============================= PAGE 1 — COVER ============================= -->
+<div class="sheet cover-sheet">
+  <img class="cover-logo" src="../../assets/img/Bonita-Logo-w.png" alt="Bonita Orthodox Presbyterian Church">
+  <img class="cover-photo" src="../../assets/img/church-building-t.jpg" alt="">
+  <p class="cover-verse">&ldquo;I was glad when they said to me, &lsquo;Let us go to the house of the L<span style="font-variant-caps:small-caps;">ord</span>!&rsquo;&rdquo;<cite>Psalm 122:1</cite></p>
+  <hr class="cover-rule">
+  <p class="cover-date cw">The Lord&rsquo;s Day &middot; [Month Day, Year] <span class="todo">set weekly</span></p>
+  <p class="cover-sub">Morning Worship 11:00 a.m. &middot; Evening Worship 6:00 p.m.</p>
+  <p class="cover-foot">5111 Central Avenue, Bonita, CA 91902 &middot; (619) 475-3752 &middot; bonitaopc.org</p>
+</div>
+
+<!-- ============================= PAGE 2 — ORDER OF WORSHIP ============================= -->
 <div class="sheet">
 
   <div class="masthead">
@@ -159,7 +194,7 @@
 
 </div>
 
-<!-- ============================= PAGE 2 — BACK ============================= -->
+<!-- ============================= PAGE 3 — BACK ============================= -->
 <div class="sheet">
 
   <p class="section-label">This week &amp; next</p>
