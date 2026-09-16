@@ -22,8 +22,9 @@
 
 <style>
   :root {
-    --green: #2f4436; --brass: #b8802a; --tile: #a6432a;
+    --green: #2f4436; --green-deep: #223328; --brass: #b8802a; --brass-bright: #d9a13d; --tile: #a6432a;
     --ink: #241f19; --muted: #7a6f61; --rule: #d9cdb8; --stock: #fbf6ec; --plaster: #f3ebdd;
+    --band-ink: #f4efe3; --band-muted: rgba(244,239,227,.72);
     --font-display: "Vollkorn", Georgia, "Times New Roman", serif;
     --font-body: "Alegreya Sans", "Segoe UI", Helvetica, Arial, sans-serif;
   }
@@ -41,24 +42,40 @@
   @page { size: letter; margin: 0; }
   @media print { html, body { background: #fff; } .sheet { box-shadow: none; margin: 0; } }
 
+  /* Deep green ground (the same surface the masthead/footer use), a brass
+     top border like the order-of-service panel, and a tile-colored role
+     pill for a real point of color — not just ink on stock. */
   .card {
     width: 3.5in; height: 2in; border: 1px dashed var(--rule);
-    padding: .18in .22in; display: flex; align-items: center; gap: .18in;
-    position: relative; overflow: hidden; background: var(--stock);
+    padding: .22in .24in; display: flex; align-items: center; gap: .2in;
+    position: relative; overflow: hidden;
+    background:
+      radial-gradient(120% 140% at 100% 0%, rgba(184,128,42,.22), transparent 55%),
+      var(--green-deep);
+    color: var(--band-ink);
+  }
+  .card::before {
+    content: ""; position: absolute; left: 0; right: 0; top: 0; height: 5px;
+    background: linear-gradient(90deg, var(--brass), var(--brass-bright) 55%, var(--tile));
   }
   .card__photo {
-    width: .95in; height: .95in; border-radius: 50%; object-fit: cover;
-    flex-shrink: 0; border: 2px solid var(--brass); background: var(--plaster);
+    width: 1in; height: 1in; border-radius: 50%; object-fit: cover;
+    flex-shrink: 0; border: 3px solid var(--brass-bright); background: var(--plaster);
+    box-shadow: 0 0 0 1px var(--green-deep);
   }
   .card__photo--blank {
-    display: grid; place-items: center; color: var(--muted); font-size: .62rem;
-    text-align: center; line-height: 1.2; font-style: italic;
+    display: grid; place-items: center; color: var(--band-muted); font-size: .62rem;
+    text-align: center; line-height: 1.2; font-style: italic; background: rgba(244,239,227,.08);
   }
   .card__body { min-width: 0; }
-  .card__name { font-family: var(--font-display); font-weight: 600; font-size: 1.02rem; color: var(--green); line-height: 1.15; margin: 0 0 .06in; }
-  .card__role { font-family: var(--font-display); font-variant-caps: small-caps; letter-spacing: .03em; color: var(--brass); font-size: .88rem; margin: 0 0 .12in; }
-  .card__org { font-size: .68rem; color: var(--muted); line-height: 1.4; }
-  .card__bar { position: absolute; left: 0; top: 0; bottom: 0; width: 4px; background: var(--tile); }
+  .card__name { font-family: var(--font-display); font-weight: 600; font-size: 1.08rem; color: #fff; line-height: 1.15; margin: 0 0 .1in; }
+  .card__role {
+    display: inline-block; font-family: var(--font-body); font-weight: 700;
+    letter-spacing: .04em; text-transform: uppercase; font-size: .62rem;
+    color: #fff; background: var(--tile); padding: .1em .55em; border-radius: 2px; margin: 0 0 .14in;
+  }
+  .card__org { font-size: .68rem; color: var(--band-muted); line-height: 1.45; }
+  .card__org strong { color: var(--brass-bright); font-weight: 700; }
 </style>
 </head>
 <body>
@@ -66,7 +83,6 @@
 <div class="sheet">
 
   <div class="card">
-    <div class="card__bar"></div>
     <img class="card__photo" src="../../assets/img/chism.jpg" alt="Mike Chism">
     <div class="card__body">
       <p class="card__name">Mike Chism</p>
@@ -76,7 +92,6 @@
   </div>
 
   <div class="card">
-    <div class="card__bar"></div>
     <img class="card__photo" src="../../assets/img/0d314f1f-1630-4745-9dfe-f92c20497b80_1_105_c.jpg" alt="Lee McMorris">
     <div class="card__body">
       <p class="card__name">Lee McMorris</p>
@@ -86,7 +101,6 @@
   </div>
 
   <div class="card">
-    <div class="card__bar"></div>
     <img class="card__photo" src="../../assets/img/skidmore.jpg" alt="Maynard Skidmore">
     <div class="card__body">
       <p class="card__name">Maynard Skidmore</p>
@@ -96,7 +110,6 @@
   </div>
 
   <div class="card">
-    <div class="card__bar"></div>
     <img class="card__photo" src="../../assets/img/weld.jpg" alt="Andy Weld">
     <div class="card__body">
       <p class="card__name">Andy Weld</p>
@@ -106,7 +119,6 @@
   </div>
 
   <div class="card">
-    <div class="card__bar"></div>
     <img class="card__photo" src="../../assets/img/york.jpg" alt="Scott York">
     <div class="card__body">
       <p class="card__name">Scott York</p>
@@ -117,7 +129,6 @@
 
   <!-- Blank slot: hand-write the guest preacher for weeks the pulpit is supplied. -->
   <div class="card">
-    <div class="card__bar" style="background:var(--brass);"></div>
     <div class="card__photo card__photo--blank">write<br>in</div>
     <div class="card__body">
       <p class="card__name">&nbsp;</p>
