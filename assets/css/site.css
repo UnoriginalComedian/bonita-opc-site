@@ -584,6 +584,11 @@ a:hover { color: var(--tile-deep); }
 .field input:focus, .field textarea:focus { border-color: var(--green); outline: 2px solid var(--focus); outline-offset: 1px; }
 .field input:invalid:not(:placeholder-shown) { border-color: var(--tile); }
 
+.form-status {
+  grid-column: 1 / -1; background: var(--green-pale); color: var(--green-deep);
+  border: 1px solid var(--rule-strong); padding: .75rem 1rem; font-size: .98rem;
+}
+
 /* --- 20. Footer ---------------------------------------------------------- */
 
 .site-footer {

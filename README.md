@@ -80,6 +80,22 @@ the project root keeps the live embeds.
 
 ---
 
+## Brand guide & next steps
+
+- `docs/BRAND-GUIDE.md` — the identity system (palette, type, signature details,
+  voice) written down so it transfers to print, social, and anything else the
+  church needs beyond the site. `docs/brand-guide-artifact.html` is the same
+  content as a standalone, shareable page for the elders.
+- `docs/MODERNIZATION-ROADMAP.md` — what else is worth doing, ordered by value
+  for effort: online giving, a real contact-form backend, claiming the Google
+  Business Profile, a church-management system, and more.
+- `docs/print/` — print-ready templates built on the same palette and type:
+  `bulletin.html` (a weekly two-page Sunday bulletin, order of worship and all —
+  open it and print with Cmd/Ctrl+P) and `leadership-cards.html` (a sheet of six
+  business-card-sized contact cards for the session, diaconate, and whoever is
+  preaching that week). Both explain how to edit and print them in a comment at
+  the top of the file.
+
 ## Before launch
 
 Search the HTML for `class="todo"`. Every one is a **CONFIRM** chip on a piece of

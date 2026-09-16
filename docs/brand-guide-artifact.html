@@ -1,0 +1,335 @@
+<title>Bonita OPC Brand Guide</title>
+<style>
+  :root {
+    --green: #2f4436; --green-deep: #223328; --green-soft: #47604e; --green-pale: #dfe4d6;
+    --plaster: #f3ebdd; --plaster-deep: #e8dcc7; --stock: #fbf6ec;
+    --ink: #241f19; --ink-soft: #4b4239; --muted: #7a6f61;
+    --tile: #a6432a; --tile-deep: #8a3520; --brass: #b8802a; --brass-pale: #f0e2c6;
+    --rule: #d9cdb8; --rule-strong: #b9a98d;
+    --font-display: "Vollkorn", Georgia, "Times New Roman", serif;
+    --font-body: "Alegreya Sans", "Segoe UI", Helvetica, Arial, sans-serif;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --green: #d5dfcd; --green-deep: #c2cfb8; --green-soft: #9fb098; --green-pale: #263123;
+      --plaster: #191611; --plaster-deep: #221e17; --stock: #201c15;
+      --ink: #f0e8d9; --ink-soft: #d3c8b5; --muted: #9e9282;
+      --tile: #e08059; --tile-deep: #ee9670; --brass: #ddab53; --brass-pale: #33291a;
+      --rule: #3a332a; --rule-strong: #554b3d;
+    }
+  }
+  :root[data-theme="dark"] {
+    --green: #d5dfcd; --green-deep: #c2cfb8; --green-soft: #9fb098; --green-pale: #263123;
+    --plaster: #191611; --plaster-deep: #221e17; --stock: #201c15;
+    --ink: #f0e8d9; --ink-soft: #d3c8b5; --muted: #9e9282;
+    --tile: #e08059; --tile-deep: #ee9670; --brass: #ddab53; --brass-pale: #33291a;
+    --rule: #3a332a; --rule-strong: #554b3d;
+  }
+  /* Fixed structural ground — stays deep green in both themes, the way the
+     site's own .site-header / footer / hero do (they read from --band-ground,
+     never from --green, which is a text-ink token that inverts per theme). */
+  :root { --band-ground: #2f4436; --band-ink: #f4efe3; --band-brass: #b8802a; --band-rule: rgba(244,239,227,.22); }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; background: var(--plaster); color: var(--ink);
+    font-family: var(--font-body); font-size: 17px; line-height: 1.6;
+  }
+  .wrap { max-width: 860px; margin-inline: auto; padding-inline: clamp(1.25rem, 4vw, 2.5rem); }
+  h1, h2, h3 { font-family: var(--font-display); font-weight: 600; line-height: 1.15; color: var(--green); text-wrap: balance; margin: 0 0 .4em; }
+  p { margin: 0 0 1em; max-width: 66ch; text-wrap: pretty; }
+  a { color: var(--tile); }
+
+  .cover {
+    background: var(--band-ground); color: var(--band-ink); padding-block: clamp(3rem, 8vw, 5rem) clamp(2.5rem, 6vw, 3.5rem);
+    border-bottom: 4px solid var(--band-brass);
+  }
+  .cover .kicker {
+    font-family: var(--font-display); font-variant-caps: small-caps; letter-spacing: .05em;
+    color: var(--band-brass); font-size: 1.1rem; margin: 0 0 .9rem; padding-bottom: .5rem;
+    border-bottom: 1px solid var(--band-rule); display: block; max-width: 20rem;
+  }
+  .cover h1 { color: var(--band-ink); font-size: clamp(2.2rem, 5vw, 3.2rem); max-width: 16ch; }
+  .cover p.lede { color: color-mix(in srgb, var(--band-ink) 82%, transparent); font-size: 1.15rem; max-width: 46ch; margin-top: .75rem; }
+
+  .toc { display: flex; flex-wrap: wrap; gap: .5rem 1.5rem; margin-top: 2rem; padding-top: 1.25rem; border-top: 1px solid var(--band-rule); }
+  .toc a { color: color-mix(in srgb, var(--band-ink) 90%, transparent); text-decoration: none; font-size: .96rem; }
+  .toc a:hover { color: var(--band-brass); text-decoration: underline; }
+
+  section.block { padding-block: clamp(2.5rem, 6vw, 3.75rem); border-bottom: 1px solid var(--rule); }
+  section.block:last-of-type { border-bottom: 0; }
+  .label {
+    font-family: var(--font-display); font-variant-caps: small-caps; font-weight: 600;
+    font-size: 1.02rem; letter-spacing: .04em; color: var(--brass); margin: 0 0 .9rem;
+    padding-bottom: .45rem; border-bottom: 1px solid var(--rule); display: block; max-width: 20rem;
+  }
+
+  /* Color swatches */
+  .swatches { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1px; background: var(--rule); border: 1px solid var(--rule); margin-top: 1.5rem; }
+  .swatch { background: var(--stock); padding: 0; }
+  .swatch__chip { height: 84px; }
+  .swatch__meta { padding: .85rem 1rem 1rem; }
+  .swatch__role { font-family: var(--font-display); font-size: 1.05rem; color: var(--green); margin-bottom: .15rem; }
+  .swatch__hex { font-variant-numeric: tabular-nums; color: var(--muted); font-size: .92rem; letter-spacing: .02em; }
+  .swatch__use { font-size: .92rem; color: var(--ink-soft); margin-top: .3rem; }
+
+  /* Type specimen */
+  .specimen { background: var(--stock); border: 1px solid var(--rule); padding: clamp(1.5rem, 3vw, 2.25rem); margin-top: 1.5rem; }
+  .specimen + .specimen { margin-top: 1.25rem; }
+  .specimen__label { font-size: .85rem; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); margin-bottom: .6rem; }
+  .specimen__display { font-family: var(--font-display); font-size: clamp(1.8rem, 4vw, 2.6rem); color: var(--green); line-height: 1.15; }
+  .specimen__body { font-family: var(--font-body); font-size: 1.15rem; color: var(--ink); max-width: 60ch; margin-top: .5rem; }
+  .specimen__meta { margin-top: .75rem; font-size: .92rem; color: var(--muted); }
+
+  /* Panels reused from the site */
+  .panel { background: var(--stock); border: 1px solid var(--rule); padding: 1.5rem; margin-top: 1.25rem; }
+  .panel--brass { background: var(--brass-pale); border-color: var(--rule-strong); }
+  .order__item { padding: .8rem 0; border-bottom: 1px dotted var(--rule-strong); }
+  .order__item:last-child { border-bottom: 0; padding-bottom: 0; }
+  .order__when { font-weight: 700; font-size: .88rem; letter-spacing: .05em; text-transform: uppercase; color: var(--green-soft); display: block; margin-bottom: .1rem; }
+  .order__what { font-family: var(--font-display); font-size: 1.15rem; color: var(--green); margin: 0; }
+
+  /* Do / don't */
+  .dodont { display: grid; grid-template-columns: 1fr 1fr; gap: 1px; background: var(--rule); border: 1px solid var(--rule); margin-top: 1.5rem; }
+  .dodont > div { background: var(--stock); padding: 1.25rem 1.5rem; }
+  .dodont h3 { font-size: 1rem; font-variant-caps: small-caps; letter-spacing: .03em; margin-bottom: .6rem; }
+  .dodont .do h3 { color: var(--green); }
+  .dodont .dont h3 { color: var(--tile); }
+  .dodont ul { margin: 0; padding-left: 1.1rem; }
+  .dodont li { margin-bottom: .4rem; font-size: .96rem; }
+  @media (max-width: 640px) { .dodont { grid-template-columns: 1fr; } }
+
+  .btn { display: inline-block; padding: .65rem 1.35rem; font-weight: 700; text-decoration: none; border: 1px solid var(--tile); border-radius: 2px; }
+  .btn--primary { background: var(--tile); color: #fff; }
+  .btn--ghost { color: var(--ink); border-color: var(--rule-strong); }
+
+  .roadmap-item { display: grid; grid-template-columns: 2.25rem 1fr; gap: 1rem; padding: 1rem 0; border-bottom: 1px solid var(--rule); align-items: start; }
+  .roadmap-item:last-child { border-bottom: 0; }
+  .roadmap-item .n { font-family: var(--font-display); font-size: 1.4rem; color: var(--brass); line-height: 1.3; }
+  .roadmap-item h3 { font-size: 1.05rem; margin-bottom: .2rem; }
+  .roadmap-item p { font-size: .96rem; color: var(--ink-soft); margin: 0; }
+
+  footer.credit { padding: 2rem 0 3rem; text-align: center; color: var(--muted); font-size: .9rem; }
+</style>
+
+<div class="cover">
+  <div class="wrap">
+    <span class="kicker">Brand Guide &middot; 2026</span>
+    <h1>Bonita Orthodox Presbyterian Church</h1>
+    <p class="lede">The identity behind the redesigned site — palette, type, and the
+    rules of thumb that keep the bulletin, the banner, and the homepage feeling like
+    the same congregation.</p>
+    <nav class="toc" aria-label="Sections">
+      <a href="#idea">The idea</a>
+      <a href="#color">Color</a>
+      <a href="#type">Type</a>
+      <a href="#details">Signature details</a>
+      <a href="#voice">Voice</a>
+      <a href="#dodont">Do &amp; don't</a>
+      <a href="#roadmap">Next steps</a>
+    </nav>
+  </div>
+</div>
+
+<section class="block" id="idea">
+  <div class="wrap">
+    <span class="label">The idea</span>
+    <h2>Parish bulletin, not tech startup</h2>
+    <p>The reference points are the printed Sunday bulletin and a hymnal: ruled
+    panels, flat tinted grounds, small-caps labels set in a serif, and information
+    density that respects a reader's time. Warmth comes from color, typography, and
+    real photography — never from rounded corners, drop shadows, or gradients.</p>
+    <p>The palette is drawn from the building and the place itself: Bonita stucco,
+    terracotta roof tile, eucalyptus and chaparral, and the congregation's own
+    orange accent color.</p>
+  </div>
+</section>
+
+<section class="block" id="color">
+  <div class="wrap">
+    <span class="label">Color</span>
+    <h2>Two accents, two jobs</h2>
+    <p><strong style="color:var(--tile)">Tile</strong> always means "do this" — a
+    link, a button, a call to action. <strong style="color:var(--brass)">Brass</strong>
+    always means "this is a label or a flourish," never an action. Don't swap them.</p>
+    <div class="swatches">
+      <div class="swatch">
+        <div class="swatch__chip" style="background:#2f4436;"></div>
+        <div class="swatch__meta"><div class="swatch__role">Green</div><div class="swatch__hex">#2F4436</div><div class="swatch__use">Headings, masthead, footer, structure</div></div>
+      </div>
+      <div class="swatch">
+        <div class="swatch__chip" style="background:#223328;"></div>
+        <div class="swatch__meta"><div class="swatch__role">Green, deepest</div><div class="swatch__hex">#223328</div><div class="swatch__use">Announcement bar, hovers</div></div>
+      </div>
+      <div class="swatch">
+        <div class="swatch__chip" style="background:#f3ebdd;border-bottom:1px solid var(--rule);"></div>
+        <div class="swatch__meta"><div class="swatch__role">Plaster</div><div class="swatch__hex">#F3EBDD</div><div class="swatch__use">Page background — the ground</div></div>
+      </div>
+      <div class="swatch">
+        <div class="swatch__chip" style="background:#fbf6ec;border-bottom:1px solid var(--rule);"></div>
+        <div class="swatch__meta"><div class="swatch__role">Stock</div><div class="swatch__hex">#FBF6EC</div><div class="swatch__use">Panels, cards, form fields — "the paper"</div></div>
+      </div>
+      <div class="swatch">
+        <div class="swatch__chip" style="background:#a6432a;"></div>
+        <div class="swatch__meta"><div class="swatch__role">Tile</div><div class="swatch__hex">#A6432A</div><div class="swatch__use">Links, primary buttons, calls to action</div></div>
+      </div>
+      <div class="swatch">
+        <div class="swatch__chip" style="background:#b8802a;"></div>
+        <div class="swatch__meta"><div class="swatch__role">Brass</div><div class="swatch__hex">#B8802A</div><div class="swatch__use">Labels, small-caps eyebrows, rules</div></div>
+      </div>
+      <div class="swatch">
+        <div class="swatch__chip" style="background:#241f19;"></div>
+        <div class="swatch__meta"><div class="swatch__role">Ink</div><div class="swatch__hex">#241F19</div><div class="swatch__use">Body text</div></div>
+      </div>
+      <div class="swatch">
+        <div class="swatch__chip" style="background:#d9cdb8;"></div>
+        <div class="swatch__meta"><div class="swatch__role">Rule</div><div class="swatch__hex">#D9CDB8</div><div class="swatch__use">Dividers, borders</div></div>
+      </div>
+    </div>
+    <p style="margin-top:1.25rem;">Every pairing above already clears WCAG AA for
+    body text. The whole palette flips automatically for dark mode — the site does
+    this with CSS custom properties; reuse the token names, not the raw hex, anywhere
+    the guide gets implemented in code.</p>
+  </div>
+</section>
+
+<section class="block" id="type">
+  <div class="wrap">
+    <span class="label">Type</span>
+    <h2>Vollkorn + Alegreya Sans</h2>
+    <p>A sturdy book serif paired with a humanist sans drawn for literature, not
+    software UI. The contrast between the two carries the identity — don't set
+    headings in the sans or body copy in the serif.</p>
+
+    <div class="specimen">
+      <div class="specimen__label">Display — Vollkorn, headings &amp; labels</div>
+      <div class="specimen__display">Gathered in Bonita since 1972</div>
+      <div class="specimen__meta">Weight 600 &middot; letter-spacing &minus;0.012em on H1 &middot; text-wrap: balance</div>
+    </div>
+    <div class="specimen">
+      <div class="specimen__label">Body — Alegreya Sans, paragraphs &amp; UI</div>
+      <div class="specimen__body">We would love to have you join us this Sunday. Sunday School begins at 9:30 a.m., Morning Worship at 11:00, and Evening Worship at 6:00 — every service open to visitors, no sign-up required.</div>
+      <div class="specimen__meta">18px / 1.6 line-height &middot; 66-character measure &middot; Georgia / system-sans fallback</div>
+    </div>
+    <div class="specimen">
+      <div class="specimen__label">The label system — the site's signature move</div>
+      <p class="label" style="max-width:none;">This Sunday&rsquo;s Order</p>
+      <div class="specimen__meta">Vollkorn set in small caps on a rule — replaces the uppercase-tracked "eyebrow" every template site uses. Reuse this for any section kicker, in print or on screen.</div>
+    </div>
+  </div>
+</section>
+
+<section class="block" id="details">
+  <div class="wrap">
+    <span class="label">Signature details</span>
+    <h2>Reuse these, don't reinvent them</h2>
+    <p>Three components that make the site (and anything printed alongside it)
+    recognizable at a glance:</p>
+
+    <div class="panel">
+      <div class="order__item">
+        <span class="order__when">Morning Worship &middot; 11:00 a.m.</span>
+        <p class="order__what">"Judgment for Turning Back"</p>
+      </div>
+      <div class="order__item">
+        <span class="order__when">Evening Worship &middot; 6:00 p.m.</span>
+        <p class="order__what">"Redemption in Christ"</p>
+      </div>
+    </div>
+    <p style="margin-top:.6rem;font-size:.92rem;color:var(--muted);">The order-of-service panel — brass top border, small-caps header, dotted dividers. The most distinctive component on the site; its structure should carry over to the printed bulletin.</p>
+
+    <div class="panel panel--brass">
+      <p style="margin:0;">A ruled panel, not a card — flat <code>--stock</code> background, a hairline border, no shadow, no radius beyond 2px. This is what should show up on a printed handout too.</p>
+    </div>
+
+    <hr style="border:0;border-top:3px double var(--rule-strong);margin:2rem 0;">
+    <p style="margin:0;font-size:.92rem;color:var(--muted);">The double rule — borrowed straight from a hymnal's section dividers. Good for a printed program or a slide transition; don't use a single rule where this is the intent.</p>
+  </div>
+</section>
+
+<section class="block" id="voice">
+  <div class="wrap">
+    <span class="label">Voice</span>
+    <h2>Plain and literal</h2>
+    <div class="dodont">
+      <div class="do">
+        <h3>Say</h3>
+        <ul>
+          <li>"Communion, followed by the Feast Day fellowship meal."</li>
+          <li>"There is a lot in front of the building, with accessible spaces close to the doors."</li>
+          <li>Scripture as the lead — a Psalm, not a slogan.</li>
+        </ul>
+      </div>
+      <div class="dont">
+        <h3>Not</h3>
+        <ul>
+          <li>"Join us for a special time of fellowship!"</li>
+          <li>"Experience worship like never before."</li>
+          <li>Unexplained churchy jargon aimed at people who already know it.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="block" id="dodont">
+  <div class="wrap">
+    <span class="label">Do &amp; don't</span>
+    <h2>Keep it a bulletin, not a product</h2>
+    <div class="dodont">
+      <div class="do">
+        <h3>Do</h3>
+        <ul>
+          <li>One accent color per action — tile for "do this," brass for labels.</li>
+          <li>Real stroke-style SVG icons, matching the site's menu/sun/moon marks.</li>
+          <li>Asymmetric layouts where one element deliberately outweighs another.</li>
+          <li>Real congregation photography whenever it exists.</li>
+        </ul>
+      </div>
+      <div class="dont">
+        <h3>Don't</h3>
+        <ul>
+          <li>Drop shadows, glassmorphism, or radius beyond 2px.</li>
+          <li>A third accent color.</li>
+          <li>Emoji as icons, anywhere.</li>
+          <li>Center everything by default.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="block" id="roadmap">
+  <div class="wrap">
+    <span class="label">Next steps</span>
+    <h2>Getting the church's systems back on their feet</h2>
+    <p>The full write-up lives in <code>docs/MODERNIZATION-ROADMAP.md</code> in the
+    site repository. The short version, in order of value for effort:</p>
+
+    <div class="roadmap-item">
+      <div class="n">1</div>
+      <div><h3>Claim the Google Business Profile</h3><p>Often the first thing a newcomer sees, before the website itself. Free, 15 minutes.</p></div>
+    </div>
+    <div class="roadmap-item">
+      <div class="n">2</div>
+      <div><h3>Wire up the contact form</h3><p>Formspree's free tier, no credit card — five minutes to replace the placeholder.</p></div>
+    </div>
+    <div class="roadmap-item">
+      <div class="n">3</div>
+      <div><h3>Add online giving</h3><p>Givelify or Tithe.ly — no monthly fee options exist at this scale.</p></div>
+    </div>
+    <div class="roadmap-item">
+      <div class="n">4</div>
+      <div><h3>Decide the hosting path</h3><p>Keep Craft and re-skin the templates, or move to free Cloudflare Pages and drop the CMS.</p></div>
+    </div>
+    <div class="roadmap-item">
+      <div class="n">5</div>
+      <div><h3>Get real congregation photos</h3><p>The single highest-leverage, lowest-cost change available. One phone, one Sunday.</p></div>
+    </div>
+
+    <p style="margin-top:1.75rem;">
+      <a class="btn btn--primary" href="https://github.com/UnoriginalComedian/bonita-opc-site" target="_blank" rel="noopener">View the site repository</a>
+    </p>
+  </div>
+</section>
+
+<footer class="credit">Brand guide generated for Bonita Orthodox Presbyterian Church &middot; palette and type drawn directly from the live site's stylesheet</footer>
