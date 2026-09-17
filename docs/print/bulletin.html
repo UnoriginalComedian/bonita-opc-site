@@ -69,21 +69,28 @@
   /* ---------- panels (5.5in x 8.5in each — half of a folded letter sheet) ---------- */
   .panel { width: 5.5in; height: 8.5in; position: relative; overflow: hidden; background: #fff; }
 
-  /* Front cover: full-bleed photo, one flat wash (no gradient seams — see git log
-     on leadership-cards.html for why), invite copy anchored low. */
-  .panel--cover {
-    display: flex; flex-direction: column; justify-content: flex-end;
-    padding: .4in .45in; color: var(--band-ink);
+  /* Front cover: the photo fills the top two-thirds only — not the whole
+     panel — with the logo and verse placed in the open sky rather than
+     crammed into a strip at the bottom. A real solid footer band (not text
+     floating on the photo) anchors the date and service times below it. */
+  .panel--cover { display: flex; flex-direction: column; color: var(--band-ink); }
+  .cover-photo-wrap { position: relative; flex: 0 0 5.6in; overflow: hidden; padding: .4in .45in; display: flex; flex-direction: column; }
+  .cover-photo { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: 50% 55%; z-index: 0; }
+  .cover-photo-wrap::before { content: ""; position: absolute; inset: 0; z-index: 1; background: linear-gradient(0deg, rgba(15,22,17,.7) 0%, rgba(15,22,17,.2) 45%, rgba(15,22,17,.35) 100%); }
+  .cover-logo, .cover-verse { position: relative; z-index: 2; }
+  .cover-logo { height: 46px; width: auto; align-self: flex-start; filter: brightness(0) invert(1); }
+  .cover-verse {
+    font-family: var(--font-display); font-size: 1.5rem; line-height: 1.32; color: #fff;
+    max-width: 4.3in; margin-top: auto; /* sits low in the photo, logo stays up in the sky */
   }
-  .cover-photo { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: 50% 78%; z-index: 0; }
-  .panel--cover::before { content: ""; position: absolute; inset: 0; z-index: 1; background: rgba(15,22,17,.66); }
-  .cover-logo, .cover-invite, .cover-verse, .cover-date { position: relative; z-index: 2; }
-  .cover-logo { height: 30px; width: auto; filter: brightness(0) invert(1); margin-bottom: .5in; }
-  .cover-invite { font-size: .78rem; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: var(--brass-bright); margin: 0 0 .12in; }
-  .cover-verse { font-family: var(--font-display); font-size: 1.55rem; line-height: 1.3; color: #fff; margin: 0 0 .15in; max-width: 4.3in; }
-  .cover-verse cite { display: block; font-style: normal; font-variant-caps: small-caps; letter-spacing: .04em; color: var(--brass-bright); font-size: .85rem; margin-top: .18in; }
-  .cover-date { font-size: 1rem; border-top: 1px solid rgba(244,239,227,.3); padding-top: .18in; margin-top: .35in; }
-  .cover-date .cw { font-size: 1.05rem; }
+  .cover-verse cite { display: block; font-style: normal; font-variant-caps: small-caps; letter-spacing: .04em; color: var(--brass-bright); font-size: .85rem; margin-top: .15in; }
+  .cover-footer {
+    flex: 1 1 auto; background: var(--green-deep); padding: .35in .45in; display: flex; flex-direction: column; justify-content: center;
+    position: relative;
+  }
+  .cover-footer::before { content: ""; position: absolute; left: 0; right: 0; top: 0; height: 4px; background: linear-gradient(90deg, var(--brass), var(--brass-bright) 55%, var(--tile)); }
+  .cover-footer .cw { font-size: 1.15rem; color: #fff; }
+  .cover-footer .cover-times { font-size: .95rem; color: var(--band-muted); margin-top: .08in; }
 
   /* Back cover: the site's own dark-green "band" surface, not stock — carries
      the same weight as the front, on the outside of the fold. */
@@ -95,7 +102,7 @@
     justify-content: space-between; /* three groups, evenly spaced — no one leftover gap */
   }
   .panel--back::before { content: ""; position: absolute; left: 0; right: 0; top: 0; height: 6px; background: linear-gradient(90deg, var(--brass), var(--brass-bright) 55%, var(--tile)); }
-  .back-logo { height: 24px; width: auto; filter: brightness(0) invert(1); margin-bottom: .3in; }
+  .back-logo { height: 24px; width: auto; align-self: flex-start; filter: brightness(0) invert(1); margin-bottom: .3in; }
   .back-label { font-family: var(--font-display); font-variant-caps: small-caps; letter-spacing: .03em; color: var(--brass-bright); font-size: 1rem; border-bottom: 1px solid rgba(244,239,227,.25); padding-bottom: .07in; margin-bottom: .12in; }
   .back-leaders .row { display: flex; justify-content: space-between; padding: .06in 0; border-bottom: 1px dotted rgba(244,239,227,.2); font-size: .95em; }
   .back-leaders .row .role { color: var(--brass-bright); font-variant-caps: small-caps; }
@@ -211,11 +218,15 @@
     var el = document.createElement("div");
     el.className = "panel panel--cover";
     el.innerHTML =
-      '<img class="cover-photo" src="../../assets/img/church-building-t.jpg" alt="">' +
-      '<img class="cover-logo" src="../../assets/img/Bonita-Logo-w.png" alt="Bonita Orthodox Presbyterian Church">' +
-      '<p class="cover-invite">You are invited</p>' +
-      '<p class="cover-verse">&ldquo;Let us go to the house of the L<span style="font-variant-caps:small-caps;">ord</span>.&rdquo;<cite>Psalm 122:1</cite></p>' +
-      '<p class="cover-date"><span class="cw">The Lord&rsquo;s Day &middot; [Month Day, Year]</span> <span class="todo">set weekly</span><br>Morning 11:00 &middot; Evening 6:00</p>';
+      '<div class="cover-photo-wrap">' +
+        '<img class="cover-photo" src="../../assets/img/church-building-t.jpg" alt="">' +
+        '<img class="cover-logo" src="../../assets/img/Bonita-Logo-w.png" alt="Bonita Orthodox Presbyterian Church">' +
+        '<p class="cover-verse">&ldquo;Let us go to the house of the L<span style="font-variant-caps:small-caps;">ord</span>.&rdquo;<cite>Psalm 122:1</cite></p>' +
+      '</div>' +
+      '<div class="cover-footer">' +
+        '<p class="cw" style="margin:0;">The Lord&rsquo;s Day &middot; [Month Day, Year] <span class="todo">set weekly</span></p>' +
+        '<p class="cover-times">Morning Worship 11:00 &middot; Evening Worship 6:00</p>' +
+      '</div>';
     return el;
   }
 
