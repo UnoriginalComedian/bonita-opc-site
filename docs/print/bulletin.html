@@ -5,6 +5,10 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Sunday Bulletin | Bonita OPC</title>
 
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Vollkorn:ital,wght@0,400..700;1,400..600&family=Alegreya+Sans:ital,wght@0,400;0,500;0,700;1,400&display=swap" rel="stylesheet">
+
 <!-- ============================================================
      WEEKLY BULLETIN — half-fold booklet, how to use it
      ------------------------------------------------------------
@@ -88,6 +92,7 @@
       radial-gradient(140% 90% at 15% 0%, rgba(184,128,42,.16), transparent 55%),
       var(--green-deep);
     color: var(--band-ink); padding: .45in .5in; display: flex; flex-direction: column;
+    justify-content: space-between; /* three groups, evenly spaced — no one leftover gap */
   }
   .panel--back::before { content: ""; position: absolute; left: 0; right: 0; top: 0; height: 6px; background: linear-gradient(90deg, var(--brass), var(--brass-bright) 55%, var(--tile)); }
   .back-logo { height: 24px; width: auto; filter: brightness(0) invert(1); margin-bottom: .3in; }
@@ -95,7 +100,11 @@
   .back-leaders .row { display: flex; justify-content: space-between; padding: .06in 0; border-bottom: 1px dotted rgba(244,239,227,.2); font-size: .95em; }
   .back-leaders .row .role { color: var(--brass-bright); font-variant-caps: small-caps; }
   .back-giving { font-size: .9em; color: var(--band-muted); margin-top: .18in; }
-  .back-contact { margin-top: auto; padding-top: .25in; border-top: 1px solid rgba(244,239,227,.25); font-size: .92em; color: var(--band-muted); line-height: 1.6; }
+  .back-middle { text-align: center; padding: 0 .2in; }
+  .back-middle .rule-double { border-top-color: rgba(244,239,227,.3); margin: 0 auto .2in; width: 1.4in; }
+  .back-middle .back-verse { font-family: var(--font-display); font-style: italic; font-size: 1.15rem; line-height: 1.45; color: var(--band-ink); }
+  .back-middle .back-verse cite { display: block; font-style: normal; font-variant-caps: small-caps; letter-spacing: .04em; color: var(--brass-bright); font-size: .85rem; margin-top: .15in; }
+  .back-contact { padding-top: .2in; border-top: 1px solid rgba(244,239,227,.25); font-size: .92em; color: var(--band-muted); line-height: 1.6; }
   .back-tagline { font-family: var(--font-display); font-style: italic; font-size: .85rem; color: var(--brass-bright); margin-top: .12in; }
 
   /* Inside pages: plain stock, accent color only — the pages people actually
@@ -138,15 +147,15 @@
   }
   .mock-closed::before { transform: translate(5px, 6px) rotate(1.4deg); }
   .mock-closed::after { transform: translate(9px, 11px) rotate(2.6deg); background: #efe6d3; }
-  .mock-closed .panel { border-radius: 2px; box-shadow: 0 22px 40px rgba(0,0,0,.5), 0 3px 8px rgba(0,0,0,.35); transform: scale(.62); transform-origin: top left; }
-  .mock-closed-wrap { width: calc(5.5in * .62); height: calc(8.5in * .62); }
+  .mock-closed .panel { border-radius: 2px; box-shadow: 0 22px 40px rgba(0,0,0,.5), 0 3px 8px rgba(0,0,0,.35); transform: scale(.78); transform-origin: top left; }
+  .mock-closed-wrap { width: calc(5.5in * .78); height: calc(8.5in * .78); }
 
   /* Open spread: page 2 + 3 side by side, flat, with a fold crease down the
      middle and a slight bow to suggest paper lying open. */
-  .mock-open { display: flex; transform: scale(.55) rotate(-1.2deg); transform-origin: top center; box-shadow: 0 22px 44px rgba(0,0,0,.5); border-radius: 2px; overflow: hidden; }
+  .mock-open { display: flex; transform: scale(.68) rotate(-1.2deg); transform-origin: top center; box-shadow: 0 22px 44px rgba(0,0,0,.5); border-radius: 2px; overflow: hidden; }
   .mock-open .panel:first-child { box-shadow: inset -14px 0 22px -14px rgba(0,0,0,.35); }
   .mock-open .panel:last-child { box-shadow: inset 14px 0 22px -14px rgba(0,0,0,.35); }
-  .mock-open-wrap { width: calc(11in * .55); height: calc(8.5in * .55); }
+  .mock-open-wrap { width: calc(11in * .68); height: calc(8.5in * .68); }
 
   /* ---------- print sheets ---------- */
   .sheet-label { text-align: center; color: rgba(251,246,236,.6); font-family: var(--font-body); font-size: .85rem; letter-spacing: .03em; text-transform: uppercase; margin: 0 0 .5rem; }
@@ -214,22 +223,30 @@
     var el = document.createElement("div");
     el.className = "panel panel--back";
     el.innerHTML =
-      '<img class="back-logo" src="../../assets/img/Bonita-Logo-w.png" alt="">' +
-      '<p class="back-label">Session &amp; Diaconate</p>' +
-      '<div class="back-leaders">' +
-        '<div class="row"><span>Mike Chism</span><span class="role">Elder</span></div>' +
-        '<div class="row"><span>Lee McMorris</span><span class="role">Elder</span></div>' +
-        '<div class="row"><span>Maynard Skidmore</span><span class="role">Elder</span></div>' +
-        '<div class="row"><span>Andy Weld</span><span class="role">Elder</span></div>' +
-        '<div class="row"><span>Scott York</span><span class="role">Deacon</span></div>' +
+      '<div class="back-top">' +
+        '<img class="back-logo" src="../../assets/img/Bonita-Logo-w.png" alt="">' +
+        '<p class="back-label">Session &amp; Diaconate</p>' +
+        '<div class="back-leaders">' +
+          '<div class="row"><span>Mike Chism</span><span class="role">Elder</span></div>' +
+          '<div class="row"><span>Lee McMorris</span><span class="role">Elder</span></div>' +
+          '<div class="row"><span>Maynard Skidmore</span><span class="role">Elder</span></div>' +
+          '<div class="row"><span>Andy Weld</span><span class="role">Elder</span></div>' +
+          '<div class="row"><span>Scott York</span><span class="role">Deacon</span></div>' +
+        '</div>' +
+        '<p class="back-giving">Reach the session through the church office. Giving by check, made out to Bonita Orthodox Presbyterian Church, placed in the offering plate. <span class="todo">Online giving: see MODERNIZATION-ROADMAP.md</span></p>' +
       '</div>' +
-      '<p class="back-giving">Reach the session through the church office. Giving by check, made out to Bonita Orthodox Presbyterian Church, placed in the offering plate. <span class="todo">Online giving: see MODERNIZATION-ROADMAP.md</span></p>' +
-      '<div class="back-contact">' +
-        '5111 Central Avenue, Bonita, CA 91902<br>' +
-        '(619) 475-3752 &middot; bonitaopc.org<br>' +
-        '[info@bonitaopc.org] <span class="todo">confirm</span>' +
+      '<div class="back-middle">' +
+        '<hr class="rule-double">' +
+        '<p class="back-verse">&ldquo;Better is one day in your courts than a thousand elsewhere.&rdquo;<cite>Psalm 84:10</cite></p>' +
       '</div>' +
-      '<p class="back-tagline">Gathered in Bonita since 1972</p>';
+      '<div class="back-bottom">' +
+        '<div class="back-contact">' +
+          '5111 Central Avenue, Bonita, CA 91902<br>' +
+          '(619) 475-3752 &middot; bonitaopc.org<br>' +
+          '[info@bonitaopc.org] <span class="todo">confirm</span>' +
+        '</div>' +
+        '<p class="back-tagline">Gathered in Bonita since 1972</p>' +
+      '</div>';
     return el;
   }
 
