@@ -6,245 +6,308 @@
 <title>Sunday Bulletin | Bonita OPC</title>
 
 <!-- ============================================================
-     WEEKLY BULLETIN TEMPLATE — how to use it
+     WEEKLY BULLETIN — half-fold booklet, how to use it
      ------------------------------------------------------------
-     1. Edit the bracketed [ ] placeholders below for this week:
-        date, hymn numbers, Scripture readings, sermon text/title,
-        announcements, and the prayer list.
-     2. Open this file in a browser and print (Cmd/Ctrl+P), letter
-        size, two-sided ("flip on long edge"), no margins scaling.
-        Three pages print as two sheets: sheet one is cover/order of
-        worship, sheet two is the announcements page with a blank
-        back. Print single-sided instead if that is easier to hand
-        out as loose sheets.
-     3. Anything still bracketed when the file leaves the office is
-        a mistake, not a placeholder — same rule the website uses
-        for the amber "confirm" markers (see README.md).
-     Re-skinning: every colour/font here is the same custom property
-     used in assets/css/site.css — change the palette there and it
-     stays in sync with the site, or override the :root block below
-     for a printed-only tweak (a slightly heavier black for cheap
-     photocopying, for instance).
+     A standard 4-page church bulletin: one letter sheet, printed
+     landscape on both sides, folded in half down the middle. Open
+     it flat and the fold runs vertically; the panels read, in
+     order: front cover, page 2, page 3, back cover.
+
+     Because of how a fold works, the two print sheets are NOT
+     "front, back, front, back" in reading order — the OUTSIDE of
+     the folded sheet carries the back cover and the front cover
+     side by side (back on the left, front on the right, so the
+     right panel is what shows when it's folded shut), and the
+     INSIDE carries page 2 and page 3 side by side. That is standard
+     "booklet imposition," not a mistake in the file below.
+
+     1. Edit the bracketed [ ] placeholders for this week: date,
+        hymn numbers, Scripture readings, announcements, prayer list.
+     2. Print sheet 1 (outside) on letter paper, LANDSCAPE, then feed
+        the same paper back in and print sheet 2 (inside) on the
+        other side. Test with scrap paper first — which way to feed
+        it back in depends on your printer's duplex direction.
+     3. Fold down the middle. Front cover should land on the outside.
+     4. Anything still bracketed when it leaves the office is a
+        mistake, not a placeholder — see README.md for the same rule
+        applied to the website.
+
+     Ink note: the two cover panels carry the color and photo; both
+     inside pages are mostly plain stock with only accent color, so
+     printing sheet 2 (inside) in black-and-white — most print
+     dialogs have a grayscale toggle — cuts ink use substantially
+     without losing anything readable. Keep sheet 1 in color.
      ============================================================ -->
 
 <style>
   :root {
-    --green: #2f4436; --brass: #b8802a; --tile: #a6432a;
+    --green: #2f4436; --green-deep: #1c2a20; --green-deepest: #131d16;
+    --brass: #b8802a; --brass-bright: #e0ac52; --tile: #a6432a;
     --ink: #241f19; --ink-soft: #4b4239; --muted: #7a6f61;
     --rule: #d9cdb8; --rule-strong: #b9a98d; --stock: #fbf6ec;
+    --band-ink: #f4efe3; --band-muted: rgba(244,239,227,.72);
     --font-display: "Vollkorn", Georgia, "Times New Roman", serif;
     --font-body: "Alegreya Sans", "Segoe UI", Helvetica, Arial, sans-serif;
   }
   * { box-sizing: border-box; }
-  html { background: #77705f; }
-  body {
-    margin: 0; font-family: var(--font-body); color: var(--ink);
-    font-size: 12.5px; line-height: 1.5;
-  }
-  .sheet {
-    width: 8.5in; min-height: 11in; margin: 0 auto 1.5rem; background: #fff;
-    padding: .65in .7in; position: relative;
-  }
-  @media screen {
-    .sheet { box-shadow: 0 6px 24px rgba(0,0,0,.35); margin-top: 1.5rem; }
-  }
-  @page { size: letter; margin: 0; }
-  @media print {
-    html, body { background: #fff; }
-    .sheet { box-shadow: none; margin: 0; page-break-after: always; }
-    .sheet:last-child { page-break-after: auto; }
-  }
+  html { background: #3a362f; }
+  body { margin: 0; font-family: var(--font-body); color: var(--ink); font-size: 11.5px; line-height: 1.5; }
 
   h1, h2, h3 { font-family: var(--font-display); font-weight: 600; color: var(--green); margin: 0 0 .3em; }
   p { margin: 0 0 .6em; }
   .cw { font-family: var(--font-display); font-variant-caps: small-caps; letter-spacing: .03em; }
+  /* A quiet, editorial way to flag "confirm before printing" — italic and
+     tile-colored, like a footnote, not a loud UI badge. The mustard pills
+     this replaced looked like website chips dropped onto a printed page. */
+  .todo { font-style: italic; font-weight: 600; color: var(--tile); }
+  .panel--cover .todo, .panel--back .todo { color: var(--brass-bright); }
 
-  .todo {
-    background: var(--brass); color: #3a2a08; font-weight: 700; font-size: .78em;
-    letter-spacing: .04em; padding: .05em .4em; border-radius: 2px; white-space: nowrap;
-  }
+  /* ---------- panels (5.5in x 8.5in each — half of a folded letter sheet) ---------- */
+  .panel { width: 5.5in; height: 8.5in; position: relative; overflow: hidden; background: #fff; }
 
-  /* --- Cover --- */
-  .cover-sheet { display: flex; flex-direction: column; align-items: center; justify-content: flex-start; text-align: center; padding-top: 1.1in; }
-  .cover-sheet .cover-logo { height: 62px; width: auto; filter: brightness(0); margin-bottom: .55in; }
-  .cover-sheet .cover-photo {
-    width: 5.2in; aspect-ratio: 4 / 3; object-fit: cover;
-    border: 1px solid var(--rule-strong); margin-bottom: .45in;
+  /* Front cover: full-bleed photo, one flat wash (no gradient seams — see git log
+     on leadership-cards.html for why), invite copy anchored low. */
+  .panel--cover {
+    display: flex; flex-direction: column; justify-content: flex-end;
+    padding: .4in .45in; color: var(--band-ink);
   }
-  .cover-sheet .cover-verse {
-    font-family: var(--font-display); font-style: italic; font-size: 1.15rem;
-    color: var(--ink-soft); max-width: 4.6in; line-height: 1.55; margin: 0 0 .12in;
-  }
-  .cover-sheet .cover-verse cite {
-    display: block; font-style: normal; font-variant-caps: small-caps;
-    letter-spacing: .04em; color: var(--brass); margin-top: .3rem; font-size: 1rem;
-  }
-  .cover-sheet .cover-rule { border: 0; border-top: 1px solid var(--rule); width: 1.6in; margin: .5in auto; }
-  .cover-sheet .cover-date { font-size: 1.15rem; color: var(--green); margin-bottom: .06in; }
-  .cover-sheet .cover-sub { font-size: .85rem; color: var(--muted); }
-  .cover-sheet .cover-foot {
-    margin-top: auto; padding-top: .4in; font-size: .82rem; color: var(--muted); line-height: 1.5;
-  }
+  .cover-photo { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: 50% 78%; z-index: 0; }
+  .panel--cover::before { content: ""; position: absolute; inset: 0; z-index: 1; background: rgba(15,22,17,.66); }
+  .cover-logo, .cover-invite, .cover-verse, .cover-date { position: relative; z-index: 2; }
+  .cover-logo { height: 30px; width: auto; filter: brightness(0) invert(1); margin-bottom: .5in; }
+  .cover-invite { font-size: .78rem; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: var(--brass-bright); margin: 0 0 .12in; }
+  .cover-verse { font-family: var(--font-display); font-size: 1.55rem; line-height: 1.3; color: #fff; margin: 0 0 .15in; max-width: 4.3in; }
+  .cover-verse cite { display: block; font-style: normal; font-variant-caps: small-caps; letter-spacing: .04em; color: var(--brass-bright); font-size: .85rem; margin-top: .18in; }
+  .cover-date { font-size: 1rem; border-top: 1px solid rgba(244,239,227,.3); padding-top: .18in; margin-top: .35in; }
+  .cover-date .cw { font-size: 1.05rem; }
 
-  /* --- Masthead --- */
-  .masthead { display: flex; align-items: center; justify-content: space-between; gap: 1rem; border-bottom: 3px solid var(--brass); padding-bottom: .5rem; margin-bottom: 1rem; }
-  .masthead img { height: 42px; width: auto; filter: brightness(0); }
-  .masthead .meta { text-align: right; font-size: .92em; color: var(--muted); line-height: 1.35; }
+  /* Back cover: the site's own dark-green "band" surface, not stock — carries
+     the same weight as the front, on the outside of the fold. */
+  .panel--back {
+    background:
+      radial-gradient(140% 90% at 15% 0%, rgba(184,128,42,.16), transparent 55%),
+      var(--green-deep);
+    color: var(--band-ink); padding: .45in .5in; display: flex; flex-direction: column;
+  }
+  .panel--back::before { content: ""; position: absolute; left: 0; right: 0; top: 0; height: 6px; background: linear-gradient(90deg, var(--brass), var(--brass-bright) 55%, var(--tile)); }
+  .back-logo { height: 24px; width: auto; filter: brightness(0) invert(1); margin-bottom: .3in; }
+  .back-label { font-family: var(--font-display); font-variant-caps: small-caps; letter-spacing: .03em; color: var(--brass-bright); font-size: 1rem; border-bottom: 1px solid rgba(244,239,227,.25); padding-bottom: .07in; margin-bottom: .12in; }
+  .back-leaders .row { display: flex; justify-content: space-between; padding: .06in 0; border-bottom: 1px dotted rgba(244,239,227,.2); font-size: .95em; }
+  .back-leaders .row .role { color: var(--brass-bright); font-variant-caps: small-caps; }
+  .back-giving { font-size: .9em; color: var(--band-muted); margin-top: .18in; }
+  .back-contact { margin-top: auto; padding-top: .25in; border-top: 1px solid rgba(244,239,227,.25); font-size: .92em; color: var(--band-muted); line-height: 1.6; }
+  .back-tagline { font-family: var(--font-display); font-style: italic; font-size: .85rem; color: var(--brass-bright); margin-top: .12in; }
 
-  .lordsday { text-align: center; margin-bottom: 1.1rem; }
-  .lordsday .cw { font-size: 1.5rem; color: var(--green); display: block; }
-  .lordsday .verse { font-family: var(--font-display); font-style: italic; font-size: .98rem; color: var(--ink-soft); margin-top: .3rem; }
-  .lordsday .verse cite { display: block; font-style: normal; font-variant-caps: small-caps; color: var(--brass); margin-top: .15rem; }
-
-  /* --- Order of worship --- */
-  .order-title { text-align: center; font-size: 1.05rem; margin-bottom: .1rem; }
-  .order-sub { text-align: center; font-size: .85em; color: var(--muted); margin-bottom: .9rem; }
+  /* Inside pages: plain stock, accent color only — the pages people actually
+     follow along on, so legibility and ink cost both matter here. */
+  .panel--inside { padding: .4in .42in; }
+  .inside-head { border-bottom: 3px solid var(--brass); padding-bottom: .12in; margin-bottom: .18in; }
+  .inside-head .cw { font-size: 1.15rem; color: var(--green); display: block; }
+  .inside-head .verse { font-family: var(--font-display); font-style: italic; font-size: .82rem; color: var(--ink-soft); margin-top: .06in; }
+  .order-title { text-align: center; font-size: .96rem; margin-bottom: .02in; }
+  .order-sub { text-align: center; font-size: .8em; color: var(--muted); margin-bottom: .14in; }
   .liturgy { border-top: 1px solid var(--rule-strong); }
-  .liturgy .row {
-    display: grid; grid-template-columns: 1fr auto; gap: .5rem;
-    padding: .38rem 0; border-bottom: 1px dotted var(--rule);
-    align-items: baseline;
-  }
+  .liturgy .row { display: grid; grid-template-columns: 1fr auto; gap: .4rem; padding: .1in 0; border-bottom: 1px dotted var(--rule); align-items: baseline; }
   .liturgy .row.hymn { font-style: italic; color: var(--ink-soft); }
-  .liturgy .row .what { font-size: .98em; }
-  .liturgy .row .ref { font-size: .88em; color: var(--muted); text-align: right; white-space: nowrap; }
-  .liturgy .row.sermon .what { font-family: var(--font-display); font-size: 1.05em; color: var(--green); font-weight: 600; }
-  .footnote { font-size: .8em; color: var(--muted); margin-top: .5rem; font-style: italic; }
-
-  .services-split { display: grid; grid-template-columns: 1fr 1fr; gap: 1.1rem; margin-top: 1.2rem; }
-  .services-split h3 { font-size: .92rem; font-variant-caps: small-caps; letter-spacing: .03em; color: var(--brass); border-bottom: 1px solid var(--rule); padding-bottom: .25rem; margin-bottom: .5rem; }
-
-  .rule-double { border: 0; border-top: 3px double var(--rule-strong); margin: 1.1rem 0; }
-
-  /* --- Back page --- */
-  .section-label { font-family: var(--font-display); font-variant-caps: small-caps; letter-spacing: .03em; color: var(--brass); font-size: 1.05rem; border-bottom: 1px solid var(--rule); padding-bottom: .3rem; margin-bottom: .6rem; }
-  .announce-item { padding: .5rem 0; border-bottom: 1px solid var(--rule); }
+  .liturgy .row .what { font-size: .96em; }
+  .liturgy .row .ref { font-size: .84em; color: var(--muted); text-align: right; white-space: nowrap; }
+  .liturgy .row.sermon .what { font-family: var(--font-display); font-size: 1em; color: var(--green); font-weight: 600; }
+  .rule-double { border: 0; border-top: 3px double var(--rule-strong); margin: .18in 0; }
+  .section-label { font-family: var(--font-display); font-variant-caps: small-caps; letter-spacing: .03em; color: var(--brass); font-size: .98rem; border-bottom: 1px solid var(--rule); padding-bottom: .06in; margin-bottom: .1in; }
+  .announce-item { padding: .1in 0; border-bottom: 1px solid var(--rule); }
   .announce-item:last-child { border-bottom: 0; }
-  .announce-item .what { font-family: var(--font-display); font-size: 1rem; color: var(--green); margin-bottom: .1rem; }
-  .announce-item p { font-size: .95em; color: var(--ink-soft); margin: 0; }
+  .announce-item .what { font-family: var(--font-display); font-size: .96rem; color: var(--green); margin-bottom: .02in; }
+  .announce-item p { font-size: .9em; color: var(--ink-soft); margin: 0; }
+  .prayer-lines { margin-top: .06in; }
+  .prayer-lines .line { border-bottom: 1px dotted var(--rule-strong); height: 1.15em; }
+  .footnote { font-size: .8em; color: var(--muted); margin-top: .12in; font-style: italic; }
 
-  .prayer-lines { margin-top: .4rem; }
-  .prayer-lines .line { border-bottom: 1px dotted var(--rule-strong); height: 1.35em; }
+  /* ---------- on-screen mockup (hidden in print) ---------- */
+  .mockups { padding: 2.5rem 1.5rem 1rem; max-width: 1040px; margin: 0 auto; }
+  .mockups h1 { font-family: var(--font-display); color: var(--stock); font-size: 1.4rem; text-align: center; margin: 0 0 .3rem; }
+  .mockups p.sub { text-align: center; color: rgba(251,246,236,.55); font-family: var(--font-body); font-size: .92rem; margin: 0 0 2.4rem; }
+  .mockup-block { display: flex; justify-content: center; margin-bottom: 3rem; }
+  .mockup-label { text-align: center; color: rgba(251,246,236,.4); font-size: .78rem; letter-spacing: .04em; text-transform: uppercase; margin-top: 1.1rem; }
 
-  .leaders { margin-top: .3rem; }
-  .leaders .row { display: flex; justify-content: space-between; padding: .3rem 0; border-bottom: 1px dotted var(--rule); font-size: .95em; }
-  .leaders .row .role { color: var(--brass); font-variant-caps: small-caps; }
+  /* Closed booklet: front cover panel, angled, with a stack of "paper edges"
+     behind it so it reads as a folded booklet, not a flat printout. */
+  .mock-closed { position: relative; transform: rotate(-3deg); }
+  .mock-closed::before, .mock-closed::after {
+    content: ""; position: absolute; inset: 0; background: var(--stock); border: 1px solid var(--rule-strong);
+    z-index: -1; border-radius: 2px;
+  }
+  .mock-closed::before { transform: translate(5px, 6px) rotate(1.4deg); }
+  .mock-closed::after { transform: translate(9px, 11px) rotate(2.6deg); background: #efe6d3; }
+  .mock-closed .panel { border-radius: 2px; box-shadow: 0 22px 40px rgba(0,0,0,.5), 0 3px 8px rgba(0,0,0,.35); transform: scale(.62); transform-origin: top left; }
+  .mock-closed-wrap { width: calc(5.5in * .62); height: calc(8.5in * .62); }
 
-  .two-col { display: grid; grid-template-columns: 1.3fr 1fr; gap: 1.5rem; margin-top: 1rem; }
+  /* Open spread: page 2 + 3 side by side, flat, with a fold crease down the
+     middle and a slight bow to suggest paper lying open. */
+  .mock-open { display: flex; transform: scale(.55) rotate(-1.2deg); transform-origin: top center; box-shadow: 0 22px 44px rgba(0,0,0,.5); border-radius: 2px; overflow: hidden; }
+  .mock-open .panel:first-child { box-shadow: inset -14px 0 22px -14px rgba(0,0,0,.35); }
+  .mock-open .panel:last-child { box-shadow: inset 14px 0 22px -14px rgba(0,0,0,.35); }
+  .mock-open-wrap { width: calc(11in * .55); height: calc(8.5in * .55); }
 
-  .giving { background: var(--stock); border: 1px solid var(--rule); padding: .75rem 1rem; margin-top: 1rem; font-size: .92em; }
-
-  .backfoot { position: absolute; bottom: .65in; left: .7in; right: .7in; text-align: center; font-size: .82em; color: var(--muted); border-top: 1px solid var(--rule); padding-top: .5rem; }
+  /* ---------- print sheets ---------- */
+  .sheet-label { text-align: center; color: rgba(251,246,236,.6); font-family: var(--font-body); font-size: .85rem; letter-spacing: .03em; text-transform: uppercase; margin: 0 0 .5rem; }
+  .landscape-sheet {
+    width: 11in; height: 8.5in; margin: 0 auto 1.5rem; display: flex; position: relative;
+  }
+  .landscape-sheet::after {
+    content: ""; position: absolute; left: 50%; top: 0; bottom: 0; width: 0;
+    border-left: 1px dashed var(--rule-strong); pointer-events: none;
+  }
+  @media screen { .landscape-sheet { box-shadow: 0 6px 24px rgba(0,0,0,.35); } }
+  @page { size: 11in 8.5in; margin: 0; }
+  @media print {
+    html, body { background: #fff; }
+    .mockups, .sheet-label { display: none; }
+    .landscape-sheet { box-shadow: none; margin: 0; page-break-after: always; }
+    .landscape-sheet:last-of-type { page-break-after: auto; }
+  }
 </style>
 </head>
 <body>
 
-<!-- ============================= PAGE 1 — COVER ============================= -->
-<div class="sheet cover-sheet">
-  <img class="cover-logo" src="../../assets/img/Bonita-Logo-w.png" alt="Bonita Orthodox Presbyterian Church">
-  <img class="cover-photo" src="../../assets/img/church-building-t.jpg" alt="">
-  <p class="cover-verse">&ldquo;I was glad when they said to me, &lsquo;Let us go to the house of the L<span style="font-variant-caps:small-caps;">ord</span>!&rsquo;&rdquo;<cite>Psalm 122:1</cite></p>
-  <hr class="cover-rule">
-  <p class="cover-date cw">The Lord&rsquo;s Day &middot; [Month Day, Year] <span class="todo">set weekly</span></p>
-  <p class="cover-sub">Morning Worship 11:00 a.m. &middot; Evening Worship 6:00 p.m.</p>
-  <p class="cover-foot">5111 Central Avenue, Bonita, CA 91902 &middot; (619) 475-3752 &middot; bonitaopc.org</p>
-</div>
+<div class="mockups">
+  <h1>Sunday Bulletin</h1>
+  <p class="sub">A half-fold booklet — closed, then open to the inside spread</p>
 
-<!-- ============================= PAGE 2 — ORDER OF WORSHIP ============================= -->
-<div class="sheet">
-
-  <div class="masthead">
-    <img src="../../assets/img/Bonita-Logo-w.png" alt="Bonita Orthodox Presbyterian Church">
-    <div class="meta">5111 Central Avenue &middot; Bonita, CA 91902<br>(619) 475-3752 &middot; bonitaopc.org</div>
-  </div>
-
-  <div class="lordsday">
-    <span class="cw">The Lord&rsquo;s Day &middot; [Month Day, Year] <span class="todo">set weekly</span></span>
-    <p class="verse">&ldquo;I was glad when they said to me, &lsquo;Let us go to the house of the L<span style="font-variant-caps:small-caps;">ord</span>!&rsquo;&rdquo;<cite>Psalm 122:1</cite></p>
-  </div>
-
-  <p class="order-title cw">Order of Worship &middot; Morning</p>
-  <p class="order-sub">&#42; the congregation stands as able</p>
-
-  <div class="liturgy">
-    <div class="row"><span class="what">Prelude</span><span class="ref"></span></div>
-    <div class="row"><span class="what">Welcome &amp; Announcements</span><span class="ref"></span></div>
-    <div class="row"><span class="what">&#42; Call to Worship</span><span class="ref">[Scripture sentence] <span class="todo">fill in</span></span></div>
-    <div class="row hymn"><span class="what">&#42; Hymn of Praise</span><span class="ref">&ldquo;[Hymn Title]&rdquo; &middot; No. [ ] <span class="todo">fill in</span></span></div>
-    <div class="row"><span class="what">&#42; Invocation</span><span class="ref"></span></div>
-    <div class="row"><span class="what">Confession of Sin</span><span class="ref">[in unison] <span class="todo">fill in</span></span></div>
-    <div class="row"><span class="what">Assurance of Pardon</span><span class="ref">[Scripture] <span class="todo">fill in</span></span></div>
-    <div class="row hymn"><span class="what">&#42; Hymn of Assurance</span><span class="ref">&ldquo;[Hymn Title]&rdquo; &middot; No. [ ] <span class="todo">fill in</span></span></div>
-    <div class="row"><span class="what">Old Testament Reading</span><span class="ref">[passage] <span class="todo">fill in</span></span></div>
-    <div class="row"><span class="what">Pastoral Prayer</span><span class="ref"></span></div>
-    <div class="row hymn"><span class="what">&#42; Hymn of Preparation</span><span class="ref">&ldquo;[Hymn Title]&rdquo; &middot; No. [ ] <span class="todo">fill in</span></span></div>
-    <div class="row sermon"><span class="what">Sermon &mdash; &ldquo;Judgment for Turning Back&rdquo;</span><span class="ref">Zephaniah 1:1&ndash;6</span></div>
-    <div class="row"><span class="what">Preached by John Joseph Matandika</span><span class="ref"></span></div>
-    <div class="row hymn"><span class="what">&#42; Hymn of Response</span><span class="ref">&ldquo;[Hymn Title]&rdquo; &middot; No. [ ] <span class="todo">fill in</span></span></div>
-    <div class="row"><span class="what">&#42; Benediction</span><span class="ref"></span></div>
-  </div>
-
-  <hr class="rule-double">
-
-  <p class="order-title cw" style="font-size:.95rem;">Evening Worship &middot; 6:00 p.m.</p>
-  <div class="liturgy">
-    <div class="row sermon"><span class="what">Sermon &mdash; &ldquo;Redemption in Christ&rdquo;</span><span class="ref">Ephesians 1:1&ndash;14</span></div>
-  </div>
-  <p class="footnote">Sunday School for all ages meets at 9:30 a.m. <span class="todo">confirm time</span>. Both services are streamed live on our YouTube channel for those who cannot be here.</p>
-
-</div>
-
-<!-- ============================= PAGE 3 — BACK ============================= -->
-<div class="sheet">
-
-  <p class="section-label">This week &amp; next</p>
-  <div class="announce-item">
-    <p class="what">Next Sunday &mdash; Communion</p>
-    <p>Followed by the Feast Day fellowship meal. A sign-up sheet for dishes is on the back table.</p>
-  </div>
-  <div class="announce-item">
-    <p class="what">Wednesday &mdash; Family Bible Study &amp; Prayer</p>
-    <p>6:00&ndash;8:00 p.m. at Rohr Park, Gate A. All ages. <span class="todo">confirm</span></p>
-  </div>
-  <div class="announce-item">
-    <p class="what">Trustees &amp; Deacons</p>
-    <p>Trustees meet the second Tuesday of each month; the Deacons meet every other month on the same evening.</p>
-  </div>
-  <div class="announce-item">
-    <p class="what">[This week&rsquo;s announcement] <span class="todo">fill in</span></p>
-    <p>[Add anything specific to this Sunday — a baptism, a members&rsquo; meeting, a visiting speaker.]</p>
-  </div>
-
-  <div class="two-col">
+  <div class="mockup-block">
     <div>
-      <p class="section-label">Prayers of the congregation</p>
-      <p style="font-size:.9em;color:var(--muted);margin-bottom:.5rem;">For the sick, the grieving, missionaries, and those to be remembered this week:</p>
-      <div class="prayer-lines">
-        <div class="line"></div><div class="line"></div><div class="line"></div>
-        <div class="line"></div><div class="line"></div><div class="line"></div>
-      </div>
-    </div>
-    <div>
-      <p class="section-label">Session &amp; diaconate</p>
-      <div class="leaders">
-        <div class="row"><span>Mike Chism</span><span class="role">Elder</span></div>
-        <div class="row"><span>Lee McMorris</span><span class="role">Elder</span></div>
-        <div class="row"><span>Maynard Skidmore</span><span class="role">Elder</span></div>
-        <div class="row"><span>Andy Weld</span><span class="role">Elder</span></div>
-        <div class="row"><span>Scott York</span><span class="role">Deacon</span></div>
-      </div>
-      <p style="font-size:.85em;color:var(--muted);margin-top:.5rem;">Reach the session through the church office &mdash; (619) 475-3752.</p>
+      <div class="mock-closed-wrap mock-closed"><div id="mock-cover"></div></div>
+      <p class="mockup-label">Closed — front cover</p>
     </div>
   </div>
 
-  <div class="giving">
-    <strong class="cw" style="color:var(--green);">Giving</strong> &mdash; by check, made out to Bonita Orthodox Presbyterian Church, placed in the offering plate or mailed to 5111 Central Avenue, Bonita, CA 91902. <span class="todo">Online giving: not yet set up — see docs/MODERNIZATION-ROADMAP.md</span>
-  </div>
-
-  <div class="backfoot">
-    New here? We would love to meet you — visit <span class="cw">bonitaopc.org/visit</span> or speak to any elder after the service.
+  <div class="mockup-block">
+    <div>
+      <div class="mock-open-wrap mock-open" id="mock-spread"></div>
+      <p class="mockup-label">Open — inside spread</p>
+    </div>
   </div>
 </div>
+
+<p class="sheet-label">Print sheet 1 of 2 — outside (back cover, then front cover)</p>
+<div class="landscape-sheet" id="outside-sheet"></div>
+
+<p class="sheet-label">Print sheet 2 of 2 — inside (page 2, then page 3)</p>
+<div class="landscape-sheet" id="inside-sheet"></div>
+
+<script>
+(function () {
+  "use strict";
+
+  function coverPanel() {
+    var el = document.createElement("div");
+    el.className = "panel panel--cover";
+    el.innerHTML =
+      '<img class="cover-photo" src="../../assets/img/church-building-t.jpg" alt="">' +
+      '<img class="cover-logo" src="../../assets/img/Bonita-Logo-w.png" alt="Bonita Orthodox Presbyterian Church">' +
+      '<p class="cover-invite">You are invited</p>' +
+      '<p class="cover-verse">&ldquo;Let us go to the house of the L<span style="font-variant-caps:small-caps;">ord</span>.&rdquo;<cite>Psalm 122:1</cite></p>' +
+      '<p class="cover-date"><span class="cw">The Lord&rsquo;s Day &middot; [Month Day, Year]</span> <span class="todo">set weekly</span><br>Morning 11:00 &middot; Evening 6:00</p>';
+    return el;
+  }
+
+  function backPanel() {
+    var el = document.createElement("div");
+    el.className = "panel panel--back";
+    el.innerHTML =
+      '<img class="back-logo" src="../../assets/img/Bonita-Logo-w.png" alt="">' +
+      '<p class="back-label">Session &amp; Diaconate</p>' +
+      '<div class="back-leaders">' +
+        '<div class="row"><span>Mike Chism</span><span class="role">Elder</span></div>' +
+        '<div class="row"><span>Lee McMorris</span><span class="role">Elder</span></div>' +
+        '<div class="row"><span>Maynard Skidmore</span><span class="role">Elder</span></div>' +
+        '<div class="row"><span>Andy Weld</span><span class="role">Elder</span></div>' +
+        '<div class="row"><span>Scott York</span><span class="role">Deacon</span></div>' +
+      '</div>' +
+      '<p class="back-giving">Reach the session through the church office. Giving by check, made out to Bonita Orthodox Presbyterian Church, placed in the offering plate. <span class="todo">Online giving: see MODERNIZATION-ROADMAP.md</span></p>' +
+      '<div class="back-contact">' +
+        '5111 Central Avenue, Bonita, CA 91902<br>' +
+        '(619) 475-3752 &middot; bonitaopc.org<br>' +
+        '[info@bonitaopc.org] <span class="todo">confirm</span>' +
+      '</div>' +
+      '<p class="back-tagline">Gathered in Bonita since 1972</p>';
+    return el;
+  }
+
+  function page2Panel() {
+    var el = document.createElement("div");
+    el.className = "panel panel--inside";
+    el.innerHTML =
+      '<div class="inside-head">' +
+        '<span class="cw">The Lord&rsquo;s Day &middot; [Month Day, Year]</span> <span class="todo">set weekly</span>' +
+        '<p class="verse">Order of Worship &mdash; Morning</p>' +
+      '</div>' +
+      '<p class="order-sub">&#42; the congregation stands as able</p>' +
+      '<div class="liturgy">' +
+        '<div class="row"><span class="what">Prelude</span><span class="ref"></span></div>' +
+        '<div class="row"><span class="what">Welcome &amp; Announcements</span><span class="ref"></span></div>' +
+        '<div class="row"><span class="what">&#42; Call to Worship</span><span class="ref">[Scripture] <span class="todo">fill in</span></span></div>' +
+        '<div class="row hymn"><span class="what">&#42; Hymn of Praise</span><span class="ref">&ldquo;[Title]&rdquo; No. [ ] <span class="todo">fill in</span></span></div>' +
+        '<div class="row"><span class="what">&#42; Invocation</span><span class="ref"></span></div>' +
+        '<div class="row"><span class="what">Confession of Sin</span><span class="ref">[in unison] <span class="todo">fill in</span></span></div>' +
+        '<div class="row"><span class="what">Assurance of Pardon</span><span class="ref">[Scripture] <span class="todo">fill in</span></span></div>' +
+        '<div class="row hymn"><span class="what">&#42; Hymn of Assurance</span><span class="ref">&ldquo;[Title]&rdquo; No. [ ] <span class="todo">fill in</span></span></div>' +
+        '<div class="row"><span class="what">Old Testament Reading</span><span class="ref">[passage] <span class="todo">fill in</span></span></div>' +
+        '<div class="row"><span class="what">Pastoral Prayer</span><span class="ref"></span></div>' +
+        '<div class="row hymn"><span class="what">&#42; Hymn of Preparation</span><span class="ref">&ldquo;[Title]&rdquo; No. [ ] <span class="todo">fill in</span></span></div>' +
+        '<div class="row sermon"><span class="what">Sermon &mdash; &ldquo;Judgment for Turning Back&rdquo;</span><span class="ref">Zephaniah 1:1&ndash;6</span></div>' +
+        '<div class="row"><span class="what">Preached by John Joseph Matandika</span><span class="ref"></span></div>' +
+        '<div class="row hymn"><span class="what">&#42; Hymn of Response</span><span class="ref">&ldquo;[Title]&rdquo; No. [ ] <span class="todo">fill in</span></span></div>' +
+        '<div class="row"><span class="what">&#42; Benediction</span><span class="ref"></span></div>' +
+      '</div>' +
+      '<p class="footnote">Sunday School meets at 9:30 a.m. <span class="todo">confirm</span>. Both services stream live on our YouTube channel.</p>';
+    return el;
+  }
+
+  function page3Panel() {
+    var el = document.createElement("div");
+    el.className = "panel panel--inside";
+    el.innerHTML =
+      '<div class="inside-head"><span class="cw">Evening Worship &middot; 6:00 p.m.</span></div>' +
+      '<div class="liturgy" style="margin-bottom:.2in;">' +
+        '<div class="row sermon"><span class="what">Sermon &mdash; &ldquo;Redemption in Christ&rdquo;</span><span class="ref">Ephesians 1:1&ndash;14</span></div>' +
+      '</div>' +
+      '<hr class="rule-double">' +
+      '<p class="section-label">This week &amp; next</p>' +
+      '<div class="announce-item">' +
+        '<p class="what">Next Sunday &mdash; Communion</p>' +
+        '<p>Followed by the Feast Day fellowship meal. Sign-up sheet on the back table.</p>' +
+      '</div>' +
+      '<div class="announce-item">' +
+        '<p class="what">Wednesday &mdash; Family Bible Study &amp; Prayer</p>' +
+        '<p>6:00&ndash;8:00 p.m., Rohr Park, Gate A. <span class="todo">confirm</span></p>' +
+      '</div>' +
+      '<div class="announce-item">' +
+        '<p class="what">[This week&rsquo;s announcement] <span class="todo">fill in</span></p>' +
+        '<p>[A baptism, a members&rsquo; meeting, a visiting speaker.]</p>' +
+      '</div>' +
+      '<p class="section-label" style="margin-top:.18in;">Prayers of the congregation</p>' +
+      '<div class="prayer-lines">' +
+        '<div class="line"></div><div class="line"></div><div class="line"></div><div class="line"></div>' +
+      '</div>';
+    return el;
+  }
+
+  // Print sheets — booklet imposition: outside = back | front, inside = page2 | page3.
+  var outside = document.getElementById("outside-sheet");
+  outside.appendChild(backPanel());
+  outside.appendChild(coverPanel());
+
+  var inside = document.getElementById("inside-sheet");
+  inside.appendChild(page2Panel());
+  inside.appendChild(page3Panel());
+
+  // Mockups — independent copies so the print sheets above stay untouched.
+  document.getElementById("mock-cover").replaceWith((function () { var w = coverPanel(); w.id = "mock-cover"; return w; })());
+  var spread = document.getElementById("mock-spread");
+  spread.appendChild(page2Panel());
+  spread.appendChild(page3Panel());
+})();
+</script>
 
 </body>
 </html>
