@@ -12,11 +12,11 @@
      same on every card — the church building, darkened, with an
      invitation and service times, so whoever hands the card out is
      also inviting someone — and a back with that person's photo
-     bleeding to the edge and their contact details. Six people —
-     the five Session/Diaconate members from about.html, plus a
-     blank "Guest Preacher" slot, since Bonita currently runs on
-     pulpit supply rather than a settled pastor (see the varied
-     preacher names in sermons.html).
+     bleeding to the edge and their contact details. The five
+     Session/Diaconate members from about.html — no card for the
+     pulpit, since Bonita currently runs on rotating pulpit supply
+     rather than a settled pastor (see sermons.html), and printing a
+     card per guest preacher isn't worth the run.
 
      On screen: a tilted preview of every front/back pair first, for
      reviewing the design — then two flat, precisely-sized print
@@ -69,7 +69,7 @@
     content: ""; position: absolute; inset: 0; z-index: 1;
     background: rgba(15,22,17,.72); /* one flat, even wash — no gradient banding */
   }
-  .front-photo, .front-eyebrow, .front-invite, .front-verse, .front-meta { position: relative; z-index: 2; }
+  .front-eyebrow, .front-invite, .front-verse, .front-meta { position: relative; z-index: 2; }
   .front-eyebrow {
     font-family: var(--font-body); font-weight: 700; letter-spacing: .12em; text-transform: uppercase;
     font-size: .56rem; color: var(--brass-bright); margin: 0 0 .09in;
@@ -170,8 +170,7 @@
     { name: "Lee McMorris", role: "Elder", photo: "../../assets/img/0d314f1f-1630-4745-9dfe-f92c20497b80_1_105_c.jpg" },
     { name: "Maynard Skidmore", role: "Elder", photo: "../../assets/img/skidmore.jpg" },
     { name: "Andy Weld", role: "Elder", photo: "../../assets/img/weld.jpg" },
-    { name: "Scott York", role: "Deacon", photo: "../../assets/img/york.jpg" },
-    { name: null, role: "This week’s preacher", photo: null }
+    { name: "Scott York", role: "Deacon", photo: "../../assets/img/york.jpg" }
   ];
 
   // One shared "invite" front — the church building, not a person —
@@ -196,7 +195,7 @@
     var info = document.createElement("div");
     info.className = "back-info";
     info.innerHTML =
-      '<p class="back-name">' + (p.name || "Guest Preacher") + '</p>' +
+      '<p class="back-name">' + p.name + '</p>' +
       '<p class="back-role">' + p.role + '</p>' +
       '<p class="back-org">Bonita Orthodox Presbyterian Church</p>' +
       '<p class="back-line">(619) 475-3752</p>' +
@@ -206,12 +205,7 @@
 
     var photoWrap = document.createElement("div");
     photoWrap.className = "back-photo-wrap";
-    if (p.photo) {
-      photoWrap.innerHTML = '<img src="' + p.photo + '" alt="' + p.name + '">';
-    } else {
-      photoWrap.classList.add("is-blank");
-      photoWrap.innerHTML = '<span>photo<br>on file</span>';
-    }
+    photoWrap.innerHTML = '<img src="' + p.photo + '" alt="' + p.name + '">';
     face.appendChild(photoWrap);
 
     return face;
@@ -227,7 +221,7 @@
     mockTarget.appendChild(row);
     var label = document.createElement("p");
     label.className = "mockup-label";
-    label.textContent = p.name || "Guest preacher (blank)";
+    label.textContent = p.name;
     mockTarget.appendChild(label);
   });
 
@@ -236,13 +230,14 @@
   PEOPLE.forEach(function (p) { frontSheet.appendChild(frontFace(p)); });
 
   // Print sheet 2: backs, column-mirrored per row so a long-edge duplex
-  // flip lines each back up behind its matching front.
+  // flip lines each back up behind its matching front. Works for any
+  // count — an odd last person just gets a lone, unmirrored row.
   var backSheet = document.getElementById("back-sheet");
-  var rows = [[PEOPLE[0], PEOPLE[1]], [PEOPLE[2], PEOPLE[3]], [PEOPLE[4], PEOPLE[5]]];
-  rows.forEach(function (pair) {
-    var ordered = MIRROR_BACK ? [pair[1], pair[0]] : pair;
+  for (var i = 0; i < PEOPLE.length; i += 2) {
+    var pair = PEOPLE.slice(i, i + 2);
+    var ordered = (MIRROR_BACK && pair.length === 2) ? [pair[1], pair[0]] : pair;
     ordered.forEach(function (p) { backSheet.appendChild(backFace(p)); });
-  });
+  }
 })();
 </script>
 
