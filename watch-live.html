@@ -3,8 +3,18 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Page not found | Bonita OPC</title>
-<meta name="robots" content="noindex">
+<title>Watch Live | Bonita OPC</title>
+<meta name="description" content="Watch Bonita Orthodox Presbyterian Church's Sunday services live, streaming automatically at 11:00 a.m. and 6:00 p.m. Pacific — no YouTube account needed.">
+<link rel="canonical" href="https://www.bonitaopc.org/watch-live.html">
+
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Bonita Orthodox Presbyterian Church">
+<meta property="og:title" content="Watch Live | Bonita OPC">
+<meta property="og:description" content="Watch Bonita Orthodox Presbyterian Church's Sunday services live, streaming automatically at 11:00 a.m. and 6:00 p.m. Pacific.">
+<meta property="og:url" content="https://www.bonitaopc.org/watch-live.html">
+<meta property="og:image" content="https://www.bonitaopc.org/assets/img/church-building-t.jpg">
+<meta name="twitter:card" content="summary_large_image">
+
 <link rel="icon" href="assets/img/favicon.ico" sizes="any">
 <link rel="apple-touch-icon" href="assets/img/apple-touch-icon.png">
 
@@ -12,12 +22,38 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Vollkorn:ital,wght@0,400..700;1,400..600&family=Alegreya+Sans:ital,wght@0,400;0,500;0,700;1,400&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="assets/css/site.css">
+
+<!-- Tells Google the who/where/when of the church. Keep it in step with the
+     visible page; search results and map cards read from this. -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Church",
+  "name": "Bonita Orthodox Presbyterian Church",
+  "url": "https://www.bonitaopc.org",
+  "telephone": "(619) 475-3752",
+  "image": "https://www.bonitaopc.org/assets/img/church-building-t.jpg",
+  "address": {
+    "@type": "PostalAddress",
+    "streetAddress": "5111 Central Avenue",
+    "addressLocality": "Bonita",
+    "addressRegion": "CA",
+    "postalCode": "91902",
+    "addressCountry": "US"
+  },
+  "openingHoursSpecification": [
+    { "@type": "OpeningHoursSpecification", "dayOfWeek": "Sunday", "opens": "11:00", "closes": "12:30" },
+    { "@type": "OpeningHoursSpecification", "dayOfWeek": "Sunday", "opens": "18:00", "closes": "19:15" }
+  ],
+  "sameAs": ["https://www.youtube.com/channel/UCrrn6fY_2RLzuUIH9ygQuDw"]
+}
+</script>
 </head>
 <body>
 <a class="skip-link" href="#main">Skip to content</a>
 
 <div class="announce">
-  Sunday services stream live &mdash; <a href="watch-live.html">watch live</a>
+  Streaming automatically at service times &mdash; no manual step needed. <a href="sermons.html">Browse past sermons</a>
 </div>
 
 <header class="site-header">
@@ -37,6 +73,7 @@
       <a class="nav__link" href="visit.html">Plan Your Visit</a>
       <a class="nav__link" href="about.html">About</a>
       <a class="nav__link" href="sermons.html">Sermons</a>
+      <a class="nav__link" href="watch-live.html" aria-current="page">Watch Live</a>
       <a class="nav__link" href="events.html">Events &amp; News</a>
       <a class="nav__link" href="contact.html">Contact</a>
       <a class="btn btn--primary btn--sm" href="visit.html">Plan your visit</a>
@@ -60,29 +97,52 @@
 <section class="pagehead">
   <div class="pagehead__media"><img src="assets/img/church-building-t.jpg" alt="" aria-hidden="true"></div>
   <div class="wrap pagehead__inner">
-    <p class="crumbs">Home <span>/</span> Page not found</p>
-    <h1>That page has wandered off</h1>
-    <p>The link that brought you here is broken, or the page has moved. Here is where you probably meant to go.</p>
+    <p class="crumbs"><a href="index.html">Home</a> <span>/</span> Watch Live</p>
+    <h1>Watch live</h1>
+    <p>The player below starts on its own the moment our stream goes live &mdash; nothing to click, no YouTube account needed.</p>
   </div>
 </section>
 
 <section class="section">
   <div class="wrap">
-    <dl class="facts">
-      <div class="facts__row">
-        <dt class="facts__term">Plan a visit</dt>
-        <dd class="facts__def"><p>Service times, parking, what to expect, and answers to the questions people usually ask before a first Sunday.</p><p><a class="textlink" href="visit.html">Plan Your Visit &rarr;</a></p></dd>
+    <div class="split-major">
+      <div class="video-frame">
+        <!-- YouTube's "live_stream" embed: shows the channel's current broadcast
+             automatically. If nothing is live right now this box will sit blank
+             (that is expected, not broken) — the panel beside it always explains
+             what to do instead. Nothing here needs updating week to week. -->
+        <iframe src="https://www.youtube-nocookie.com/embed/live_stream?channel=UCrrn6fY_2RLzuUIH9ygQuDw"
+                title="Bonita OPC — live stream" loading="lazy" allowfullscreen
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"></iframe>
       </div>
-      <div class="facts__row">
-        <dt class="facts__term">Sermons</dt>
-        <dd class="facts__def"><p>Every Lord's Day sermon, preached from the Scriptures and kept here to watch or search.</p><p><a class="textlink" href="sermons.html">Sermon archive &rarr;</a></p></dd>
+      <div>
+        <p class="label">Service times &middot; Pacific</p>
+        <h2>Sunday, 11:00 a.m. &amp; 6:00 p.m.</h2>
+        <p class="lede">If the screen to the left is blank, we&rsquo;re simply not live yet &mdash;
+        come back at one of the times above, or catch up below in the meantime.</p>
+        <p style="margin-top:1.5rem;">
+          <a class="btn btn--primary" href="sermons.html">Watch the most recent sermon</a>
+        </p>
+        <p style="margin-top:.75rem;">
+          <a class="btn btn--onDark" href="https://www.youtube.com/channel/UCrrn6fY_2RLzuUIH9ygQuDw" target="_blank" rel="noopener">Open our YouTube channel</a>
+        </p>
       </div>
-      <div class="facts__row">
-        <dt class="facts__term">Get in touch</dt>
-        <dd class="facts__def"><p>Questions about the church, or anything else — an elder will get back to you.</p><p><a class="textlink" href="contact.html">Contact &rarr;</a></p></dd>
-      </div>
-    </dl>
-    <p style="margin-top:2rem;"><a class="btn btn--primary" href="index.html">Back to the home page</a></p>
+    </div>
+  </div>
+</section>
+
+<section class="section section--alt">
+  <div class="wrap">
+    <div class="section-head" style="margin-bottom:1.5rem;">
+      <p class="label">Recent uploads</p>
+      <h2>Straight from our channel</h2>
+      <p>This list updates itself the moment a new video is posted to YouTube &mdash; nobody has to touch this page.</p>
+    </div>
+    <div class="video-frame" style="aspect-ratio:16/10;">
+      <iframe src="https://www.youtube-nocookie.com/embed/videoseries?list=UUrrn6fY_2RLzuUIH9ygQuDw"
+              title="Recent uploads from Bonita OPC" loading="lazy" allowfullscreen
+              allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture"></iframe>
+    </div>
   </div>
 </section>
 

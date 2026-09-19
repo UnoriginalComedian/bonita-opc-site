@@ -13,6 +13,16 @@ doesn't apply.
 - 404 page, `robots.txt`, `sitemap.xml` (the old Craft site's sitemap returned an
   empty index, invisible to Google)
 - `Church` structured data so service times can surface directly in Google/Maps
+- **`watch-live.html`** — a page that shows the channel's live broadcast automatically
+  (YouTube's `live_stream` embed) plus a self-updating "recent uploads" strip (the
+  channel's uploads-playlist embed), so a visitor who doesn't know how to find the
+  YouTube channel can just go to the site instead. Nobody has to touch either embed
+  when a new video posts or a stream starts — both pull live from YouTube. Linked from
+  the header nav and the home page on every page.
+- The Sermons page's featured video now uses that same uploads-playlist embed instead
+  of a hand-pasted video ID, so it never goes stale — only the caption text beside it
+  (preacher, passage, date) still needs a weekly update, since YouTube's free embed
+  doesn't expose that as data.
 
 ## Free or near-free, do these first
 
@@ -60,15 +70,26 @@ doesn't apply.
     the fundamentals (skip link, focus rings, alt text, `prefers-reduced-motion`);
     formalizing that with a short public statement protects a small nonprofit from
     the ADA-lawsuit-mill letters that target churches with older sites.
+11. **Tidy up the OBS-to-YouTube workflow.** Today someone starts the stream in OBS
+    and fixes the title/description afterward in YouTube Studio. Two changes remove
+    that step entirely: (a) pre-create each Sunday's broadcast in YouTube Studio
+    ahead of time — correct title, description mentioning Bonita/Chula Vista/San
+    Diego, thumbnail — so OBS just starts streaming into an already-titled slot
+    instead of a generic one that needs fixing after the fact; (b) turn on
+    auto-captions on the channel, which also helps search find the sermon by what
+    was actually said. This is an operator-workflow change in YouTube Studio, not a
+    site-code change — scope it as its own small piece of work.
 
 ## Later, higher effort
 
-11. **The member companion app** already prototyped in `app/church-app.html` —
+12. **The member companion app** already prototyped in `app/church-app.html` —
     a phone-installable PWA (events, sign-ups, prayer requests, directory). It's
     a real prototype, not a mockup; worth a scoped project once the CMS/hosting
     question above is settled, since the app should read from whatever system of
-    record the church lands on.
-12. **Migrate off Craft entirely if adopting Breeze/Planning Center** — both
+    record the church lands on. "Notify me when we go live" / "you're up for
+    nursery" style push notifications are a natural extension of this app once it
+    has a shared backend, not of the plain website — see `COMMUNITY-FEATURES.md`.
+13. **Migrate off Craft entirely if adopting Breeze/Planning Center** — both
     publish calendars and, in Breeze's case, a directory that can replace what
     Craft is doing today, which would let the church drop the CMS hosting bill
     for good (see README hosting option 2).

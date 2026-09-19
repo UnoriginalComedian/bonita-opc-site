@@ -13,6 +13,7 @@ bonita-opc-site/
 ├── visit.html          Plan Your Visit  (new — merges "What to Expect" + "Meeting Times")
 ├── about.html          About            (Mission + Doctrine + Government + Leadership)
 ├── sermons.html        Sermons          (featured video + searchable archive of 50)
+├── watch-live.html     Watch Live       (auto-plays the channel's live stream + recent uploads)
 ├── events.html         Events & News
 ├── contact.html        Contact
 ├── assets/
