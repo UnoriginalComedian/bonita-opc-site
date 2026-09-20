@@ -181,6 +181,64 @@
 </section>
 
 
+<!-- Full calendar — a Google Calendar embed, chosen over a hand-built events
+     system so a non-developer can add an event without touching this file.
+     Zero infrastructure: Google hosts and maintains the widget, this is just
+     an iframe. SET UP BEFORE LAUNCH:
+       1. Create a Google Calendar for the church (or use an existing one).
+       2. Google Calendar → Settings → [that calendar] → "Integrate calendar"
+          → copy the Calendar ID (looks like xxxx@group.calendar.google.com).
+       3. On the same settings page, under "Access permissions," check "Make
+          available to public" (or the embed will show nothing but a login
+          prompt).
+       4. Replace CALENDAR_ID_PLACEHOLDER below with the real ID (URL-encode
+          the @ as %40 if you build the src by hand — the src below already
+          does this for you, just swap the one line marked CONFIRM).
+     The short list above stays — it's a quick-glance highlight, not a
+     duplicate system. This is the "everything, including months out" view. -->
+<section class="section">
+  <div class="wrap">
+    <div class="section-head">
+      <p class="label">Full calendar</p>
+      <h2>Everything, at a glance</h2>
+      <p class="lede">Add this calendar to your own phone or computer, or just browse it here.
+      <span class="todo">CONFIRM: church needs to create a Google Calendar and share the real link — see the comment in events.html</span></p>
+    </div>
+    <div class="map-frame" style="aspect-ratio:16/10;">
+      <iframe src="https://calendar.google.com/calendar/embed?src=CALENDAR_ID_PLACEHOLDER%40group.calendar.google.com&ctz=America%2FLos_Angeles&mode=AGENDA" title="Bonita OPC calendar" loading="lazy"></iframe>
+    </div>
+  </div>
+</section>
+
+
+<!-- Email updates — Mailchimp free tier, per docs/MODERNIZATION-ROADMAP.md.
+     SET UP BEFORE LAUNCH:
+       1. Create a free Mailchimp account (mailchimp.com) if the church
+          doesn't have one, and one Audience for the congregation.
+       2. Audience → Signup forms → Embedded forms → copy the <form> tag's
+          action URL (posts to a *.list-manage.com address) and the hidden
+          "u" and "id" field values.
+       3. Replace the three CONFIRM placeholders below with those real
+          values. Nothing else about this form needs to change. -->
+<section class="section section--stock">
+  <div class="wrap wrap--narrow" style="text-align:center;">
+    <p class="label">Stay in the loop</p>
+    <h2>Get updates by email</h2>
+    <p class="lede" style="margin-inline:auto;">Announcements, new sermons, and anything
+    added to the calendar &mdash; sent only when there is something worth sending.</p>
+    <form class="form-grid" style="max-width:26rem;margin:1.5rem auto 0;" action="https://CONFIRM.list-manage.com/subscribe/post?u=CONFIRM&amp;id=CONFIRM" method="post" target="_blank">
+      <div class="field field--full">
+        <label for="mc-email" class="visually-hidden">Email address</label>
+        <input id="mc-email" type="email" name="EMAIL" placeholder="you@example.com" required>
+      </div>
+      <div class="field--full">
+        <button class="btn btn--primary" type="submit" style="width:100%;">Sign up for updates</button>
+      </div>
+    </form>
+  </div>
+</section>
+
+
 <section class="section section--alt">
   <div class="wrap">
     <div class="section-head">

@@ -23,6 +23,16 @@ doesn't apply.
   of a hand-pasted video ID, so it never goes stale — only the caption text beside it
   (preacher, passage, date) still needs a weekly update, since YouTube's free embed
   doesn't expose that as data.
+- **`outreach.html`** ("In the community") — a permanent, growing photo page for
+  outreach/festival photos that isn't tied to any one dated event, so it doesn't age
+  off the way the Events page's "Recently" list does. Linked from every page's footer.
+- **Events "wired up," waiting on one Google account.** `events.html` now embeds a
+  Google Calendar (zero extra infrastructure — Google hosts the widget). It's pointed
+  at a placeholder calendar right now; see the setup steps in the HTML comment directly
+  above the embed in `events.html` (create a calendar, make it public, swap in the real
+  ID). The short hand-typed "Upcoming"/"Recently" list stays as a quick-glance
+  highlight — the calendar is the full everything-including-months-out view.
+- **Email signup form, same situation** — see item 9 below for the setup steps.
 
 ## Free or near-free, do these first
 
@@ -63,9 +73,15 @@ doesn't apply.
 8. **Social media presence**, using the Brand Guide's palette/type so it looks
    like the same organization as the site. Even a low-effort Instagram/Facebook
    with the Sunday photo and the sermon title reaches people search never will.
-9. **Email newsletter.** Mailchimp's free tier (up to 500 contacts) covers a
-   congregation this size. Weekly bulletin + prayer requests, sent instead of (or
-   alongside) a printed insert.
+9. **Email newsletter — the site side is already built, waiting on the account.**
+   `events.html` has a Mailchimp signup form already wired into the page (styled,
+   in place, "Stay in the loop" section). To finish it: create a free Mailchimp
+   account (up to 500 contacts, no cost) and one Audience for the congregation,
+   then Audience → Signup forms → Embedded forms → copy the `<form>` tag's real
+   `action` URL and the hidden `u`/`id` field values, and paste those three
+   values over the `CONFIRM` placeholders in `events.html`'s signup form (see
+   the HTML comment right above it). Weekly bulletin + prayer requests, sent
+   instead of (or alongside) a printed insert.
 10. **An accessibility statement + real ADA pass.** The rebuilt site already ships
     the fundamentals (skip link, focus rings, alt text, `prefers-reduced-motion`);
     formalizing that with a short public statement protects a small nonprofit from
