@@ -409,6 +409,14 @@ a:hover { color: var(--tile-deep); }
 @media (min-width: 900px) { .split { grid-template-columns: 1fr 1fr; } .split--reverse > :first-child { order: 2; } }
 .split img { width: 100%; border: 1px solid var(--rule-strong); }
 
+/* Event photo gallery — ruled borders, no radius, no shadow, same as every
+   other photo treatment on the site. A caption sits under the frame like a
+   printed photo credit, not overlaid on the image. */
+.gallery { display: grid; gap: clamp(1rem, 2.4vw, 1.5rem); grid-template-columns: repeat(auto-fit, minmax(min(100%, 15rem), 1fr)); }
+.gallery figure { margin: 0; }
+.gallery img { width: 100%; aspect-ratio: 3 / 2; object-fit: cover; border: 1px solid var(--rule-strong); display: block; }
+.gallery figcaption { margin-top: .5rem; font-size: .95rem; color: var(--muted); }
+
 /* --- 11. Sermons --------------------------------------------------------- */
 
 .video-frame {
