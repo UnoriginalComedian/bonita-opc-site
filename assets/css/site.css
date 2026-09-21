@@ -378,21 +378,16 @@ body.home .site-header.is-stuck {
   background: rgba(255,255,255,.4);
 }
 
-/* --- 7c. Overlap panel — the "room, not a rectangle" move ------------------
-   Pulls the first content band up onto the hero's bottom edge with real
-   elevation, instead of stacking flush underneath it. */
+/* --- 7c. Section right after the hero -------------------------------------
+   Used to overlap up onto the hero's bottom edge, but that meant a sliver
+   of this panel's gold border was always visible at the bottom of the
+   very first screen, competing with the hero photo/video. Full-bleed hero,
+   clean edge, panel starts only once you actually scroll. */
 
 .section--overlap {
   position: relative; z-index: 5;
-  margin-top: -64px;
   border-top: 4px solid var(--brass);
-  box-shadow: 0 12px 40px rgba(36,31,25,.18);
 }
-:root[data-theme="dark"] .section--overlap { box-shadow: 0 12px 40px rgba(0,0,0,.45); }
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) .section--overlap { box-shadow: 0 12px 40px rgba(0,0,0,.45); }
-}
-@media (max-width: 640px) { .section--overlap { margin-top: -40px; } }
 
 /* Interior page heads */
 .pagehead {
