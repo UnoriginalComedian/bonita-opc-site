@@ -281,6 +281,18 @@ a:hover { color: var(--tile-deep); }
   :root:not([data-theme="light"]) .theme-toggle .icon-sun { display: none; }
 }
 
+/* Homepage only: header starts as glass over the hero video, and turns
+   solid the moment site.js marks it "is-stuck" (scrollY > 8). No extra JS
+   needed — that hook already existed for the header's scroll shadow. */
+body.home .site-header {
+  position: sticky; background: transparent; border-bottom-color: transparent;
+  transition: background-color .3s ease, border-bottom-color .3s ease, box-shadow .3s ease;
+}
+body.home .site-header.is-stuck {
+  background: var(--band-ground); border-bottom-color: var(--brass);
+  box-shadow: 0 6px 24px rgba(0,0,0,.28);
+}
+
 .nav-toggle { display: none; }
 
 @media (max-width: 980px) {
@@ -306,7 +318,7 @@ a:hover { color: var(--tile-deep); }
 
 .hero { position: relative; isolation: isolate; color: #fff; background: var(--band-ground); }
 .hero__media { position: absolute; inset: 0; z-index: -2; overflow: hidden; }
-.hero__media img { width: 100%; height: 100%; object-fit: cover; object-position: 50% 72%; }
+.hero__media img, .hero__media video { width: 100%; height: 100%; object-fit: cover; object-position: 50% 72%; }
 .hero::after {
   content: ""; position: absolute; inset: 0; z-index: -1;
   background:
@@ -329,16 +341,70 @@ a:hover { color: var(--tile-deep); }
 }
 .hero__cta { display: flex; flex-wrap: wrap; gap: .7rem; margin-top: 2rem; }
 
+/* --- 7b. Full-viewport video hero (home page only) ------------------------
+   Slides up under the sticky header (see "body.home .site-header" above)
+   so the header reads as glass over the footage until the visitor scrolls.
+   Swap in real footage per the comment beside the markup in index.html. */
+
+.hero--video {
+  min-height: 100svh; display: flex; flex-direction: column; justify-content: flex-end;
+  margin-top: -85px; /* pulls the video up under the header's box */
+}
+/* A dedicated scrim just for the glass-nav band, independent of the overall
+   hero grade below — keeps the logo/nav readable no matter how bright the
+   footage is at the top of frame (sky, stucco in full sun, etc.). */
+.hero--video::before {
+  content: ""; position: absolute; inset: 0 0 auto 0; height: 150px; z-index: 0;
+  background: linear-gradient(180deg, rgba(20,26,17,.6) 0%, rgba(20,26,17,0) 100%);
+}
+.hero--video .hero__inner { padding-top: clamp(6rem, 16vw, 10rem); }
+.hero--video h1 { font-size: clamp(2.35rem, 6.4vw, 4.5rem); max-width: 17ch; }
+
+.hero__poster--kenburns {
+  animation: kenburns 22s ease-in-out infinite alternate;
+  transform-origin: 50% 60%;
+}
+@keyframes kenburns { from { transform: scale(1); } to { transform: scale(1.06); } }
+
+.hero__scrollcue {
+  align-self: center; margin-bottom: clamp(1rem, 3vw, 1.75rem);
+  color: rgba(255,255,255,.6); font-size: .8rem; letter-spacing: .1em;
+  font-variant-caps: small-caps; text-align: center;
+}
+.hero__scrollcue::after {
+  content: ""; display: block; width: 1px; height: 22px; margin: .4rem auto 0;
+  background: rgba(255,255,255,.4);
+}
+
+/* --- 7c. Overlap panel — the "room, not a rectangle" move ------------------
+   Pulls the first content band up onto the hero's bottom edge with real
+   elevation, instead of stacking flush underneath it. */
+
+.section--overlap {
+  position: relative; z-index: 5;
+  margin-top: -64px;
+  border-top: 4px solid var(--brass);
+  box-shadow: 0 12px 40px rgba(36,31,25,.18);
+}
+:root[data-theme="dark"] .section--overlap { box-shadow: 0 12px 40px rgba(0,0,0,.45); }
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .section--overlap { box-shadow: 0 12px 40px rgba(0,0,0,.45); }
+}
+@media (max-width: 640px) { .section--overlap { margin-top: -40px; } }
+
 /* Interior page heads */
-.pagehead { position: relative; isolation: isolate; color: #fff; background: var(--band-ground); }
+.pagehead {
+  position: relative; isolation: isolate; color: #fff; background: var(--band-ground);
+  border-top: 3px solid var(--brass);
+}
 .pagehead__media { position: absolute; inset: 0; z-index: -2; overflow: hidden; }
-.pagehead__media img { width: 100%; height: 100%; object-fit: cover; opacity: .32; }
+.pagehead__media img { width: 100%; height: 100%; object-fit: cover; opacity: .4; }
 .pagehead::after {
   content: ""; position: absolute; inset: 0; z-index: -1;
-  background: linear-gradient(180deg, rgba(24,30,20,.72), rgba(24,30,20,.86));
+  background: linear-gradient(180deg, rgba(24,30,20,.42) 0%, rgba(24,30,20,.68) 55%, rgba(24,30,20,.88) 100%);
 }
-.pagehead__inner { padding-block: clamp(2.75rem, 7vw, 4.5rem) clamp(2rem, 5vw, 3rem); }
-.pagehead h1 { color: #fff; margin-bottom: .25em; }
+.pagehead__inner { padding-block: clamp(3.5rem, 9vw, 6rem) clamp(2.25rem, 5vw, 3.25rem); }
+.pagehead h1 { color: #fff; margin-bottom: .25em; font-size: clamp(2.1rem, 4.6vw, 3.2rem); }
 .pagehead p { color: rgba(255,255,255,.88); max-width: 50ch; margin: 0; font-size: 1.15rem; }
 .crumbs { font-size: .95rem; color: rgba(255,255,255,.7); margin: 0 0 .9rem; font-variant-caps: small-caps; letter-spacing: .04em; }
 .crumbs a { color: rgba(255,255,255,.88); text-decoration: none; }

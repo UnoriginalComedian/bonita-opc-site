@@ -49,7 +49,7 @@
 }
 </script>
 </head>
-<body>
+<body class="home">
 <a class="skip-link" href="#main">Skip to content</a>
 
 <div class="announce">
@@ -94,9 +94,16 @@
 
 <main id="main">
 
-<section class="hero">
+<section class="hero hero--video" aria-label="Welcome">
   <div class="hero__media">
-    <img src="assets/img/church-building-t.jpg" alt="" aria-hidden="true" fetchpriority="high" width="1000" height="750">
+    <!-- Muted on purpose — the site stays silent. site.js pauses this
+         automatically for visitors who have reduced motion turned on,
+         which leaves the poster frame showing as a static image. -->
+    <video class="hero__poster" id="heroVideo" autoplay muted loop playsinline
+           poster="assets/img/hero-poster.jpg">
+      <source src="assets/video/hero.webm" type="video/webm">
+      <source src="assets/video/hero.mp4" type="video/mp4">
+    </video>
   </div>
   <div class="wrap hero__inner">
     <h1>Gathered in Bonita since 1972</h1>
@@ -110,10 +117,11 @@
       <a class="btn btn--onDark" href="sermons.html">Hear a sermon</a>
     </div>
   </div>
+  <p class="hero__scrollcue" aria-hidden="true">Scroll</p>
 </section>
 
 
-<section class="section section--tight section--stock">
+<section class="section section--tight section--stock section--overlap">
   <div class="wrap">
     <div class="split-major">
 

@@ -60,6 +60,15 @@
     window.addEventListener("scroll", onScroll, { passive: true });
   }
 
+  /* --- Hero video: respect reduced motion ---------------------------------
+     autoplay/loop on a <video> ignores prefers-reduced-motion on its own,
+     so we pause it by hand and let the poster frame stand in as a still. */
+  var heroVideo = document.getElementById("heroVideo");
+  if (heroVideo && window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+    heroVideo.removeAttribute("autoplay");
+    heroVideo.pause();
+  }
+
   /* --- Reveal on scroll ---------------------------------------------------- */
   var reveals = document.querySelectorAll(".reveal");
   var reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
