@@ -64,9 +64,18 @@
      autoplay/loop on a <video> ignores prefers-reduced-motion on its own,
      so we pause it by hand and let the poster frame stand in as a still. */
   var heroVideo = document.getElementById("heroVideo");
-  if (heroVideo && window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+  var heroReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  if (heroVideo && heroReducedMotion) {
     heroVideo.removeAttribute("autoplay");
     heroVideo.pause();
+  }
+
+  /* --- Hero lead image: Bible first, sanctuary footage rolls in second ----
+     Reduced-motion visitors just keep the Bible image — no fade, nothing
+     else to show them since the video is already paused above. */
+  var heroLead = document.getElementById("heroLead");
+  if (heroLead && !heroReducedMotion) {
+    setTimeout(function () { heroLead.classList.add("is-hidden"); }, 3500);
   }
 
   /* --- Reveal on scroll ---------------------------------------------------- */

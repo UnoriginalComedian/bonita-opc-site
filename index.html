@@ -96,9 +96,16 @@
 
 <section class="hero hero--video" aria-label="Welcome">
   <div class="hero__media">
-    <!-- Muted on purpose — the site stays silent. site.js pauses this
-         automatically for visitors who have reduced motion turned on,
-         which leaves the poster frame showing as a static image. -->
+    <!-- Lee (elder, site approval) asked that the Word lead, not the cross —
+         the sanctuary shot centers the cross, which he'd rather have "roll in
+         as secondary." So the Bible holds the frame first; site.js fades it
+         out a few seconds in to reveal the sanctuary footage underneath,
+         which keeps looping the same as before. Reduced-motion visitors get
+         the Bible image permanently and never see the fade — one static
+         image, already the preferred one, so nothing else needs to change
+         for them. TODO: swap assets/img/bible-table.jpg (licensed stock) for
+         a real photo of one of Bonita's own pew Bibles when there's one. -->
+    <img class="hero__lead" id="heroLead" src="assets/img/bible-table.jpg" alt="An open Bible.">
     <video class="hero__poster" id="heroVideo" autoplay muted loop playsinline
            poster="assets/img/hero-poster.jpg">
       <source src="assets/video/hero.webm" type="video/webm">
