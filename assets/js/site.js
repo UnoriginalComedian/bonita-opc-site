@@ -75,7 +75,7 @@
      else to show them since the video is already paused above. */
   var heroLead = document.getElementById("heroLead");
   if (heroLead && !heroReducedMotion) {
-    setTimeout(function () { heroLead.classList.add("is-hidden"); }, 3500);
+    setTimeout(function () { heroLead.classList.add("is-hidden"); }, 5500);
   }
 
   /* --- Reveal on scroll ---------------------------------------------------- */

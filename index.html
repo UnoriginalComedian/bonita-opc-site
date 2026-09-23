@@ -21,6 +21,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Vollkorn:ital,wght@0,400..700;1,400..600&family=Alegreya+Sans:ital,wght@0,400;0,500;0,700;1,400&display=swap" rel="stylesheet">
+<link rel="preload" as="image" href="assets/img/bible-table.jpg" fetchpriority="high">
 <link rel="stylesheet" href="assets/css/site.css">
 
 <!-- Tells Google the who/where/when of the church. Keep it in step with the
@@ -31,7 +32,7 @@
   "@type": "Church",
   "name": "Bonita Orthodox Presbyterian Church",
   "url": "https://www.bonitaopc.org",
-  "telephone": "(619) 475-3752",
+  "email": "Bonitaopc.5111@gmail.com",
   "image": "https://www.bonitaopc.org/assets/img/church-building-t.jpg",
   "address": {
     "@type": "PostalAddress",
@@ -105,7 +106,7 @@
          image, already the preferred one, so nothing else needs to change
          for them. TODO: swap assets/img/bible-table.jpg (licensed stock) for
          a real photo of one of Bonita's own pew Bibles when there's one. -->
-    <img class="hero__lead" id="heroLead" src="assets/img/bible-table.jpg" alt="An open Bible.">
+    <img class="hero__lead" id="heroLead" src="assets/img/bible-table.jpg" alt="An open Bible." fetchpriority="high">
     <video class="hero__poster" id="heroVideo" autoplay muted loop playsinline
            poster="assets/img/hero-poster.jpg">
       <source src="assets/video/hero.webm" type="video/webm">
@@ -195,11 +196,6 @@
         the front doors. Come in through the front; someone will be there to meet you.</dd>
       </div>
       <div class="facts__row">
-        <dt class="facts__term">How long</dt>
-        <dd class="facts__def">The morning service runs about an hour and a quarter. The
-        evening service is shorter. <span class="todo" title="Confirm this with the church before launch">confirm</span></dd>
-      </div>
-      <div class="facts__row">
         <dt class="facts__term">The service itself</dt>
         <dd class="facts__def">We sing, we pray, we read the Scriptures together, and we
         sit under the preaching of the Word. You will not be asked to stand, introduce
@@ -208,7 +204,7 @@
       <div class="facts__row">
         <dt class="facts__term">Your children</dt>
         <dd class="facts__def">Children stay with their families in the service, and we are
-        glad to hear them. <span class="todo" title="Confirm this with the church before launch">confirm</span></dd>
+        glad to hear them. We also have a nursery.</dd>
       </div>
     </dl>
 
@@ -284,14 +280,14 @@
 <section class="section section--stock">
   <div class="wrap">
     <div class="section-head" style="margin-bottom:2rem;">
-      <p class="label">Session and diaconate</p>
+      <p class="label">Elders and deacons</p>
       <h2>Our leadership</h2>
     </div>
     <div class="people">
-      <div class="person"><img src="assets/img/chism.jpg" alt="Mike Chism" width="276" height="276" loading="lazy"><h3>Mike Chism</h3><p class="role">Elder</p></div>
-      <div class="person"><img src="assets/img/0d314f1f-1630-4745-9dfe-f92c20497b80_1_105_c.jpg" alt="Lee McMorris" width="276" height="276" loading="lazy"><h3>Lee McMorris</h3><p class="role">Elder</p></div>
-      <div class="person"><img src="assets/img/skidmore.jpg" alt="Maynard Skidmore" width="276" height="276" loading="lazy"><h3>Maynard Skidmore</h3><p class="role">Elder</p></div>
-      <div class="person"><img src="assets/img/weld.jpg" alt="Andy Weld" width="276" height="276" loading="lazy"><h3>Andy Weld</h3><p class="role">Elder</p></div>
+      <div class="person"><img src="assets/img/chism.jpg" alt="Mike Chism" width="276" height="276" loading="lazy"><h3>Mike Chism</h3><p class="role">Ordained Elder</p></div>
+      <div class="person"><img src="assets/img/0d314f1f-1630-4745-9dfe-f92c20497b80_1_105_c.jpg" alt="Lee McMorris" width="276" height="276" loading="lazy"><h3>Lee McMorris</h3><p class="role">Ordained Elder</p></div>
+      <div class="person"><img src="assets/img/skidmore.jpg" alt="Maynard Skidmore" width="276" height="276" loading="lazy"><h3>Maynard Skidmore</h3><p class="role">Ordained Elder</p></div>
+      <div class="person"><img src="assets/img/weld.jpg" alt="Andy Weld" width="276" height="276" loading="lazy"><h3>Andy Weld</h3><p class="role">Ordained Elder</p></div>
       <div class="person"><img src="assets/img/york.jpg" alt="Scott York" width="276" height="276" loading="lazy"><h3>Scott York</h3><p class="role">Deacon</p></div>
     </div>
   </div>
@@ -306,7 +302,7 @@
         <h2>5111 Central Avenue</h2>
         <p class="lede">Bonita, CA 91902</p>
         <p>Off Central Avenue, with plenty of parking on site.</p>
-        <p><a href="tel:+16194753752">(619) 475-3752</a></p>
+        <p><a href="mailto:Bonitaopc.5111@gmail.com">Bonitaopc.5111@gmail.com</a></p>
         <div class="hero__cta" style="margin-top:1.25rem;">
           <a class="btn btn--primary" href="https://maps.google.com/?q=5111+Central+Ave,+Bonita,+CA+91902" target="_blank" rel="noopener">Directions</a>
           <a class="btn btn--ghost" href="contact.html">Contact us</a>
@@ -355,7 +351,7 @@
         <address>
           5111 Central Avenue<br>
           Bonita, CA 91902<br>
-          <a href="tel:+16194753752">(619) 475-3752</a>
+          <a href="mailto:Bonitaopc.5111@gmail.com">Bonitaopc.5111@gmail.com</a>
         </address>
         <ul style="margin-top:1rem;">
           <li><a href="https://maps.google.com/?q=5111+Central+Ave,+Bonita,+CA+91902" target="_blank" rel="noopener">Directions</a></li>
@@ -370,7 +366,7 @@
 
     <div class="site-footer__bottom">
       <p style="margin:0;">&copy; <span id="yr">2026</span> Bonita Orthodox Presbyterian Church. All rights reserved.</p>
-      <p style="margin:0;"><a href="https://maps.google.com/?q=5111+Central+Ave,+Bonita,+CA+91902" target="_blank" rel="noopener">5111 Central Avenue, Bonita, CA 91902</a> &middot; <a href="tel:+16194753752">(619) 475-3752</a></p>
+      <p style="margin:0;"><a href="https://maps.google.com/?q=5111+Central+Ave,+Bonita,+CA+91902" target="_blank" rel="noopener">5111 Central Avenue, Bonita, CA 91902</a> &middot; <a href="mailto:Bonitaopc.5111@gmail.com">Bonitaopc.5111@gmail.com</a></p>
     </div>
   </div>
 </footer>
