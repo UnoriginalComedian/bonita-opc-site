@@ -659,6 +659,20 @@ body.home .site-header.is-stuck {
 }
 .map-frame iframe { width: 100%; height: 100%; border: 0; }
 
+/* Google's embed loads its own JS bundle the moment the iframe exists, even
+   with loading="lazy" — a real cost for a map most visitors never open.
+   This stands in for it until clicked, so nothing map-related loads unless
+   someone actually asks for it. */
+.map-frame__load {
+  width: 100%; height: 100%; display: flex; flex-direction: column;
+  align-items: center; justify-content: center; gap: .6rem;
+  background: var(--plaster-deep); border: 0; cursor: pointer;
+  font: inherit; font-size: 1.02rem; font-weight: 600; color: var(--ink-soft);
+  transition: background-color .15s linear, color .15s linear;
+}
+.map-frame__load:hover { background: var(--rule); color: var(--ink); }
+.map-frame__load svg { width: 30px; height: 30px; color: var(--tile); }
+
 /* --- 19. Forms ----------------------------------------------------------- */
 
 .form-grid { display: grid; gap: 1rem; grid-template-columns: repeat(auto-fit, minmax(min(100%, 13rem), 1fr)); }

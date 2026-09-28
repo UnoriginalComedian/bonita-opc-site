@@ -96,6 +96,20 @@
     reveals.forEach(function (el) { el.classList.add("is-in"); });
   }
 
+  /* --- Click-to-load map ---------------------------------------------------
+     Google's embed pulls its own JS the moment the iframe exists, so we
+     don't create it until someone actually clicks. */
+  document.querySelectorAll(".map-frame__load").forEach(function (btn) {
+    btn.addEventListener("click", function () {
+      var iframe = document.createElement("iframe");
+      iframe.src = btn.getAttribute("data-map-src");
+      iframe.title = btn.getAttribute("data-map-title") || "Map";
+      iframe.loading = "lazy";
+      iframe.referrerPolicy = "no-referrer-when-downgrade";
+      btn.replaceWith(iframe);
+    });
+  });
+
   /* --- Sermon archive filter ---------------------------------------------- */
   var filter = document.querySelector("[data-sermon-filter]");
   if (filter) {
