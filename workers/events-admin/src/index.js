@@ -332,6 +332,9 @@ ${bodyHtml}
      moving between admin pages doesn't flash the login form each time.
      Only falls back to the login screen if the saved password turns out
      to be stale (rare: cleared/changed server-side mid-session). */
+  // Runs at the end of the script (see below), after the page-specific code
+  // has defined window.onAdminReady; running it earlier left lists empty.
+  function autoEnter() {
   var saved = "";
   try { saved = localStorage.getItem(SESSION_KEY) || sessionStorage.getItem(SESSION_KEY) || ""; } catch (e) {}
   if (saved) {
@@ -346,11 +349,13 @@ ${bodyHtml}
       }
     });
   }
+  }
 
   window.escapeHtml = escapeHtml;
   window.authHeaders = function () { return authHeaders(); };
   window.initPlaces = function () {}; /* no-op unless a page below replaces it */
 ${scriptExtra || ""}
+  autoEnter();
 })();
 </script>
 ${includeMaps ? '<script src="https://maps.googleapis.com/maps/api/js?key=__GOOGLE_MAPS_API_KEY__&libraries=places&callback=initPlaces&loading=async" async defer></script>' : ""}
