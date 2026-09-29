@@ -37,6 +37,8 @@ step, no framework. Repo: `UnoriginalComedian/bonita-opc-site`, local checkout a
 - **Password**: ask Joel (never write it in this repo: it is public, and this doc was
   once served on the live site). Set as a Worker secret, not in source. Change
   it with `wrangler secret put ADMIN_PASSWORD` from `workers/events-admin/`.
+  Changed 2026-09-29 after the old one was found in the public repo history; the
+  crew's sign-in sheet PDF lives outside this repo (never commit it).
 - **Pages**: `/admin/events`, `/admin/news`, `/admin/sermon`, `/admin/settings` — a
   shared header nav, one login gated by a password stored in `sessionStorage`
   (`bopc-admin-pw`) so it doesn't re-prompt when moving between pages.
