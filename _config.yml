@@ -1,0 +1,7 @@
+# GitHub Pages (Jekyll) settings. Keeps internal notes and the admin Worker's
+# source off the public website; they stay in the repo, just not published.
+exclude:
+  - docs
+  - workers
+  - README.md
+  - COMMUNITY-FEATURES.md

@@ -34,7 +34,8 @@ step, no framework. Repo: `UnoriginalComedian/bonita-opc-site`, local checkout a
 ## 3. Admin system
 
 - **URL**: `bonitaopc.org/admin` (redirects to `/admin/events`)
-- **Password**: `Bonita-Bells-1972` (set as a Worker secret, not in source). Change
+- **Password**: ask Joel (never write it in this repo: it is public, and this doc was
+  once served on the live site). Set as a Worker secret, not in source. Change
   it with `wrangler secret put ADMIN_PASSWORD` from `workers/events-admin/`.
 - **Pages**: `/admin/events`, `/admin/news`, `/admin/sermon`, `/admin/settings` — a
   shared header nav, one login gated by a password stored in `sessionStorage`
