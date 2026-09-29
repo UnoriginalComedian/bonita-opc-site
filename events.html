@@ -163,27 +163,23 @@
 </section>
 
 
-<!-- Email updates — Mailchimp free tier, per docs/MODERNIZATION-ROADMAP.md.
-     SET UP BEFORE LAUNCH:
-       1. Create a free Mailchimp account (mailchimp.com) if the church
-          doesn't have one, and one Audience for the congregation.
-       2. Audience → Signup forms → Embedded forms → copy the <form> tag's
-          action URL (posts to a *.list-manage.com address) and the hidden
-          "u" and "id" field values.
-       3. Replace the three CONFIRM placeholders below with those real
-          values. Nothing else about this form needs to change. -->
-<section class="section section--stock" hidden>
-  <!-- Hidden until the Mailchimp steps above are done: remove "hidden" from
-       this section at the same time as the CONFIRM values are filled in. -->
+<!-- Email updates — Mailchimp free tier (Joel's existing "Chism Cinematics"
+     account/audience — free plan only supports one audience, so church
+     subscribers share that same list; revisit if that pool fills up). -->
+<section class="section section--stock">
   <div class="wrap wrap--narrow" style="text-align:center;">
     <p class="label">Stay in the loop</p>
     <h2>Get updates by email</h2>
     <p class="lede" style="margin-inline:auto;">Announcements, new sermons, and anything
     added to the calendar &mdash; sent only when there is something worth sending.</p>
-    <form class="form-grid" style="max-width:26rem;margin:1.5rem auto 0;" action="https://CONFIRM.list-manage.com/subscribe/post?u=CONFIRM&amp;id=CONFIRM" method="post" target="_blank">
+    <form class="form-grid" style="max-width:26rem;margin:1.5rem auto 0;" action="https://chismcine.us11.list-manage.com/subscribe/post?u=4bd20052e54ee629a3090492d&amp;id=7115e6f554&amp;f_id=003096e0f0" method="post" target="_blank">
       <div class="field field--full">
         <label for="mc-email" class="visually-hidden">Email address</label>
         <input id="mc-email" type="email" name="EMAIL" placeholder="you@example.com" required>
+      </div>
+      <!-- Bot trap — real people never see or fill this in; leave it here. -->
+      <div aria-hidden="true" style="position:absolute;left:-5000px;">
+        <input type="text" name="b_4bd20052e54ee629a3090492d_7115e6f554" tabindex="-1" value="">
       </div>
       <div class="field--full">
         <button class="btn btn--primary" type="submit" style="width:100%;">Sign up for updates</button>
