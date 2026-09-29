@@ -352,16 +352,22 @@ body.home .site-header.is-stuck {
 .hero__inner { padding-block: clamp(4.5rem, 13vw, 8rem) clamp(2.75rem, 7vw, 4.5rem); }
 .hero h1 { color: #fff; max-width: 15ch; margin-bottom: .35em; }
 
-/* Scripture, not a slogan — the reference churches both lead with the Word. */
+/* Scripture, not a slogan — the reference churches both lead with the Word.
+   The verse carries the hero as the big heading; "Gathered in Bonita since
+   1972" drops to a small tagline underneath it. */
 .hero__verse {
-  font-family: var(--font-display); font-style: italic;
-  font-size: clamp(1.1rem, 2.1vw, 1.4rem); line-height: 1.45;
-  color: #fff; max-width: 34ch; margin: 0 0 .5rem;
-  padding-left: 1rem; border-left: 2px solid var(--brass);
+  font-family: var(--font-display); font-style: italic; font-weight: 600;
+  color: #fff; max-width: 22ch; margin: 0 0 .5rem;
+  padding-left: 1.1rem; border-left: 3px solid var(--brass);
 }
 .hero__verse cite {
   display: block; font-style: normal; font-variant-caps: small-caps;
-  font-size: 1.02rem; letter-spacing: .06em; color: var(--brass-onDark); margin-top: .45rem;
+  font-size: 1.05rem; letter-spacing: .06em; color: var(--brass-onDark); margin-top: .5rem;
+}
+.hero__tagline {
+  font-family: var(--font-body); font-variant-caps: small-caps;
+  font-size: clamp(1.05rem, 2vw, 1.3rem); letter-spacing: .03em;
+  color: rgba(255,255,255,.8); margin: 0 0 1.5rem;
 }
 .hero__cta { display: flex; flex-wrap: wrap; gap: .7rem; margin-top: 2rem; }
 
@@ -383,6 +389,7 @@ body.home .site-header.is-stuck {
 }
 .hero--video .hero__inner { padding-top: clamp(6rem, 16vw, 10rem); }
 .hero--video h1 { font-size: clamp(2.35rem, 6.4vw, 4.5rem); max-width: 17ch; }
+.hero--video .hero__verse { font-size: clamp(2.1rem, 5.6vw, 4rem); line-height: 1.14; }
 
 .hero__poster--kenburns {
   animation: kenburns 22s ease-in-out infinite alternate;
@@ -739,9 +746,9 @@ body.home .site-header.is-stuck {
    page should not decorate its content either. */
 
 @keyframes settle { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
-.hero h1, .hero__verse, .hero__cta { animation: settle .5s cubic-bezier(.2,.6,.3,1) backwards; }
-.hero h1 { animation-delay: .04s; }
-.hero__verse { animation-delay: .13s; }
+.hero h1, .hero__verse, .hero__tagline, .hero__cta { animation: settle .5s cubic-bezier(.2,.6,.3,1) backwards; }
+.hero__verse { animation-delay: .04s; }
+.hero__tagline { animation-delay: .13s; }
 .hero__cta { animation-delay: .22s; }
 
 @media (prefers-reduced-motion: reduce) {
