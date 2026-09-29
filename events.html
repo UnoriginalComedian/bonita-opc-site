@@ -109,45 +109,28 @@
         <p class="label">Coming up</p>
         <h2 style="margin-bottom:1.5rem;">Upcoming events</h2>
 
-        <!-- Live events come from the admin page at
-             https://bonita-events-admin.joelpchism.workers.dev/admin —
-             add, edit, or remove them there, no code involved. If that
-             can't be reached, the two events below show as a fallback. -->
-        <div id="upcoming-events" data-events-api="https://bonita-events-admin.joelpchism.workers.dev/api/events">
+        <!-- Live events come from bonitaopc.org/admin — add, edit, or
+             remove them there, no code involved. If that can't be
+             reached, the event below shows as a fallback. -->
+        <div id="upcoming-events" data-events-api="https://bonitaopc.org/api/events">
           <div class="event">
-            <div class="event__date"><span class="m">Aug</span><span class="d">26</span></div>
+            <div class="event__date"><span class="m">Sep</span><span class="d">30</span></div>
             <div class="event__body">
               <h3>Family Bible Study &amp; Prayer</h3>
-              <p>Wednesday, August 26, 2026 &middot; Rohr Park, Gate A</p>
-            </div>
-          </div>
-
-          <div class="event">
-            <div class="event__date"><span class="m">Aug</span><span class="d">31</span></div>
-            <div class="event__body">
-              <h3>Feast Day Fellowship Meal</h3>
-              <p>Sunday, August 31, 2026 &middot; Bonita OPC, after the morning service</p>
+              <p>Wednesday, 6:00&ndash;8:00 p.m. &middot; Rohr Park, Gate A</p>
             </div>
           </div>
         </div>
 
         <h2 style="margin:3rem 0 1.5rem;">Recently</h2>
 
-        <div class="event">
-          <div class="event__date"><span class="m">Sep</span><span class="d">19</span></div>
-          <div class="event__body"><h3><a href="#taste-of-bonita">Taste of Bonita Outreach</a></h3><p>Saturday, September 19, 2026 &middot; Bonita Museum &amp; Cultural Center</p></div>
-        </div>
-        <div class="event">
-          <div class="event__date"><span class="m">Aug</span><span class="d">22</span></div>
-          <div class="event__body"><h3>Church Workday</h3><p>Saturday, August 22, 2026 &middot; Bonita OPC</p></div>
-        </div>
-        <div class="event">
-          <div class="event__date"><span class="m">Aug</span><span class="d">19</span></div>
-          <div class="event__body"><h3>Family Bible Study &amp; Prayer</h3><p>Wednesday, August 19, 2026 &middot; Rohr Park, Gate A</p></div>
-        </div>
-        <div class="event">
-          <div class="event__date"><span class="m">Aug</span><span class="d">12</span></div>
-          <div class="event__body"><h3>Family Bible Study &amp; Prayer</h3><p>Wednesday, August 12, 2026 &middot; Rohr Park, Gate A</p></div>
+        <!-- Same source, past events, most recent first. Also managed
+             at bonitaopc.org/admin. -->
+        <div id="recent-events" data-events-api="https://bonitaopc.org/api/events" data-events-recent="6">
+          <div class="event">
+            <div class="event__date"><span class="m">Sep</span><span class="d">19</span></div>
+            <div class="event__body"><h3><a href="#taste-of-bonita">Taste of Bonita Outreach</a></h3><p>Saturday, September 19, 2026 &middot; Bonita Museum &amp; Cultural Center</p></div>
+          </div>
         </div>
       </div>
 
@@ -219,22 +202,10 @@
       <h2>From the bulletin</h2>
     </div>
 
-    <div class="grid grid--3">
-
-      <div class="panel">
-        <p class="label" style="margin-bottom:.5rem;">Week of August 23, 2026</p>
-        <h3>Communion and Feast Day next Sunday</h3>
-        <p>Next Sunday we come to the Lord&rsquo;s Table, and afterwards share a meal together.
-        A sign-up sheet for dishes is on the back table.</p>
-      </div>
-
-      <div class="panel">
-        <p class="label" style="margin-bottom:.5rem;">Week of August 16, 2026</p>
-        <h3>Church workday</h3>
-        <p>The congregation gathered at the church on Saturday, August 22 to work on the
-        grounds and building.</p>
-      </div>
-
+    <!-- Live from bonitaopc.org/admin — add, edit, or remove items
+         there, no code involved. If that can't be reached, the item
+         below shows as a fallback. -->
+    <div class="grid grid--3" id="news-items" data-news-api="https://bonitaopc.org/api/news">
       <div class="panel">
         <p class="label" style="margin-bottom:.5rem;">Ongoing</p>
         <h3>Services streamed each Lord&rsquo;s Day</h3>

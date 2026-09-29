@@ -1,11 +1,12 @@
-/* Bonita OPC — events admin.
-   A tiny replacement for the old CMS's admin panel: a password-gated page
-   at /admin where a church volunteer can add, edit, and delete upcoming
-   events without touching code. Events are stored as a single JSON array
-   in Workers KV. The public site (events.html) reads GET /api/events —
-   no password needed for that, since the list itself isn't sensitive. */
-
-const KV_KEY = "events";
+/* Bonita OPC — site admin.
+   A tiny replacement for the old CMS's admin panel: password-gated pages
+   at /admin/events and /admin/news where a church volunteer can add, edit,
+   delete, search, and page through events and news items without touching
+   code. Each collection is a single JSON array in Workers KV — fine up to
+   the low thousands of items, which covers "hundreds of events" with
+   plenty of headroom. The public site reads GET /api/events and /api/news
+   — no password needed for those, since the lists themselves aren't
+   sensitive; only writes require the admin password. */
 
 function corsHeaders(origin) {
   return {
@@ -22,18 +23,85 @@ function json(data, init, origin) {
   });
 }
 
-async function readEvents(env) {
-  const raw = await env.EVENTS.get(KV_KEY);
-  return raw ? JSON.parse(raw) : [];
-}
-
-async function writeEvents(env, events) {
-  await env.EVENTS.put(KV_KEY, JSON.stringify(events));
-}
-
 function checkAuth(request, env) {
   const supplied = request.headers.get("X-Admin-Password") || "";
   return supplied.length > 0 && supplied === env.ADMIN_PASSWORD;
+}
+
+async function readCollection(env, key) {
+  const raw = await env.EVENTS.get(key);
+  return raw ? JSON.parse(raw) : [];
+}
+
+async function writeCollection(env, key, items) {
+  await env.EVENTS.put(key, JSON.stringify(items));
+}
+
+/* One config per collection: KV key, required fields, and how to build a
+   clean record from a request body. Shared by both /api/events and
+   /api/news so adding a third collection later is a few lines, not a
+   copy-pasted route. */
+const COLLECTIONS = {
+  events: {
+    key: "events",
+    required: ["date", "title"],
+    build: (body) => ({ date: body.date, title: body.title, location: body.location || "" }),
+  },
+  news: {
+    key: "news",
+    required: ["label", "title", "body"],
+    build: (body) => ({ label: body.label, title: body.title, body: body.body }),
+  },
+};
+
+async function handleCollection(request, env, origin, collection) {
+  const url = new URL(request.url);
+
+  if (url.pathname === `/api/${collection.name}`) {
+    if (request.method === "GET") {
+      return json(await readCollection(env, collection.key), {}, origin);
+    }
+    if (request.method === "POST") {
+      if (!checkAuth(request, env)) return json({ error: "unauthorized" }, { status: 401 }, origin);
+      const body = await request.json().catch(() => null);
+      if (!body || collection.required.some((f) => !body[f])) {
+        return json({ error: collection.required.join(" and ") + " are required" }, { status: 400 }, origin);
+      }
+      const items = await readCollection(env, collection.key);
+      const item = { id: crypto.randomUUID(), ...collection.build(body) };
+      items.push(item);
+      await writeCollection(env, collection.key, items);
+      return json(item, { status: 201 }, origin);
+    }
+    return json({ error: "method not allowed" }, { status: 405 }, origin);
+  }
+
+  const match = url.pathname.match(new RegExp(`^/api/${collection.name}/([^/]+)$`));
+  if (match) {
+    if (!checkAuth(request, env)) return json({ error: "unauthorized" }, { status: 401 }, origin);
+    const id = match[1];
+    const items = await readCollection(env, collection.key);
+    const idx = items.findIndex((it) => it.id === id);
+    if (idx === -1) return json({ error: "not found" }, { status: 404 }, origin);
+
+    if (request.method === "PUT") {
+      const body = await request.json().catch(() => null);
+      if (!body || collection.required.some((f) => !body[f])) {
+        return json({ error: collection.required.join(" and ") + " are required" }, { status: 400 }, origin);
+      }
+      items[idx] = { id, ...collection.build(body) };
+      await writeCollection(env, collection.key, items);
+      return json(items[idx], {}, origin);
+    }
+    if (request.method === "DELETE") {
+      items.splice(idx, 1);
+      await writeCollection(env, collection.key, items);
+      return json({ ok: true }, {}, origin);
+    }
+    return json({ error: "method not allowed" }, { status: 405 }, origin);
+  }
+
+  return null;
 }
 
 export default {
@@ -46,65 +114,41 @@ export default {
     }
 
     if (url.pathname === "/admin" || url.pathname === "/admin/") {
-      return new Response(ADMIN_HTML, { headers: { "Content-Type": "text/html; charset=utf-8" } });
+      return Response.redirect(url.origin + "/admin/events", 302);
+    }
+    if (url.pathname === "/admin/events") {
+      return htmlPage(eventsPage(), env);
+    }
+    if (url.pathname === "/admin/news") {
+      return htmlPage(newsPage(), env);
     }
 
-    if (url.pathname === "/api/events") {
-      if (request.method === "GET") {
-        const events = await readEvents(env);
-        return json(events, {}, origin);
-      }
-      if (request.method === "POST") {
-        if (!checkAuth(request, env)) return json({ error: "unauthorized" }, { status: 401 }, origin);
-        const body = await request.json().catch(() => null);
-        if (!body || !body.date || !body.title) return json({ error: "date and title are required" }, { status: 400 }, origin);
-        const events = await readEvents(env);
-        const event = {
-          id: crypto.randomUUID(),
-          date: body.date,
-          title: body.title,
-          location: body.location || "",
-        };
-        events.push(event);
-        await writeEvents(env, events);
-        return json(event, { status: 201 }, origin);
-      }
-      return json({ error: "method not allowed" }, { status: 405 }, origin);
-    }
-
-    const eventMatch = url.pathname.match(/^\/api\/events\/([^/]+)$/);
-    if (eventMatch) {
-      if (!checkAuth(request, env)) return json({ error: "unauthorized" }, { status: 401 }, origin);
-      const id = eventMatch[1];
-      const events = await readEvents(env);
-      const idx = events.findIndex((e) => e.id === id);
-      if (idx === -1) return json({ error: "not found" }, { status: 404 }, origin);
-
-      if (request.method === "PUT") {
-        const body = await request.json().catch(() => null);
-        if (!body || !body.date || !body.title) return json({ error: "date and title are required" }, { status: 400 }, origin);
-        events[idx] = { id, date: body.date, title: body.title, location: body.location || "" };
-        await writeEvents(env, events);
-        return json(events[idx], {}, origin);
-      }
-      if (request.method === "DELETE") {
-        events.splice(idx, 1);
-        await writeEvents(env, events);
-        return json({ ok: true }, {}, origin);
-      }
-      return json({ error: "method not allowed" }, { status: 405 }, origin);
+    for (const name of Object.keys(COLLECTIONS)) {
+      const result = await handleCollection(request, env, origin, { name, ...COLLECTIONS[name] });
+      if (result) return result;
     }
 
     return json({ error: "not found" }, { status: 404 }, origin);
   },
 };
 
-const ADMIN_HTML = `<!doctype html>
+function htmlPage(html, env) {
+  return new Response(html.replace("__GOOGLE_MAPS_API_KEY__", env.GOOGLE_MAPS_API_KEY || ""), {
+    headers: { "Content-Type": "text/html; charset=utf-8" },
+  });
+}
+
+/* --- Shared page shell -----------------------------------------------------
+   Header with the Events/News/Back-to-site nav, the shared styles, and the
+   password gate. `active` picks which nav link is current. `bodyHtml` and
+   `scriptExtra` are page-specific. */
+function shell(active, title, bodyHtml, scriptExtra, includeMaps) {
+  return `<!doctype html>
 <html lang="en">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Events Admin | Bonita OPC</title>
+<title>${title} | Bonita OPC Admin</title>
 <style>
   :root {
     --green: #2f4436; --plaster: #f3ebdd; --stock: #fbf6ec; --ink: #241f19;
@@ -117,38 +161,62 @@ const ADMIN_HTML = `<!doctype html>
     line-height: 1.5;
   }
   header {
-    background: var(--green); color: #fff; padding: 1.25rem 1.5rem;
+    background: var(--green); color: #fff; padding: 1rem 1.5rem;
+    display: flex; align-items: center; gap: 1.5rem; flex-wrap: wrap;
   }
-  header h1 { margin: 0; font-size: 1.3rem; }
-  main { max-width: 720px; margin: 0 auto; padding: 1.5rem; }
+  header h1 { margin: 0; font-size: 1.2rem; margin-right: auto; }
+  header nav { display: flex; gap: 1.25rem; align-items: center; }
+  header nav a { color: rgba(255,255,255,.8); text-decoration: none; font-size: .95rem; }
+  header nav a:hover, header nav a[aria-current] { color: #fff; text-decoration: underline; }
+  header nav a.back { border-left: 1px solid rgba(255,255,255,.3); padding-left: 1.25rem; }
+  main { max-width: 760px; margin: 0 auto; padding: 1.5rem; }
   .panel { background: var(--stock); border: 1px solid var(--rule-strong); padding: 1.25rem; margin-bottom: 1.5rem; }
   label { display: block; font-weight: 600; font-size: .92rem; margin-bottom: .25rem; }
-  input {
+  input, textarea {
     width: 100%; padding: .55rem .7rem; margin-bottom: .9rem;
     border: 1px solid var(--rule-strong); border-radius: 2px; font: inherit;
   }
+  textarea { min-height: 5rem; resize: vertical; }
   button {
     background: var(--tile); color: #fff; border: 0; padding: .6rem 1.2rem;
     font: inherit; font-weight: 700; cursor: pointer; border-radius: 2px;
   }
   button:hover { opacity: .9; }
   button.secondary { background: transparent; color: var(--tile); border: 1px solid var(--tile); }
-  .event-row {
+  button:disabled { opacity: .4; cursor: default; }
+  .row {
     display: flex; justify-content: space-between; align-items: center; gap: 1rem;
     padding: .8rem 0; border-bottom: 1px solid var(--rule);
   }
-  .event-row .meta { font-size: .88rem; color: var(--muted); }
-  .event-row .actions { display: flex; gap: .5rem; flex-shrink: 0; }
-  .event-row .actions button { padding: .4rem .8rem; font-size: .85rem; }
+  .row .meta { font-size: .88rem; color: var(--muted); }
+  .row .actions { display: flex; gap: .5rem; flex-shrink: 0; }
+  .row .actions button { padding: .4rem .8rem; font-size: .85rem; }
   #app { display: none; }
   #login { max-width: 360px; margin: 3rem auto 0; }
   .error { color: var(--tile); font-size: .9rem; margin-bottom: .8rem; }
   .empty { color: var(--muted); font-style: italic; padding: 1rem 0; }
+  .search-row { display: flex; gap: .75rem; align-items: center; margin-bottom: 1rem; }
+  .search-row input { margin-bottom: 0; flex: 1; }
+  .search-row .count { font-size: .85rem; color: var(--muted); white-space: nowrap; }
+  .pager { display: flex; gap: .35rem; align-items: center; justify-content: center; margin-top: 1.25rem; flex-wrap: wrap; }
+  .pager button {
+    background: var(--stock); color: var(--ink); border: 1px solid var(--rule-strong);
+    padding: .35rem .7rem; font-size: .85rem; font-weight: 600;
+  }
+  .pager button[aria-current] { background: var(--tile); color: #fff; border-color: var(--tile); }
+  .pager button:disabled { opacity: .35; }
 </style>
 </head>
 <body>
 
-<header><h1>Bonita OPC — Events Admin</h1></header>
+<header>
+  <h1>Bonita OPC Admin</h1>
+  <nav>
+    <a href="/admin/events" ${active === "events" ? 'aria-current="page"' : ""}>Events</a>
+    <a href="/admin/news" ${active === "news" ? 'aria-current="page"' : ""}>News</a>
+    <a href="https://bonitaopc.org" class="back">\u2190 Back to site</a>
+  </nav>
+</header>
 
 <main>
   <div id="login" class="panel">
@@ -159,31 +227,14 @@ const ADMIN_HTML = `<!doctype html>
   </div>
 
   <div id="app">
-    <div class="panel">
-      <h2 id="formTitle" style="margin-top:0;">Add an event</h2>
-      <input type="hidden" id="eventId">
-      <label for="date">Date</label>
-      <input type="date" id="date">
-      <label for="title">Title</label>
-      <input type="text" id="title" placeholder="Family Bible Study &amp; Prayer">
-      <label for="location">Location (optional)</label>
-      <input type="text" id="location" placeholder="Rohr Park, Gate A">
-      <p id="formError" class="error" hidden></p>
-      <button id="saveBtn">Save event</button>
-      <button id="cancelBtn" class="secondary" hidden>Cancel edit</button>
-    </div>
-
-    <div class="panel">
-      <h2 style="margin-top:0;">All events</h2>
-      <div id="list"></div>
-    </div>
+${bodyHtml}
   </div>
 </main>
 
 <script>
 (function () {
   "use strict";
-  var API = location.origin + "/api/events";
+  var SESSION_KEY = "bopc-admin-pw";
   var password = "";
 
   var loginEl = document.getElementById("login");
@@ -191,15 +242,6 @@ const ADMIN_HTML = `<!doctype html>
   var pwEl = document.getElementById("pw");
   var loginBtn = document.getElementById("loginBtn");
   var loginError = document.getElementById("loginError");
-  var listEl = document.getElementById("list");
-  var formTitle = document.getElementById("formTitle");
-  var eventIdEl = document.getElementById("eventId");
-  var dateEl = document.getElementById("date");
-  var titleEl = document.getElementById("title");
-  var locationEl = document.getElementById("location");
-  var saveBtn = document.getElementById("saveBtn");
-  var cancelBtn = document.getElementById("cancelBtn");
-  var formError = document.getElementById("formError");
 
   function escapeHtml(s) {
     return String(s).replace(/[&<>"']/g, function (c) {
@@ -211,94 +253,325 @@ const ADMIN_HTML = `<!doctype html>
     return { "Content-Type": "application/json", "X-Admin-Password": password };
   }
 
-  function resetForm() {
-    eventIdEl.value = "";
-    dateEl.value = "";
-    titleEl.value = "";
-    locationEl.value = "";
-    formTitle.textContent = "Add an event";
-    cancelBtn.hidden = true;
-    formError.hidden = true;
+  function tryPassword(pw, onResult) {
+    fetch(location.origin + "/api/events/__check__", { method: "DELETE", headers: { "X-Admin-Password": pw } })
+      .then(function (r) { onResult(r.status !== 401); })
+      .catch(function () { onResult(false); });
   }
 
-  function loadEvents() {
-    fetch(API).then(function (r) { return r.json(); }).then(function (events) {
-      events.sort(function (a, b) { return a.date < b.date ? -1 : a.date > b.date ? 1 : 0; });
-      if (!events.length) {
-        listEl.innerHTML = '<p class="empty">No events yet.</p>';
-        return;
-      }
-      listEl.innerHTML = events.map(function (e) {
-        return '<div class="event-row">' +
-          '<div><strong>' + escapeHtml(e.title) + '</strong><br>' +
-          '<span class="meta">' + escapeHtml(e.date) + (e.location ? " \\u00b7 " + escapeHtml(e.location) : "") + '</span></div>' +
-          '<div class="actions">' +
-          '<button type="button" data-edit="' + e.id + '">Edit</button>' +
-          '<button type="button" class="secondary" data-delete="' + e.id + '">Delete</button>' +
-          '</div></div>';
-      }).join("");
-
-      listEl.querySelectorAll("[data-edit]").forEach(function (btn) {
-        btn.addEventListener("click", function () {
-          var e = events.filter(function (ev) { return ev.id === btn.getAttribute("data-edit"); })[0];
-          if (!e) return;
-          eventIdEl.value = e.id;
-          dateEl.value = e.date;
-          titleEl.value = e.title;
-          locationEl.value = e.location || "";
-          formTitle.textContent = "Edit event";
-          cancelBtn.hidden = false;
-          window.scrollTo(0, 0);
-        });
-      });
-      listEl.querySelectorAll("[data-delete]").forEach(function (btn) {
-        btn.addEventListener("click", function () {
-          if (!confirm("Delete this event?")) return;
-          fetch(API + "/" + btn.getAttribute("data-delete"), { method: "DELETE", headers: authHeaders() })
-            .then(loadEvents);
-        });
-      });
-    });
+  function enterApp() {
+    loginEl.style.display = "none";
+    appEl.style.display = "block";
+    if (window.onAdminReady) window.onAdminReady(authHeaders);
   }
 
   loginBtn.addEventListener("click", function () {
-    password = pwEl.value;
-    fetch(API + "/__check__", { method: "DELETE", headers: authHeaders() }).then(function (r) {
-      if (r.status === 401) {
+    var candidate = pwEl.value;
+    tryPassword(candidate, function (ok) {
+      if (!ok) {
         loginError.hidden = false;
-        password = "";
         return;
       }
+      password = candidate;
       loginError.hidden = true;
-      loginEl.style.display = "none";
-      appEl.style.display = "block";
-      loadEvents();
+      try { sessionStorage.setItem(SESSION_KEY, password); } catch (e) {}
+      enterApp();
     });
   });
   pwEl.addEventListener("keydown", function (e) { if (e.key === "Enter") loginBtn.click(); });
 
-  saveBtn.addEventListener("click", function () {
-    var body = { date: dateEl.value, title: titleEl.value.trim(), location: locationEl.value.trim() };
-    if (!body.date || !body.title) {
-      formError.textContent = "Date and title are required.";
-      formError.hidden = false;
-      return;
-    }
-    var id = eventIdEl.value;
-    var req = id
-      ? fetch(API + "/" + id, { method: "PUT", headers: authHeaders(), body: JSON.stringify(body) })
-      : fetch(API, { method: "POST", headers: authHeaders(), body: JSON.stringify(body) });
-    req.then(function (r) {
-      if (!r.ok) throw new Error();
-      resetForm();
-      loadEvents();
-    }).catch(function () {
-      formError.textContent = "Could not save \\u2014 try again.";
-      formError.hidden = false;
+  /* Skip the login screen if this tab already proved the password once. */
+  var saved = "";
+  try { saved = sessionStorage.getItem(SESSION_KEY) || ""; } catch (e) {}
+  if (saved) {
+    tryPassword(saved, function (ok) {
+      if (ok) { password = saved; enterApp(); }
+      else { try { sessionStorage.removeItem(SESSION_KEY); } catch (e) {} }
     });
-  });
-  cancelBtn.addEventListener("click", resetForm);
+  }
+
+  window.escapeHtml = escapeHtml;
+  window.authHeaders = function () { return authHeaders(); };
+  window.initPlaces = function () {}; /* no-op unless a page below replaces it */
+${scriptExtra || ""}
 })();
 </script>
+${includeMaps ? '<script src="https://maps.googleapis.com/maps/api/js?key=__GOOGLE_MAPS_API_KEY__&libraries=places&callback=initPlaces&loading=async" async defer></script>' : ""}
 </body>
 </html>`;
+}
+
+/* Search + numbered pagination, shared by both list pages. Everything is
+   fetched once and paged/filtered client-side — even a couple thousand
+   small JSON records is a trivial payload, so this stays simple instead
+   of building out server-side paging for a scale the church won't hit. */
+const PAGER_JS = `
+  function makePager(opts) {
+    var searchEl = document.getElementById(opts.searchField);
+    var countEl = document.getElementById(opts.countField);
+    var listEl = document.getElementById(opts.listField);
+    var pagerEl = document.getElementById(opts.pagerField);
+    var pageSize = 25;
+    var page = 1;
+    var all = [];
+
+    function matches(item, q) {
+      if (!q) return true;
+      q = q.toLowerCase();
+      return opts.searchFields.some(function (f) { return (item[f] || "").toLowerCase().indexOf(q) !== -1; });
+    }
+
+    function render() {
+      var q = searchEl.value.trim();
+      var filtered = all.filter(function (it) { return matches(it, q); });
+      var totalPages = Math.max(1, Math.ceil(filtered.length / pageSize));
+      if (page > totalPages) page = totalPages;
+      var start = (page - 1) * pageSize;
+      var pageItems = filtered.slice(start, start + pageSize);
+
+      countEl.textContent = filtered.length + (filtered.length === 1 ? " item" : " items") +
+        (filtered.length !== all.length ? " (of " + all.length + ")" : "");
+
+      if (!pageItems.length) {
+        listEl.innerHTML = '<p class="empty">' + opts.emptyLabel + '</p>';
+      } else {
+        listEl.innerHTML = pageItems.map(function (it) {
+          return '<div class="row"><div><strong>' + escapeHtml(it[opts.titleField]) + '</strong><br>' +
+            '<span class="meta">' + escapeHtml(opts.metaLine(it)) + '</span></div>' +
+            '<div class="actions">' +
+            '<button type="button" data-edit="' + it.id + '">Edit</button>' +
+            '<button type="button" class="secondary" data-delete="' + it.id + '">Delete</button>' +
+            '</div></div>';
+        }).join("");
+        listEl.querySelectorAll("[data-edit]").forEach(function (btn) {
+          btn.addEventListener("click", function () {
+            var it = all.filter(function (x) { return x.id === btn.getAttribute("data-edit"); })[0];
+            if (it) opts.onEdit(it);
+          });
+        });
+        listEl.querySelectorAll("[data-delete]").forEach(function (btn) {
+          btn.addEventListener("click", function () {
+            if (!confirm(opts.deleteConfirm)) return;
+            fetch(opts.api + "/" + btn.getAttribute("data-delete"), { method: "DELETE", headers: authHeaders() })
+              .then(reload);
+          });
+        });
+      }
+
+      var pagerHtml = '<button type="button" data-page="prev" ' + (page <= 1 ? "disabled" : "") + '>\\u2039 Prev</button>';
+      var windowStart = Math.max(1, page - 3);
+      var windowEnd = Math.min(totalPages, windowStart + 6);
+      for (var p = windowStart; p <= windowEnd; p++) {
+        pagerHtml += '<button type="button" data-page="' + p + '" ' + (p === page ? 'aria-current="page"' : "") + '>' + p + '</button>';
+      }
+      pagerHtml += '<button type="button" data-page="next" ' + (page >= totalPages ? "disabled" : "") + '>Next \\u203a</button>';
+      pagerEl.innerHTML = totalPages > 1 ? pagerHtml : "";
+      pagerEl.querySelectorAll("[data-page]").forEach(function (btn) {
+        btn.addEventListener("click", function () {
+          var v = btn.getAttribute("data-page");
+          if (v === "prev") page = Math.max(1, page - 1);
+          else if (v === "next") page = Math.min(totalPages, page + 1);
+          else page = parseInt(v, 10);
+          render();
+          window.scrollTo(0, listEl.offsetTop - 20);
+        });
+      });
+    }
+
+    function reload() {
+      return fetch(opts.api).then(function (r) { return r.json(); }).then(function (items) {
+        all = items;
+        page = 1;
+        render();
+      });
+    }
+
+    searchEl.addEventListener("input", function () { page = 1; render(); });
+    return { reload: reload };
+  }
+`;
+
+function searchPagerHtml(prefix) {
+  return `
+    <div class="search-row">
+      <input type="search" id="${prefix}Search" placeholder="Search\u2026">
+      <span class="count" id="${prefix}Count"></span>
+    </div>
+    <div id="${prefix}List"></div>
+    <div class="pager" id="${prefix}Pager"></div>`;
+}
+
+function eventsPage() {
+  const body = `
+    <h2 style="margin-top:0;">Add an event</h2>
+    <div class="panel">
+      <input type="hidden" id="eventId">
+      <label for="eventDate">Date</label>
+      <input type="date" id="eventDate">
+      <label for="eventTitle">Title</label>
+      <input type="text" id="eventTitle" placeholder="Family Bible Study &amp; Prayer">
+      <label for="eventLocation">Location (optional)</label>
+      <input type="text" id="eventLocation" placeholder="Start typing an address\u2026" autocomplete="off">
+      <p id="eventsFormError" class="error" hidden></p>
+      <button id="eventsSaveBtn">Save event</button>
+      <button id="eventsCancelBtn" class="secondary" hidden>Cancel edit</button>
+    </div>
+
+    <h2 id="eventsFormTitle">All events</h2>
+    <div class="panel">
+      ${searchPagerHtml("events")}
+    </div>`;
+
+  const script = `${PAGER_JS}
+  window.initPlaces = function () {
+    var input = document.getElementById("eventLocation");
+    if (!input || !window.google || !google.maps || !google.maps.places) return;
+    var ac = new google.maps.places.Autocomplete(input, { fields: ["formatted_address"] });
+    ac.addListener("place_changed", function () {
+      var place = ac.getPlace();
+      if (place && place.formatted_address) input.value = place.formatted_address;
+    });
+  };
+
+  window.onAdminReady = function () {
+    var idEl = document.getElementById("eventId");
+    var dateEl = document.getElementById("eventDate");
+    var titleEl = document.getElementById("eventTitle");
+    var locationEl = document.getElementById("eventLocation");
+    var saveBtn = document.getElementById("eventsSaveBtn");
+    var cancelBtn = document.getElementById("eventsCancelBtn");
+    var formError = document.getElementById("eventsFormError");
+    var sectionTitle = document.getElementById("eventsFormTitle");
+    var addHeading = document.querySelector("main h2");
+
+    function resetForm() {
+      idEl.value = ""; dateEl.value = ""; titleEl.value = ""; locationEl.value = "";
+      addHeading.textContent = "Add an event";
+      cancelBtn.hidden = true;
+      formError.hidden = true;
+    }
+
+    var pager = makePager({
+      api: location.origin + "/api/events",
+      searchField: "eventsSearch", countField: "eventsCount", listField: "eventsList", pagerField: "eventsPager",
+      searchFields: ["title", "location", "date"], titleField: "title",
+      emptyLabel: "No events yet.", deleteConfirm: "Delete this event?",
+      metaLine: function (e) { return e.date + (e.location ? " \\u00b7 " + e.location : ""); },
+      onEdit: function (e) {
+        idEl.value = e.id; dateEl.value = e.date; titleEl.value = e.title; locationEl.value = e.location || "";
+        addHeading.textContent = "Edit event";
+        cancelBtn.hidden = false;
+        window.scrollTo(0, 0);
+      },
+    });
+
+    saveBtn.addEventListener("click", function () {
+      var body = { date: dateEl.value, title: titleEl.value.trim(), location: locationEl.value.trim() };
+      if (!body.date || !body.title) {
+        formError.textContent = "Date and title are required.";
+        formError.hidden = false;
+        return;
+      }
+      var id = idEl.value;
+      var api = location.origin + "/api/events";
+      var req = id
+        ? fetch(api + "/" + id, { method: "PUT", headers: authHeaders(), body: JSON.stringify(body) })
+        : fetch(api, { method: "POST", headers: authHeaders(), body: JSON.stringify(body) });
+      req.then(function (r) {
+        if (!r.ok) throw new Error();
+        resetForm();
+        pager.reload();
+      }).catch(function () {
+        formError.textContent = "Could not save \\u2014 try again.";
+        formError.hidden = false;
+      });
+    });
+    cancelBtn.addEventListener("click", resetForm);
+
+    pager.reload();
+  };`;
+
+  return shell("events", "Events", body, script, true);
+}
+
+function newsPage() {
+  const body = `
+    <h2 style="margin-top:0;">Add a news item</h2>
+    <div class="panel">
+      <input type="hidden" id="newsId">
+      <label for="newsLabel">Label</label>
+      <input type="text" id="newsLabel" placeholder="Week of August 23, 2026 (or &quot;Ongoing&quot;)">
+      <label for="newsTitle">Title</label>
+      <input type="text" id="newsTitle" placeholder="Communion and Feast Day next Sunday">
+      <label for="newsBody">Body</label>
+      <textarea id="newsBody" placeholder="A sentence or two."></textarea>
+      <p id="newsFormError" class="error" hidden></p>
+      <button id="newsSaveBtn">Save news item</button>
+      <button id="newsCancelBtn" class="secondary" hidden>Cancel edit</button>
+    </div>
+
+    <h2 id="newsFormTitle">All news items</h2>
+    <div class="panel">
+      ${searchPagerHtml("news")}
+    </div>`;
+
+  const script = `${PAGER_JS}
+  window.onAdminReady = function () {
+    var idEl = document.getElementById("newsId");
+    var labelEl = document.getElementById("newsLabel");
+    var titleEl = document.getElementById("newsTitle");
+    var bodyEl = document.getElementById("newsBody");
+    var saveBtn = document.getElementById("newsSaveBtn");
+    var cancelBtn = document.getElementById("newsCancelBtn");
+    var formError = document.getElementById("newsFormError");
+    var addHeading = document.querySelector("main h2");
+
+    function resetForm() {
+      idEl.value = ""; labelEl.value = ""; titleEl.value = ""; bodyEl.value = "";
+      addHeading.textContent = "Add a news item";
+      cancelBtn.hidden = true;
+      formError.hidden = true;
+    }
+
+    var pager = makePager({
+      api: location.origin + "/api/news",
+      searchField: "newsSearch", countField: "newsCount", listField: "newsList", pagerField: "newsPager",
+      searchFields: ["title", "label", "body"], titleField: "title",
+      emptyLabel: "No news items yet.", deleteConfirm: "Delete this news item?",
+      metaLine: function (n) { return n.label; },
+      onEdit: function (n) {
+        idEl.value = n.id; labelEl.value = n.label; titleEl.value = n.title; bodyEl.value = n.body;
+        addHeading.textContent = "Edit news item";
+        cancelBtn.hidden = false;
+        window.scrollTo(0, 0);
+      },
+    });
+
+    saveBtn.addEventListener("click", function () {
+      var body = { label: labelEl.value.trim(), title: titleEl.value.trim(), body: bodyEl.value.trim() };
+      if (!body.label || !body.title || !body.body) {
+        formError.textContent = "Label, title, and body are all required.";
+        formError.hidden = false;
+        return;
+      }
+      var id = idEl.value;
+      var api = location.origin + "/api/news";
+      var req = id
+        ? fetch(api + "/" + id, { method: "PUT", headers: authHeaders(), body: JSON.stringify(body) })
+        : fetch(api, { method: "POST", headers: authHeaders(), body: JSON.stringify(body) });
+      req.then(function (r) {
+        if (!r.ok) throw new Error();
+        resetForm();
+        pager.reload();
+      }).catch(function () {
+        formError.textContent = "Could not save \\u2014 try again.";
+        formError.hidden = false;
+      });
+    });
+    cancelBtn.addEventListener("click", resetForm);
+
+    pager.reload();
+  };`;
+
+  return shell("news", "News", body, script, false);
+}

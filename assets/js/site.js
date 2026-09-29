@@ -206,45 +206,68 @@
     });
   }
 
-  /* --- Upcoming events, from the events admin -------------------------------
-     Whoever keeps the calendar adds/edits/removes events at
-     bonita-events-admin.joelpchism.workers.dev/admin — no code, no CMS
-     login on the old site. Renders here on top of whatever's already
-     written into the HTML, so if the Worker can't be reached the page
-     just falls back to those. */
-  var eventsEl = document.getElementById("upcoming-events");
-  if (eventsEl) {
-    var apiUrl = eventsEl.getAttribute("data-events-api");
-    if (apiUrl) {
-      fetch(apiUrl)
-        .then(function (r) { if (!r.ok) throw new Error("bad response"); return r.json(); })
-        .then(function (events) {
-          var today = new Date(); today.setHours(0, 0, 0, 0);
-          events = events
-            .map(function (e) { return { date: new Date(e.date || ""), title: e.title || "", location: e.location || "" }; })
-            .filter(function (e) { return e.title && !isNaN(e.date) && e.date >= today; })
-            .sort(function (a, b) { return a.date - b.date; });
-
-          if (!events.length) return;
-
-          var html = events.map(function (e) {
-            var month = e.date.toLocaleDateString("en-US", { month: "short" });
-            var day = e.date.getDate();
-            var full = e.date.toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric", year: "numeric" });
-            var line = full + (e.location ? " · " + escapeHtml(e.location) : "");
-            return '<div class="event"><div class="event__date"><span class="m">' + month + '</span><span class="d">' + day +
-              '</span></div><div class="event__body"><h3>' + escapeHtml(e.title) + '</h3><p>' + line + '</p></div></div>';
-          }).join("");
-          eventsEl.innerHTML = html;
-        })
-        .catch(function () { /* leave the events already in the HTML as-is */ });
-    }
-  }
-
+  /* --- Events and news, from the site admin ---------------------------------
+     Whoever keeps the calendar adds/edits/removes events and news at
+     bonitaopc.org/admin — no code, no CMS login on the old site. Each
+     block renders on top of whatever's already written into the HTML,
+     so if the Worker can't be reached the page just falls back to that. */
   function escapeHtml(s) {
     return String(s).replace(/[&<>"']/g, function (c) {
       return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c];
     });
+  }
+
+  function renderEvent(e) {
+    var month = e.date.toLocaleDateString("en-US", { month: "short" });
+    var day = e.date.getDate();
+    var full = e.date.toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric", year: "numeric" });
+    var line = full + (e.location ? " · " + escapeHtml(e.location) : "");
+    return '<div class="event"><div class="event__date"><span class="m">' + month + '</span><span class="d">' + day +
+      '</span></div><div class="event__body"><h3>' + escapeHtml(e.title) + '</h3><p>' + line + '</p></div></div>';
+  }
+
+  function loadEvents(el, filterSort, limit) {
+    var apiUrl = el && el.getAttribute("data-events-api");
+    if (!apiUrl) return;
+    fetch(apiUrl)
+      .then(function (r) { if (!r.ok) throw new Error("bad response"); return r.json(); })
+      .then(function (events) {
+        var today = new Date(); today.setHours(0, 0, 0, 0);
+        events = events
+          .map(function (e) { return { date: new Date(e.date || ""), title: e.title || "", location: e.location || "" }; })
+          .filter(function (e) { return e.title && !isNaN(e.date); });
+        events = filterSort(events, today);
+        if (limit) events = events.slice(0, limit);
+        if (!events.length) return;
+        el.innerHTML = events.map(renderEvent).join("");
+      })
+      .catch(function () { /* leave whatever's already in the HTML as-is */ });
+  }
+
+  loadEvents(document.getElementById("upcoming-events"), function (events, today) {
+    return events.filter(function (e) { return e.date >= today; }).sort(function (a, b) { return a.date - b.date; });
+  });
+
+  var recentEl = document.getElementById("recent-events");
+  loadEvents(recentEl, function (events, today) {
+    return events.filter(function (e) { return e.date < today; }).sort(function (a, b) { return b.date - a.date; });
+  }, recentEl && parseInt(recentEl.getAttribute("data-events-recent"), 10) || undefined);
+
+  var newsEl = document.getElementById("news-items");
+  if (newsEl) {
+    var newsApi = newsEl.getAttribute("data-news-api");
+    if (newsApi) {
+      fetch(newsApi)
+        .then(function (r) { if (!r.ok) throw new Error("bad response"); return r.json(); })
+        .then(function (items) {
+          if (!items.length) return;
+          newsEl.innerHTML = items.map(function (n) {
+            return '<div class="panel"><p class="label" style="margin-bottom:.5rem;">' + escapeHtml(n.label) +
+              '</p><h3>' + escapeHtml(n.title) + '</h3><p>' + escapeHtml(n.body) + '</p></div>';
+          }).join("");
+        })
+        .catch(function () { /* leave whatever's already in the HTML as-is */ });
+    }
   }
 
   /* --- Mark the current page in the nav ------------------------------------ */
