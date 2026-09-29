@@ -54,6 +54,36 @@ const COLLECTIONS = {
   },
 };
 
+/* Singleton values (not lists) — one KV key per config, e.g. the current
+   sermon note or the Bible study's current location, each with a fixed
+   shape and defaults. Reused for anything that's "one editable value the
+   site reads everywhere," as opposed to the growing lists (events, news). */
+const SINGLETONS = {
+  "sermon-note": { defaults: { description: "" } },
+  "site-settings": { defaults: { bibleStudyLocation: "" } },
+};
+
+async function handleSingleton(request, env, origin) {
+  const url = new URL(request.url);
+  const key = url.pathname.replace(/^\/api\//, "");
+  const config = SINGLETONS[key];
+  if (!config || url.pathname !== `/api/${key}`) return null;
+
+  if (request.method === "GET") {
+    const raw = await env.EVENTS.get(key);
+    return json(raw ? JSON.parse(raw) : config.defaults, {}, origin);
+  }
+  if (request.method === "PUT") {
+    if (!checkAuth(request, env)) return json({ error: "unauthorized" }, { status: 401 }, origin);
+    const body = await request.json().catch(() => null);
+    const value = {};
+    Object.keys(config.defaults).forEach((f) => { value[f] = (body && body[f]) || config.defaults[f]; });
+    await env.EVENTS.put(key, JSON.stringify(value));
+    return json(value, {}, origin);
+  }
+  return json({ error: "method not allowed" }, { status: 405 }, origin);
+}
+
 async function handleCollection(request, env, origin, collection) {
   const url = new URL(request.url);
 
@@ -122,6 +152,15 @@ export default {
     if (url.pathname === "/admin/news") {
       return htmlPage(newsPage(), env);
     }
+    if (url.pathname === "/admin/sermon") {
+      return htmlPage(sermonPage(), env);
+    }
+    if (url.pathname === "/admin/settings") {
+      return htmlPage(settingsPage(), env);
+    }
+
+    const singletonResult = await handleSingleton(request, env, origin);
+    if (singletonResult) return singletonResult;
 
     for (const name of Object.keys(COLLECTIONS)) {
       const result = await handleCollection(request, env, origin, { name, ...COLLECTIONS[name] });
@@ -214,6 +253,8 @@ function shell(active, title, bodyHtml, scriptExtra, includeMaps) {
   <nav>
     <a href="/admin/events" ${active === "events" ? 'aria-current="page"' : ""}>Events</a>
     <a href="/admin/news" ${active === "news" ? 'aria-current="page"' : ""}>News</a>
+    <a href="/admin/sermon" ${active === "sermon" ? 'aria-current="page"' : ""}>Sermon</a>
+    <a href="/admin/settings" ${active === "settings" ? 'aria-current="page"' : ""}>Settings</a>
     <a href="https://bonitaopc.org" class="back">\u2190 Back to site</a>
   </nav>
 </header>
@@ -280,13 +321,23 @@ ${bodyHtml}
   });
   pwEl.addEventListener("keydown", function (e) { if (e.key === "Enter") loginBtn.click(); });
 
-  /* Skip the login screen if this tab already proved the password once. */
+  /* Skip the login screen if this tab already proved the password once.
+     Shown optimistically — before the check round-trip even finishes — so
+     moving between admin pages doesn't flash the login form each time.
+     Only falls back to the login screen if the saved password turns out
+     to be stale (rare: cleared/changed server-side mid-session). */
   var saved = "";
   try { saved = sessionStorage.getItem(SESSION_KEY) || ""; } catch (e) {}
   if (saved) {
+    password = saved;
+    enterApp();
     tryPassword(saved, function (ok) {
-      if (ok) { password = saved; enterApp(); }
-      else { try { sessionStorage.removeItem(SESSION_KEY); } catch (e) {} }
+      if (!ok) {
+        try { sessionStorage.removeItem(SESSION_KEY); } catch (e) {}
+        password = "";
+        appEl.style.display = "none";
+        loginEl.style.display = "block";
+      }
     });
   }
 
@@ -574,4 +625,96 @@ function newsPage() {
   };`;
 
   return shell("news", "News", body, script, false);
+}
+
+function sermonPage() {
+  const body = `
+    <h2 style="margin-top:0;">Most recent sermon</h2>
+    <div class="panel">
+      <p style="margin-top:0;color:var(--muted);font-size:.92rem;">The video on the sermons
+      page always shows whatever's actually most recent on YouTube automatically — nothing
+      to do there. This is just an optional line of text shown beside it (who preached, the
+      passage, anything else). Leave it blank and the site simply won't show anything extra;
+      nothing breaks either way.</p>
+      <label for="sermonDescription">Description (optional)</label>
+      <textarea id="sermonDescription" placeholder="Preached by John Joseph Matandika on Zephaniah 1:1-6."></textarea>
+      <p id="sermonFormError" class="error" hidden></p>
+      <p id="sermonSaved" class="error" style="color:var(--green);" hidden>Saved.</p>
+      <button id="sermonSaveBtn">Save</button>
+    </div>`;
+
+  const script = `
+  window.onAdminReady = function () {
+    var descEl = document.getElementById("sermonDescription");
+    var saveBtn = document.getElementById("sermonSaveBtn");
+    var formError = document.getElementById("sermonFormError");
+    var saved = document.getElementById("sermonSaved");
+    var api = location.origin + "/api/sermon-note";
+
+    fetch(api).then(function (r) { return r.json(); }).then(function (note) {
+      descEl.value = note.description || "";
+    });
+
+    saveBtn.addEventListener("click", function () {
+      formError.hidden = true;
+      saved.hidden = true;
+      fetch(api, { method: "PUT", headers: authHeaders(), body: JSON.stringify({ description: descEl.value.trim() }) })
+        .then(function (r) {
+          if (!r.ok) throw new Error();
+          saved.hidden = false;
+        })
+        .catch(function () {
+          formError.textContent = "Could not save \\u2014 try again.";
+          formError.hidden = false;
+        });
+    });
+  };`;
+
+  return shell("sermon", "Sermon", body, script, false);
+}
+
+function settingsPage() {
+  const body = `
+    <h2 style="margin-top:0;">Wednesday Bible study location</h2>
+    <div class="panel">
+      <p style="margin-top:0;color:var(--muted);font-size:.92rem;">Shows up in several spots
+      across the site — the footer on every page and the weekly schedule on the Events
+      page. Change it here and it updates everywhere at once. This only affects the current,
+      ongoing Wednesday meeting — it does not change any past event already recorded on
+      the Events page.</p>
+      <label for="bibleStudyLocation">Current location</label>
+      <input type="text" id="bibleStudyLocation" placeholder="the church">
+      <p id="settingsFormError" class="error" hidden></p>
+      <p id="settingsSaved" class="error" style="color:var(--green);" hidden>Saved.</p>
+      <button id="settingsSaveBtn">Save</button>
+    </div>`;
+
+  const script = `
+  window.onAdminReady = function () {
+    var locEl = document.getElementById("bibleStudyLocation");
+    var saveBtn = document.getElementById("settingsSaveBtn");
+    var formError = document.getElementById("settingsFormError");
+    var saved = document.getElementById("settingsSaved");
+    var api = location.origin + "/api/site-settings";
+
+    fetch(api).then(function (r) { return r.json(); }).then(function (s) {
+      locEl.value = s.bibleStudyLocation || "";
+    });
+
+    saveBtn.addEventListener("click", function () {
+      formError.hidden = true;
+      saved.hidden = true;
+      fetch(api, { method: "PUT", headers: authHeaders(), body: JSON.stringify({ bibleStudyLocation: locEl.value.trim() }) })
+        .then(function (r) {
+          if (!r.ok) throw new Error();
+          saved.hidden = false;
+        })
+        .catch(function () {
+          formError.textContent = "Could not save \\u2014 try again.";
+          formError.hidden = false;
+        });
+    });
+  };`;
+
+  return shell("settings", "Settings", body, script, false);
 }

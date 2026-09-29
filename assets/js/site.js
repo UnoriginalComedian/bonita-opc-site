@@ -270,6 +270,39 @@
     }
   }
 
+  /* --- Site-wide settings: Bible study location -----------------------------
+     One value, set at bonitaopc.org/admin/settings, shown in every footer
+     plus the Events page's weekly schedule. If it's never been set, or the
+     Worker can't be reached, every one of these spots just keeps the
+     "the church" text already written into the HTML. */
+  var locationEls = document.querySelectorAll(".js-bible-location");
+  if (locationEls.length) {
+    fetch("https://bonitaopc.org/api/site-settings")
+      .then(function (r) { if (!r.ok) throw new Error("bad response"); return r.json(); })
+      .then(function (s) {
+        if (!s.bibleStudyLocation) return;
+        locationEls.forEach(function (el) { el.textContent = s.bibleStudyLocation; });
+      })
+      .catch(function () { /* leave "the church" as-is */ });
+  }
+
+  /* --- Most recent sermon description ---------------------------------------
+     Optional, set at bonitaopc.org/admin/sermon. The video itself always
+     auto-updates from YouTube regardless; this is just the line of text
+     beside it. If it's blank, the element is simply hidden — the video
+     still works fine on its own. */
+  var sermonNoteEl = document.getElementById("sermon-note");
+  if (sermonNoteEl) {
+    fetch("https://bonitaopc.org/api/sermon-note")
+      .then(function (r) { if (!r.ok) throw new Error("bad response"); return r.json(); })
+      .then(function (note) {
+        if (!note.description) return;
+        sermonNoteEl.textContent = note.description;
+        sermonNoteEl.hidden = false;
+      })
+      .catch(function () { /* leave whatever's already in the HTML as-is */ });
+  }
+
   /* --- Mark the current page in the nav ------------------------------------ */
   var here = location.pathname.replace(/index\.html$/, "").replace(/\/$/, "");
   document.querySelectorAll(".nav__link").forEach(function (a) {
