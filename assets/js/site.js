@@ -104,21 +104,6 @@
   /* --- Hero video: respect reduced motion ---------------------------------
      autoplay/loop on a <video> ignores prefers-reduced-motion on its own,
      so we pause it by hand and let the poster frame stand in as a still. */
-  /* --- Hero lead image: Bible first, sanctuary footage rolls in second ----
-     The video has no autoplay attribute and preload="none", so it costs
-     nothing during the initial page load — we only start fetching and
-     playing it once the Bible image is about to fade, which also keeps
-     it off the critical path for mobile Performance scores. Reduced-motion
-     visitors just keep the Bible image — no fade, no video request at all. */
-  var heroVideo = document.getElementById("heroVideo");
-  var heroLead = document.getElementById("heroLead");
-  var heroReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-  if (heroLead && !heroReducedMotion) {
-    setTimeout(function () {
-      heroLead.classList.add("is-hidden");
-      if (heroVideo) heroVideo.play().catch(function () {});
-    }, 5500);
-  }
 
   /* --- Reveal on scroll ---------------------------------------------------- */
   var reveals = document.querySelectorAll(".reveal");

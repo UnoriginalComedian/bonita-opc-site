@@ -95,22 +95,12 @@
 
 <section class="hero hero--video" aria-label="Welcome">
   <div class="hero__media">
-    <!-- Lee (elder, site approval) asked that the Word lead, not the cross —
-         the sanctuary shot centers the cross, which he'd rather have "roll in
-         as secondary." So the Bible holds the frame first; site.js fades it
-         out a few seconds in to reveal the sanctuary footage underneath,
-         which keeps looping the same as before. Reduced-motion visitors get
-         the Bible image permanently and never see the fade — one static
-         image, already the preferred one, so nothing else needs to change
-         for them. TODO: swap assets/img/bible-table.jpg (licensed stock) for
-         a real photo of one of Bonita's own pew Bibles when there's one. -->
+    <!-- Per Lee (elder, site approval): the Bible stays as the only image here.
+         The footage that used to fade in showed people, which the elders didn't
+         want on the homepage; it now lives on outreach.html as its own player.
+         TODO: swap assets/img/bible-table.jpg (licensed stock) for a real photo
+         of one of Bonita's own pew Bibles when there's one. -->
     <img class="hero__lead" id="heroLead" src="assets/img/bible-table.jpg" alt="An open Bible." width="1200" height="800" fetchpriority="high">
-    <video class="hero__poster" id="heroVideo" muted loop playsinline preload="none"
-           poster="assets/img/hero-poster.jpg" width="1280" height="720">
-      <source src="assets/video/hero.webm" type="video/webm">
-      <source src="assets/video/hero.mp4" type="video/mp4">
-      <track kind="captions" src="assets/video/hero-captions.vtt" srclang="en" label="No spoken audio">
-    </video>
   </div>
   <div class="wrap hero__inner">
     <blockquote class="hero__verse">
