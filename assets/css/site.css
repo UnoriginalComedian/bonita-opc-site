@@ -59,6 +59,7 @@
      stays for borders and other non-text decoration. */
   --tile:         #a6432a;
   --tile-deep:    #8a3520;
+  --on-tile:      #fff;     /* text on a tile-coloured button */
   --brass:        #b8802a;
   --brass-text:   #7d571c;  /* labels/links on plaster or stock (light) */
   --brass-onDark: #d7a251;  /* labels/links on the dark green bands */
@@ -99,6 +100,7 @@
     --muted:        #9e9282;
     --tile:         #e08059;
     --tile-deep:    #ee9670;
+    --on-tile:      #1c130d;
     --brass:        #ddab53;
     --brass-text:   #ddab53;
     --brass-onDark: #ddab53;
@@ -121,6 +123,7 @@
   --muted:        #9e9282;
   --tile:         #e08059;
   --tile-deep:    #ee9670;
+  --on-tile:      #1c130d;
   --brass:        #ddab53;
   --brass-text:   #ddab53;
   --brass-onDark: #ddab53;
@@ -198,7 +201,7 @@ a:hover { color: var(--tile-deep); }
 
 .skip-link {
   position: absolute; left: -9999px; top: 0; z-index: 999;
-  background: var(--tile); color: #fff; padding: .7rem 1.2rem; font-weight: 700;
+  background: var(--tile); color: var(--on-tile); padding: .7rem 1.2rem; font-weight: 700;
 }
 .skip-link:focus { left: 0; color: #fff; }
 
@@ -242,8 +245,8 @@ a:hover { color: var(--tile-deep); }
   cursor: pointer;
   transition: background-color .15s linear, color .15s linear, border-color .15s linear;
 }
-.btn--primary { background: var(--tile); color: #fff; border-color: var(--tile); }
-.btn--primary:hover { background: var(--tile-deep); border-color: var(--tile-deep); color: #fff; }
+.btn--primary { background: var(--tile); color: var(--on-tile); border-color: var(--tile); }
+.btn--primary:hover { background: var(--tile-deep); border-color: var(--tile-deep); color: var(--on-tile); }
 .btn--primary:active { background: var(--tile-deep); }
 
 .btn--ghost { border-color: var(--rule-strong); color: var(--ink); background: transparent; }
@@ -362,8 +365,8 @@ body.home .site-header.is-stuck {
    The verse carries the hero as the big heading; "Gathered in Bonita since
    1972" drops to a small tagline underneath it. */
 .hero__verse {
-  font-family: var(--font-display); font-style: italic; font-weight: 600;
-  color: #fff; max-width: 22ch; margin: 0 0 .5rem;
+  font-family: var(--font-display); font-style: italic; font-weight: 500;
+  color: #fff; max-width: 30ch; margin: 0 0 .5rem;
   padding-left: 1.1rem; border-left: 3px solid var(--brass);
 }
 .hero__verse cite {
@@ -395,7 +398,8 @@ body.home .site-header.is-stuck {
 }
 .hero--video .hero__inner { padding-top: clamp(6rem, 16vw, 10rem); }
 .hero--video h1 { font-size: clamp(2.35rem, 6.4vw, 4.5rem); max-width: 17ch; }
-.hero--video .hero__verse { font-size: clamp(2.1rem, 5.6vw, 4rem); line-height: 1.14; }
+.hero--video .hero__verse { font-size: clamp(1.45rem, 3vw, 2.3rem); line-height: 1.25; text-shadow: 0 1px 12px rgba(0,0,0,.35); }
+.hero__verse h1 { max-width: none; font-weight: inherit; }
 
 .hero__poster--kenburns {
   animation: kenburns 22s ease-in-out infinite alternate;
@@ -587,6 +591,7 @@ body.home .site-header.is-stuck {
 .event__body h3 a { color: inherit; text-decoration: none; }
 .event__body h3 a:hover { color: var(--tile); text-decoration: underline; }
 .event__body p { font-size: 1rem; color: var(--muted); margin: 0; }
+.event-empty { margin: 0; padding: 1.05rem 0; border-top: 2px solid var(--rule-strong); border-bottom: 1px solid var(--rule); color: var(--muted); }
 
 /* --- 13. People ---------------------------------------------------------- */
 
@@ -769,3 +774,5 @@ body.home .site-header.is-stuck {
   position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
   overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0;
 }
+.nowrap { white-space: nowrap; }
+[hidden] { display: none !important; }

@@ -5,14 +5,14 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Events & News | Bonita OPC</title>
 <meta name="description" content="Upcoming events, the weekly rhythm of congregational life, and news from Bonita Orthodox Presbyterian Church.">
-<link rel="canonical" href="https://www.bonitaopc.org/events.html">
+<link rel="canonical" href="https://bonitaopc.org/events.html">
 
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Bonita Orthodox Presbyterian Church">
 <meta property="og:title" content="Events & News | Bonita OPC">
 <meta property="og:description" content="Upcoming events, the weekly rhythm of congregational life, and news from Bonita Orthodox Presbyterian Church.">
-<meta property="og:url" content="https://www.bonitaopc.org/events.html">
-<meta property="og:image" content="https://www.bonitaopc.org/assets/img/church-building-t.jpg">
+<meta property="og:url" content="https://bonitaopc.org/events.html">
+<meta property="og:image" content="https://bonitaopc.org/assets/img/church-building-t.jpg">
 <meta name="twitter:card" content="summary_large_image">
 
 <link rel="icon" href="assets/img/favicon.ico" sizes="any">
@@ -31,9 +31,9 @@
   "@context": "https://schema.org",
   "@type": "Church",
   "name": "Bonita Orthodox Presbyterian Church",
-  "url": "https://www.bonitaopc.org",
+  "url": "https://bonitaopc.org",
   "email": "Bonitaopc.5111@gmail.com",
-  "image": "https://www.bonitaopc.org/assets/img/church-building-t.jpg",
+  "image": "https://bonitaopc.org/assets/img/church-building-t.jpg",
   "address": {
     "@type": "PostalAddress",
     "streetAddress": "5111 Central Avenue",
@@ -111,15 +111,10 @@
 
         <!-- Live events come from bonitaopc.org/admin — add, edit, or
              remove them there, no code involved. If that can't be
-             reached, the event below shows as a fallback. -->
+             reached, the line below shows as a fallback (undated, so it
+             never goes stale). -->
         <div id="upcoming-events" data-events-api="https://bonitaopc.org/api/events">
-          <div class="event">
-            <div class="event__date"><span class="m">Sep</span><span class="d">30</span></div>
-            <div class="event__body">
-              <h3>Family Bible Study &amp; Prayer</h3>
-              <p>Wednesday, 6:00&ndash;8:00 p.m. &middot; Rohr Park, Gate A</p>
-            </div>
-          </div>
+          <p class="event-empty">Sunday worship and Wednesday Bible study meet every week.</p>
         </div>
 
         <h2 style="margin:3rem 0 1.5rem;">Recently</h2>
@@ -140,6 +135,7 @@
 
         <div class="panel" style="margin-bottom:1rem;">
           <h3>Sunday</h3>
+          <p style="margin-bottom:.35rem;">Sunday School &mdash; 9:30 a.m.</p>
           <p style="margin-bottom:.35rem;">Morning Worship &mdash; 11:00 a.m.</p>
           <p style="margin-bottom:0;">Evening Worship &mdash; 6:00 p.m.</p>
         </div>
@@ -176,7 +172,9 @@
           "u" and "id" field values.
        3. Replace the three CONFIRM placeholders below with those real
           values. Nothing else about this form needs to change. -->
-<section class="section section--stock">
+<section class="section section--stock" hidden>
+  <!-- Hidden until the Mailchimp steps above are done: remove "hidden" from
+       this section at the same time as the CONFIRM values are filled in. -->
   <div class="wrap wrap--narrow" style="text-align:center;">
     <p class="label">Stay in the loop</p>
     <h2>Get updates by email</h2>
@@ -223,9 +221,8 @@
     <div class="section-head">
       <p class="label">Outreach &middot; September 19, 2026</p>
       <h2>Taste of Bonita</h2>
-      <p class="lede">Once a year the community gathers a few blocks away at the Bonita Museum
-      &amp; Cultural Center for food, music, and neighbors — and our church sets up a table.
-      A few of our people, out where the community already is.</p>
+      <p class="lede">Taste of Bonita is a yearly community festival at the Bonita Museum
+      &amp; Cultural Center, a few blocks from the church. We had a table there this year.</p>
     </div>
 
     <div class="gallery">

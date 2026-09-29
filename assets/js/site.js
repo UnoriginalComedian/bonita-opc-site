@@ -56,10 +56,14 @@
       liveFrame.innerHTML = '<iframe src="https://www.youtube-nocookie.com/embed/videoseries?list=UU' +
         channel.replace(/^UC/, "") + '" title="Most recent service" loading="lazy" allowfullscreen ' +
         'allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture"></iframe>';
+      // The swapped-in player already shows the latest uploads, so the
+      // "Recent uploads" section below would just repeat the same video.
+      var uploads = document.getElementById("recentUploads");
+      if (uploads) uploads.hidden = true;
       var liveStatus = document.getElementById("liveStatus");
       if (liveStatus) {
         liveStatus.hidden = false;
-        liveStatus.textContent = "Not live right now — our next service streams Sunday, 11:00 a.m. & 6:00 p.m. Pacific. Here's our most recent service in the meantime:";
+        liveStatus.textContent = "We are not live right now. Here is our most recent service.";
       }
     }
   }
@@ -226,7 +230,15 @@
       '</span></div><div class="event__body"><h3>' + escapeHtml(e.title) + '</h3><p>' + line + '</p></div></div>';
   }
 
-  function loadEvents(el, filterSort, limit) {
+  // "2026-09-19" on its own is read as midnight UTC, which is the afternoon
+  // before in California, so every event showed a day early. Build the date
+  // from its parts instead so it stays on the day that was entered.
+  function parseDay(s) {
+    var m = /^(\d{4})-(\d{2})-(\d{2})/.exec(s || "");
+    return m ? new Date(+m[1], +m[2] - 1, +m[3]) : new Date(NaN);
+  }
+
+  function loadEvents(el, filterSort, limit, emptyText) {
     var apiUrl = el && el.getAttribute("data-events-api");
     if (!apiUrl) return;
     fetch(apiUrl)
@@ -234,11 +246,14 @@
       .then(function (events) {
         var today = new Date(); today.setHours(0, 0, 0, 0);
         events = events
-          .map(function (e) { return { date: new Date(e.date || ""), title: e.title || "", location: e.location || "" }; })
+          .map(function (e) { return { date: parseDay(e.date), title: e.title || "", location: e.location || "" }; })
           .filter(function (e) { return e.title && !isNaN(e.date); });
         events = filterSort(events, today);
         if (limit) events = events.slice(0, limit);
-        if (!events.length) return;
+        if (!events.length) {
+          if (emptyText) el.innerHTML = '<p class="event-empty">' + emptyText + '</p>';
+          return;
+        }
         el.innerHTML = events.map(renderEvent).join("");
       })
       .catch(function () { /* leave whatever's already in the HTML as-is */ });
@@ -246,7 +261,7 @@
 
   loadEvents(document.getElementById("upcoming-events"), function (events, today) {
     return events.filter(function (e) { return e.date >= today; }).sort(function (a, b) { return a.date - b.date; });
-  });
+  }, undefined, "Nothing else is scheduled right now. Sunday worship and Wednesday Bible study meet every week.");
 
   var recentEl = document.getElementById("recent-events");
   loadEvents(recentEl, function (events, today) {

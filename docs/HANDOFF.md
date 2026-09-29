@@ -197,3 +197,34 @@ Joel asked for these; none are done. Don't assume they exist:
 - Look for any other hardcoded content on the live site that duplicates what the
   admin now manages (a second sweep beyond what this session caught).
 - Decide/confirm scope on the three open asks in §7 before building any of them.
+
+## 10. Audit pass (2026-09-29)
+
+Fixed:
+- **Event dates showed a day early** everywhere (`new Date("YYYY-MM-DD")` is UTC
+  midnight = previous afternoon in Pacific). `site.js` now builds dates locally.
+  Side effect: the Feast Day event, stored in KV as 2026-08-31 (a Monday), now
+  shows as Monday. It should be 2026-08-30. Fix it in /admin/events.
+- Upcoming events: shows a plain "nothing else scheduled" line when the API has no
+  future events, instead of the stale Sep 30 / Rohr Park fallback.
+- Homepage "The Lord's Day · August 23" box and "Next Sunday: Communion" were a
+  month stale → now an evergreen "Every Lord's Day" schedule.
+- All 50 sermon links pointed at the dead old site (`/sermons/...` → 404). Now
+  YouTube channel searches by title. Added the 8 sermons from Aug 30 to Sep 27
+  (from the YouTube RSS feed) with direct video links; homepage list updated.
+- 404 page: root-relative paths (it rendered unstyled at nested URLs) and
+  forwards old-site URLs (`/sermons/*`, `/news`, `/about`, etc.) to the matching page.
+- Canonical/OG/JSON-LD/sitemap/robots: `www.bonitaopc.org` → `bonitaopc.org`
+  (www 301s to apex). Outreach page added to sitemap.
+- Hero verse: much smaller, lighter weight, two lines on desktop.
+- Dark mode: orange buttons had 2.8:1 contrast, now dark text (6.5:1).
+- Sermons/Watch Live: white-outline buttons were invisible in light mode.
+- Watch Live: same video appeared twice outside service hours; repeated
+  "nothing to click" copy removed.
+- Mailchimp signup section hidden (`hidden` attr) until it is configured.
+- Sunday School added to the Events and Contact schedules. Copy plainer on
+  Home, Watch Live, Outreach, Events, Sermons, 404; duplicated mission
+  statement removed from Visit (still on About).
+
+Open questions are listed in the session summary. The biggest: YouTube
+descriptions say Wednesday Bible study is at **7 p.m.**, while the site says 6–8.

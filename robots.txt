@@ -3,4 +3,4 @@ Allow: /
 Disallow: /app/
 Disallow: /theme-preview.html
 
-Sitemap: https://www.bonitaopc.org/sitemap.xml
+Sitemap: https://bonitaopc.org/sitemap.xml
