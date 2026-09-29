@@ -229,3 +229,26 @@ Fixed:
 Follow-up the same day (per Lee): Wednesday Bible study is **7:00–8:00 p.m.**,
 updated everywhere, including every footer. Gallery photos on Events and Outreach
 now open full-size in a viewer (arrows and keyboard, Esc or click outside to close).
+
+## 11. Admin tools on the public pages (2026-09-29)
+
+Built the "old site" behaviour from §7: sign in once via the footer's
+"Admin sign-in" link and edit right on the page.
+- `assets/js/admin-inline.js` + `assets/css/admin-inline.css` load only for a
+  signed-in admin (site.js checks localStorage `bopc-admin-pw`), so visitors
+  never download them.
+- Stays signed in on that computer until Sign out (localStorage, no expiry, per
+  Joel: "security doesn't matter that much as long as it's password protected").
+  The /admin pages (Worker) switch to the same localStorage key and get a Sign out
+  link. That Worker change needs `wrangler deploy` from workers/events-admin/.
+- Events page: Add event / Add news item buttons; click an item to edit; a
+  hover-revealed ⋯ menu (always visible on touch) and right-click give Edit/Delete;
+  delete confirms and offers Undo for 8 seconds (re-creates the item with a new id,
+  so a restored news item moves to the end of the list).
+- Wednesday panel: "Change location" (site-settings). Sermons page: "Edit caption"
+  (sermon-note).
+- Tested locally against a stubbed API (no live writes): add, edit, delete, undo,
+  right-click, location, caption, wrong-password error, phone + dark mode.
+
+Also: the elder/deacon headshots were moved off the homepage to the bottom of the
+Events page (per the elders). They are still on About too.

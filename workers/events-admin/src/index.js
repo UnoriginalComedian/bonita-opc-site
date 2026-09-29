@@ -256,6 +256,7 @@ function shell(active, title, bodyHtml, scriptExtra, includeMaps) {
     <a href="/admin/sermon" ${active === "sermon" ? 'aria-current="page"' : ""}>Sermon</a>
     <a href="/admin/settings" ${active === "settings" ? 'aria-current="page"' : ""}>Settings</a>
     <a href="https://bonitaopc.org" class="back">\u2190 Back to site</a>
+    <a href="#" id="signOut">Sign out</a>
   </nav>
 </header>
 
@@ -315,11 +316,16 @@ ${bodyHtml}
       }
       password = candidate;
       loginError.hidden = true;
-      try { sessionStorage.setItem(SESSION_KEY, password); } catch (e) {}
+      try { localStorage.setItem(SESSION_KEY, password); } catch (e) {}
       enterApp();
     });
   });
   pwEl.addEventListener("keydown", function (e) { if (e.key === "Enter") loginBtn.click(); });
+  document.getElementById("signOut").addEventListener("click", function (e) {
+    e.preventDefault();
+    try { localStorage.removeItem(SESSION_KEY); sessionStorage.removeItem(SESSION_KEY); } catch (err) {}
+    location.reload();
+  });
 
   /* Skip the login screen if this tab already proved the password once.
      Shown optimistically — before the check round-trip even finishes — so
@@ -327,13 +333,13 @@ ${bodyHtml}
      Only falls back to the login screen if the saved password turns out
      to be stale (rare: cleared/changed server-side mid-session). */
   var saved = "";
-  try { saved = sessionStorage.getItem(SESSION_KEY) || ""; } catch (e) {}
+  try { saved = localStorage.getItem(SESSION_KEY) || sessionStorage.getItem(SESSION_KEY) || ""; } catch (e) {}
   if (saved) {
     password = saved;
     enterApp();
     tryPassword(saved, function (ok) {
       if (!ok) {
-        try { sessionStorage.removeItem(SESSION_KEY); } catch (e) {}
+        try { localStorage.removeItem(SESSION_KEY); sessionStorage.removeItem(SESSION_KEY); } catch (e) {}
         password = "";
         appEl.style.display = "none";
         loginEl.style.display = "block";

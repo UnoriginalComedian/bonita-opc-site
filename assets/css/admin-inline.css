@@ -1,0 +1,70 @@
+/* Bonita OPC — admin-mode styles. Loaded by admin-inline.js only, so ordinary
+   visitors never download them. Uses the colour tokens from site.css. */
+
+.adm-bar { background: var(--brass-pale); border-bottom: 1px solid var(--brass); color: var(--ink); font-size: .95rem; }
+.adm-bar__inner { display: flex; align-items: center; gap: 1rem; flex-wrap: wrap; padding-block: .45rem; }
+.adm-bar__label { font-weight: 700; color: var(--brass-text); }
+.adm-bar__hint { color: var(--muted); margin-right: auto; }
+.adm-bar a, .adm-bar button { color: var(--tile); font: inherit; font-weight: 700; background: none; border: 0; padding: 0; cursor: pointer; text-decoration: underline; }
+@media (max-width: 600px) { .adm-bar__hint { display: none; } .adm-bar__label { margin-right: auto; } }
+
+.adm-add { display: inline-flex; align-items: center; gap: .4rem; margin-bottom: 1rem; }
+.adm-add svg { width: 1rem; height: 1rem; }
+.adm-edit {
+  display: inline-flex; align-items: center; gap: .35rem; margin-top: .75rem; padding: .3rem .6rem;
+  font: inherit; font-size: .9rem; font-weight: 700; color: var(--tile); cursor: pointer;
+  background: transparent; border: 1px solid var(--rule-strong); border-radius: var(--radius);
+}
+.adm-edit:hover { border-color: var(--tile); }
+.adm-edit svg { width: 1rem; height: 1rem; }
+
+.adm-item { position: relative; cursor: pointer; padding-right: 2.75rem; }
+.event.adm-item { padding-left: .6rem; }
+.adm-item:hover { background: var(--green-pale); }
+.adm-dots {
+  position: absolute; top: .6rem; right: .4rem; width: 2rem; height: 2rem;
+  display: grid; place-items: center; padding: 0; cursor: pointer;
+  color: var(--ink-soft); background: var(--stock); border: 1px solid var(--rule-strong); border-radius: var(--radius);
+  opacity: 0; transition: opacity .12s;
+}
+.adm-dots svg { width: 1.1rem; height: 1.1rem; }
+.adm-item:hover .adm-dots, .adm-dots:focus-visible { opacity: 1; }
+@media (hover: none) { .adm-dots { opacity: 1; } }
+
+.adm-menu {
+  position: fixed; z-index: 60; min-width: 150px; padding: .3rem 0;
+  background: var(--stock); border: 1px solid var(--rule-strong); box-shadow: 0 6px 20px rgba(0,0,0,.18);
+}
+.adm-menu button {
+  display: block; width: 100%; text-align: left; padding: .5rem .9rem;
+  font: inherit; color: var(--ink); background: none; border: 0; cursor: pointer;
+}
+.adm-menu button:hover { background: var(--green-pale); }
+.adm-menu .is-danger { color: var(--tile); }
+
+.adm-dialog {
+  width: min(30rem, calc(100vw - 2rem)); padding: 0; color: var(--ink);
+  background: var(--stock); border: 1px solid var(--rule-strong); border-top: 3px solid var(--brass);
+}
+.adm-dialog::backdrop { background: rgba(12, 10, 8, .55); }
+.adm-form { padding: 1.5rem; }
+.adm-form h2 { font-size: 1.4rem; margin: 0 0 .75rem; }
+.adm-form__msg { color: var(--muted); margin: 0 0 1rem; }
+.adm-form label { display: block; font-weight: 700; margin: 0 0 .3rem; }
+.adm-opt { font-weight: 400; color: var(--muted); }
+.adm-form input, .adm-form textarea {
+  display: block; width: 100%; margin: 0 0 1rem; padding: .6rem .7rem; font: inherit; color: var(--ink);
+  background: var(--plaster); border: 1px solid var(--rule-strong); border-radius: var(--radius);
+}
+.adm-form textarea { min-height: 7rem; resize: vertical; }
+.adm-form__actions { display: flex; justify-content: flex-end; gap: .6rem; margin-top: .5rem; }
+.adm-error { color: var(--tile); font-weight: 700; margin: 0 0 .75rem; }
+.adm-danger { background: #b3261e; color: #fff; border-color: #b3261e; }
+.adm-danger:hover { background: #8f1d17; border-color: #8f1d17; }
+
+.adm-toast {
+  position: fixed; z-index: 70; left: 50%; bottom: 1.25rem; transform: translateX(-50%);
+  display: flex; align-items: center; gap: 1rem; padding: .7rem 1rem; max-width: calc(100vw - 2rem);
+  background: #241f19; color: #fff; border-left: 3px solid var(--brass); box-shadow: 0 6px 20px rgba(0,0,0,.25);
+}
+.adm-toast button { font: inherit; font-weight: 700; color: #f0c27a; background: none; border: 0; cursor: pointer; text-decoration: underline; }

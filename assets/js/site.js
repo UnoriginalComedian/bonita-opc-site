@@ -226,8 +226,14 @@
     var day = e.date.getDate();
     var full = e.date.toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric", year: "numeric" });
     var line = full + (e.location ? " · " + escapeHtml(e.location) : "");
-    return '<div class="event"><div class="event__date"><span class="m">' + month + '</span><span class="d">' + day +
-      '</span></div><div class="event__body"><h3>' + escapeHtml(e.title) + '</h3><p>' + line + '</p></div></div>';
+    return '<div class="event" data-id="' + escapeHtml(e.id || "") + '"><div class="event__date"><span class="m">' + month +
+      '</span><span class="d">' + day + '</span></div><div class="event__body"><h3>' + escapeHtml(e.title) +
+      '</h3><p>' + line + '</p></div></div>';
+  }
+
+  function renderNews(n) {
+    return '<div class="panel" data-id="' + escapeHtml(n.id || "") + '"><p class="label" style="margin-bottom:.5rem;">' +
+      escapeHtml(n.label) + '</p><h3>' + escapeHtml(n.title) + '</h3><p>' + escapeHtml(n.body) + '</p></div>';
   }
 
   // "2026-09-19" on its own is read as midnight UTC, which is the afternoon
@@ -238,52 +244,59 @@
     return m ? new Date(+m[1], +m[2] - 1, +m[3]) : new Date(NaN);
   }
 
-  function loadEvents(el, filterSort, limit, emptyText) {
-    var apiUrl = el && el.getAttribute("data-events-api");
-    if (!apiUrl) return;
-    fetch(apiUrl)
-      .then(function (r) { if (!r.ok) throw new Error("bad response"); return r.json(); })
-      .then(function (events) {
-        var today = new Date(); today.setHours(0, 0, 0, 0);
-        events = events
-          .map(function (e) { return { date: parseDay(e.date), title: e.title || "", location: e.location || "" }; })
-          .filter(function (e) { return e.title && !isNaN(e.date); });
-        events = filterSort(events, today);
-        if (limit) events = events.slice(0, limit);
-        if (!events.length) {
-          if (emptyText) el.innerHTML = '<p class="event-empty">' + emptyText + '</p>';
-          return;
-        }
-        el.innerHTML = events.map(renderEvent).join("");
-      })
-      .catch(function () { /* leave whatever's already in the HTML as-is */ });
+  function getJson(url) {
+    return fetch(url, { cache: "no-store" }).then(function (r) {
+      if (!r.ok) throw new Error("bad response");
+      return r.json();
+    });
   }
 
-  loadEvents(document.getElementById("upcoming-events"), function (events, today) {
-    return events.filter(function (e) { return e.date >= today; }).sort(function (a, b) { return a.date - b.date; });
-  }, undefined, "Nothing else is scheduled right now. Sunday worship and Wednesday Bible study meet every week.");
-
-  var recentEl = document.getElementById("recent-events");
-  loadEvents(recentEl, function (events, today) {
-    return events.filter(function (e) { return e.date < today; }).sort(function (a, b) { return b.date - a.date; });
-  }, recentEl && parseInt(recentEl.getAttribute("data-events-recent"), 10) || undefined);
-
-  var newsEl = document.getElementById("news-items");
-  if (newsEl) {
-    var newsApi = newsEl.getAttribute("data-news-api");
-    if (newsApi) {
-      fetch(newsApi)
-        .then(function (r) { if (!r.ok) throw new Error("bad response"); return r.json(); })
-        .then(function (items) {
-          if (!items.length) return;
-          newsEl.innerHTML = items.map(function (n) {
-            return '<div class="panel"><p class="label" style="margin-bottom:.5rem;">' + escapeHtml(n.label) +
-              '</p><h3>' + escapeHtml(n.title) + '</h3><p>' + escapeHtml(n.body) + '</p></div>';
-          }).join("");
-        })
-        .catch(function () { /* leave whatever's already in the HTML as-is */ });
+  function fillEvents(el, events, filterSort, limit, emptyText) {
+    if (!el) return;
+    var today = new Date(); today.setHours(0, 0, 0, 0);
+    var list = events
+      .map(function (e) { return { id: e.id, date: parseDay(e.date), title: e.title || "", location: e.location || "" }; })
+      .filter(function (e) { return e.title && !isNaN(e.date); });
+    list = filterSort(list, today);
+    if (limit) list = list.slice(0, limit);
+    if (!list.length) {
+      if (emptyText) el.innerHTML = '<p class="event-empty">' + emptyText + '</p>';
+      return;
     }
+    el.innerHTML = list.map(renderEvent).join("");
   }
+
+  var upcomingEl = document.getElementById("upcoming-events");
+  var recentEl = document.getElementById("recent-events");
+  var newsEl = document.getElementById("news-items");
+
+  // Fetches events and news and draws them. Runs once on load, and again
+  // whenever a signed-in admin changes something (see admin-inline.js).
+  // Fires "bopc:rendered" afterwards so the admin tools can attach.
+  function refreshContent() {
+    var jobs = [];
+    var eventsApi = (upcomingEl || recentEl) && (upcomingEl || recentEl).getAttribute("data-events-api");
+    if (eventsApi) {
+      jobs.push(getJson(eventsApi).then(function (events) {
+        fillEvents(upcomingEl, events, function (list, today) {
+          return list.filter(function (e) { return e.date >= today; }).sort(function (a, b) { return a.date - b.date; });
+        }, undefined, "Nothing else is scheduled right now. Sunday worship and Wednesday Bible study meet every week.");
+        fillEvents(recentEl, events, function (list, today) {
+          return list.filter(function (e) { return e.date < today; }).sort(function (a, b) { return b.date - a.date; });
+        }, recentEl && parseInt(recentEl.getAttribute("data-events-recent"), 10) || undefined);
+      }).catch(function () { /* leave whatever's already in the HTML as-is */ }));
+    }
+    var newsApi = newsEl && newsEl.getAttribute("data-news-api");
+    if (newsApi) {
+      jobs.push(getJson(newsApi).then(function (items) {
+        if (items.length) newsEl.innerHTML = items.map(renderNews).join("");
+      }).catch(function () { /* leave whatever's already in the HTML as-is */ }));
+    }
+    return Promise.all(jobs).then(function () {
+      document.dispatchEvent(new CustomEvent("bopc:rendered"));
+    });
+  }
+  refreshContent();
 
   /* --- Site-wide settings: Bible study location -----------------------------
      One value, set at bonitaopc.org/admin/settings, shown in every footer
@@ -380,6 +393,39 @@
           if (e.key === "Enter" || e.key === " ") { e.preventDefault(); open(); }
         });
       });
+    });
+  }
+
+  /* --- Admin tools on the public pages --------------------------------------
+     A church admin signs in once (footer link) and then sees add/edit/delete
+     controls right on the page. The tools live in their own file and only
+     load for someone who is signed in, so ordinary visitors never download
+     them. The password is kept in localStorage, so it stays signed in on
+     that computer until someone clicks Sign out. */
+  window.bopcSite = { refresh: refreshContent, escapeHtml: escapeHtml, parseDay: parseDay };
+  var ADMIN_KEY = "bopc-admin-pw";
+  var adminLoaded = false;
+  function loadAdmin(then) {
+    if (adminLoaded) { if (then) then(); return; }
+    adminLoaded = true;
+    var tag = document.createElement("script");
+    tag.src = "/assets/js/admin-inline.js";
+    tag.onload = function () { if (then) then(); };
+    document.body.appendChild(tag);
+  }
+  var hasAdmin = false;
+  try { hasAdmin = !!localStorage.getItem(ADMIN_KEY); } catch (e) {}
+  if (hasAdmin) loadAdmin();
+
+  var footerBottom = document.querySelector(".site-footer__bottom");
+  if (footerBottom && !hasAdmin) {
+    var signIn = document.createElement("p");
+    signIn.style.margin = "0";
+    signIn.innerHTML = '<a href="#" class="admin-signin-link">Admin sign-in</a>';
+    footerBottom.appendChild(signIn);
+    signIn.firstChild.addEventListener("click", function (e) {
+      e.preventDefault();
+      loadAdmin(function () { if (window.bopcAdmin) window.bopcAdmin.signIn(); });
     });
   }
 
