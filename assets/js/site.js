@@ -394,7 +394,7 @@
     if (adminLoaded) { if (then) then(); return; }
     adminLoaded = true;
     var tag = document.createElement("script");
-    tag.src = "/assets/js/admin-inline.js";
+    tag.src = "/assets/js/admin-inline.js?v=20260929c";
     tag.onload = function () { if (then) then(); };
     document.body.appendChild(tag);
   }

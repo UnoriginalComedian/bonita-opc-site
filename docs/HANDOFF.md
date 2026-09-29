@@ -253,3 +253,12 @@ Built the "old site" behaviour from §7: sign in once via the footer's
 
 Also: the elder/deacon headshots were moved off the homepage to the bottom of the
 Events page (per the elders). They are still on About too.
+
+## 12. Cloudflare caches CSS/JS for 4 hours — bump ?v= on every asset change
+
+Cloudflare serves `/assets/*` with `cache-control: max-age=14400`, while HTML is
+not cached. So a change to site.css/site.js can pair new HTML with an old script
+for hours (this is how the homepage Bible "faded to green" on 2026-09-29).
+Every page links `site.css?v=…` and `site.js?v=…`, and site.js / admin-inline.js
+load `admin-inline.js?v=…` / `admin-inline.css?v=…`. When any of those files
+change, bump the version string in all of them in the same commit.

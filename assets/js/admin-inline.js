@@ -9,10 +9,10 @@
 
   var API = "https://bonitaopc.org/api";
 
-  if (!document.querySelector('link[href$="admin-inline.css"]')) {
+  if (!document.querySelector('link[href*="admin-inline.css"]')) {
     var css = document.createElement("link");
     css.rel = "stylesheet";
-    css.href = "/assets/css/admin-inline.css";
+    css.href = "/assets/css/admin-inline.css?v=20260929c";
     document.head.appendChild(css);
   }
   var KEY = "bopc-admin-pw";
