@@ -27,6 +27,66 @@
     });
   }
 
+  /* --- Dismissible announce bar --------------------------------------------
+     Kept quiet on purpose (see the CSS), and skippable — once dismissed it
+     stays gone for that visitor, on every page, until they clear storage. */
+  var announce = document.querySelector(".announce");
+  if (announce) {
+    var announceDismissed = false;
+    try { announceDismissed = localStorage.getItem("bopc-announce-dismissed") === "1"; } catch (e) {}
+    if (announceDismissed) {
+      announce.remove();
+    } else {
+      var announceClose = document.createElement("button");
+      announceClose.type = "button";
+      announceClose.className = "announce__close";
+      announceClose.setAttribute("aria-label", "Dismiss this message");
+      announceClose.textContent = "×";
+      announceClose.addEventListener("click", function () {
+        announce.remove();
+        try { localStorage.setItem("bopc-announce-dismissed", "1"); } catch (e) {}
+      });
+      announce.appendChild(announceClose);
+    }
+  }
+
+  /* --- Watch Live: show something real instead of "video unavailable" ------
+     YouTube's live_stream embed just sits on an error-looking placeholder
+     when nothing's live. Swap it for the channel's most recent upload
+     outside the two Sunday windows, so there's always something to watch. */
+  var liveFrame = document.getElementById("liveFrame");
+  if (liveFrame) {
+    var channel = liveFrame.getAttribute("data-channel");
+    var windows = (liveFrame.getAttribute("data-sunday-windows") || "").split(",").map(function (w) {
+      var parts = w.split("-");
+      return { start: parts[0], end: parts[1] };
+    });
+    var parts = new Intl.DateTimeFormat("en-US", {
+      timeZone: "America/Los_Angeles", weekday: "short", hour: "2-digit", minute: "2-digit", hour12: false
+    }).formatToParts(new Date());
+    var get = function (type) { return (parts.filter(function (p) { return p.type === type; })[0] || {}).value; };
+    var isSunday = get("weekday") === "Sun";
+    var nowMinutes = parseInt(get("hour"), 10) * 60 + parseInt(get("minute"), 10);
+    var toMinutes = function (hhmm) {
+      var hm = hhmm.split(":");
+      return parseInt(hm[0], 10) * 60 + parseInt(hm[1], 10);
+    };
+    var isLive = isSunday && windows.some(function (w) {
+      return nowMinutes >= toMinutes(w.start) && nowMinutes < toMinutes(w.end);
+    });
+
+    if (!isLive && channel) {
+      liveFrame.innerHTML = '<iframe src="https://www.youtube-nocookie.com/embed/videoseries?list=UU' +
+        channel.replace(/^UC/, "") + '" title="Most recent service" loading="lazy" allowfullscreen ' +
+        'allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture"></iframe>';
+      var liveStatus = document.getElementById("liveStatus");
+      if (liveStatus) {
+        liveStatus.hidden = false;
+        liveStatus.textContent = "Not live right now — our next service streams Sunday, 11:00 a.m. & 6:00 p.m. Pacific. Here's our most recent service in the meantime:";
+      }
+    }
+  }
+
   /* --- Mobile navigation -------------------------------------------------- */
   var navToggle = document.querySelector(".nav-toggle");
   var nav = document.querySelector(".nav");

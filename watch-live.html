@@ -104,20 +104,26 @@
 <section class="section">
   <div class="wrap">
     <div class="split-major">
-      <div class="video-frame">
-        <!-- YouTube's "live_stream" embed: shows the channel's current broadcast
-             automatically. If nothing is live right now this box will sit blank
-             (that is expected, not broken) — the panel beside it always explains
-             what to do instead. Nothing here needs updating week to week. -->
-        <iframe src="https://www.youtube-nocookie.com/embed/live_stream?channel=UCrrn6fY_2RLzuUIH9ygQuDw"
-                title="Bonita OPC — live stream" loading="lazy" allowfullscreen
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"></iframe>
+      <div>
+        <!-- Outside service hours, YouTube's "live_stream" embed just shows a
+             bare "Video unavailable" box, which reads as broken. site.js
+             checks the current Pacific time against the two Sunday windows
+             below and, when we're not live, swaps this for the most recent
+             uploaded service plus a plain-language note instead — so there's
+             always something real on screen, never an error-looking one. -->
+        <p id="liveStatus" class="lede" style="margin-bottom:1rem;" hidden></p>
+        <div class="video-frame" id="liveFrame" data-channel="UCrrn6fY_2RLzuUIH9ygQuDw"
+             data-sunday-windows="11:00-12:30,18:00-19:15">
+          <iframe src="https://www.youtube-nocookie.com/embed/live_stream?channel=UCrrn6fY_2RLzuUIH9ygQuDw"
+                  title="Bonita OPC — live stream" loading="lazy" allowfullscreen
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"></iframe>
+        </div>
       </div>
       <div>
         <p class="label">Service times &middot; Pacific</p>
         <h2>Sunday, 11:00 a.m. &amp; 6:00 p.m.</h2>
-        <p class="lede">If the screen to the left is blank, we&rsquo;re simply not live yet &mdash;
-        come back at one of the times above, or catch up below in the meantime.</p>
+        <p class="lede">Streaming starts on its own at those times &mdash; nothing to
+        click. Outside of that, the player shows our most recent service instead.</p>
         <p style="margin-top:1.5rem;">
           <a class="btn btn--primary" href="sermons.html">Watch the most recent sermon</a>
         </p>

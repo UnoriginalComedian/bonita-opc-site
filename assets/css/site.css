@@ -242,15 +242,22 @@ a:hover { color: var(--tile-deep); }
 
 /* --- 6. Masthead --------------------------------------------------------- */
 
+/* Deliberately quiet — a passing mention, not a banner shouting for
+   attention. Dismissible; site.js remembers that choice. */
 .announce {
-  background: var(--green-deep); color: var(--band-ink);
-  font-size: .96rem; padding: .55rem var(--gutter); text-align: center;
+  position: relative; background: var(--plaster-deep); color: var(--muted);
+  font-size: .85rem; padding: .5rem 2.25rem; text-align: center;
+  border-bottom: 1px solid var(--rule);
 }
-:root[data-theme="dark"] .announce,
-:root:not([data-theme="light"]) .announce { background: #101409; }
-@media (prefers-color-scheme: light) { :root:not([data-theme="dark"]) .announce { background: var(--green-deep); } }
-.announce a { color: var(--brass-onDark); font-weight: 700; }
-.announce a:hover { color: #fff; }
+.announce a { color: var(--tile); text-decoration: underline; text-underline-offset: 2px; }
+.announce a:hover { color: var(--tile-deep); }
+.announce__close {
+  position: absolute; top: 0; right: .4rem; height: 100%;
+  display: grid; place-items: center; width: 2rem;
+  background: none; border: 0; color: var(--muted); font-size: 1.15rem;
+  line-height: 1; cursor: pointer; opacity: .6;
+}
+.announce__close:hover { opacity: 1; color: var(--ink); }
 
 .site-header {
   position: sticky; top: 0; z-index: 100;
