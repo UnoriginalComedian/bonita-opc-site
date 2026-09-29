@@ -518,6 +518,46 @@ body.home .site-header.is-stuck {
 .gallery figure { margin: 0; }
 .gallery img { width: 100%; aspect-ratio: 3 / 2; object-fit: cover; border: 1px solid var(--rule-strong); display: block; }
 .gallery figcaption { margin-top: .5rem; font-size: .95rem; color: var(--muted); }
+.gallery img { cursor: zoom-in; transition: opacity .15s; }
+.gallery img:hover { opacity: .88; }
+
+/* Photo viewer, opened from any .gallery photo (see site.js). */
+.lightbox {
+  width: 100vw; height: 100dvh; max-width: none; max-height: none;
+  margin: 0; padding: clamp(3.5rem, 6vw, 4.5rem) clamp(3.5rem, 7vw, 6rem);
+  border: 0; background: rgba(12, 10, 8, .97); color: #fff;
+}
+.lightbox::backdrop { background: rgba(12, 10, 8, .6); }
+.lightbox__figure {
+  margin: 0; height: 100%; display: flex; flex-direction: column;
+  align-items: center; justify-content: center; gap: .75rem;
+}
+.lightbox__img {
+  max-width: 100%; max-height: calc(100% - 2.5rem); object-fit: contain;
+  border: 1px solid rgba(255,255,255,.18); cursor: default;
+}
+.lightbox__cap { font-size: 1rem; color: rgba(255,255,255,.82); text-align: center; }
+.lightbox__btn {
+  position: absolute; display: grid; place-items: center;
+  width: 2.75rem; height: 2.75rem; padding: 0; cursor: pointer;
+  color: #fff; background: rgba(255,255,255,.08);
+  border: 1px solid rgba(255,255,255,.3); border-radius: var(--radius);
+}
+.lightbox__btn:hover { background: rgba(255,255,255,.2); }
+.lightbox__btn:focus-visible { outline: 2px solid var(--brass-onDark); outline-offset: 2px; }
+.lightbox__btn svg { width: 1.35rem; height: 1.35rem; }
+.lightbox__close { top: 1rem; right: 1rem; }
+.lightbox__prev, .lightbox__next { top: 50%; transform: translateY(-50%); }
+.lightbox__prev { left: clamp(.5rem, 2vw, 1.25rem); }
+.lightbox__next { right: clamp(.5rem, 2vw, 1.25rem); }
+.lightbox.is-single .lightbox__prev, .lightbox.is-single .lightbox__next { display: none; }
+.has-lightbox { overflow: hidden; }
+@media (max-width: 600px) {
+  .lightbox { padding: 4rem .75rem 5rem; }
+  .lightbox__prev, .lightbox__next { top: auto; bottom: 1rem; transform: none; }
+  .lightbox__prev { left: calc(50% - 3.25rem); }
+  .lightbox__next { right: calc(50% - 3.25rem); }
+}
 
 /* --- 11. Sermons --------------------------------------------------------- */
 

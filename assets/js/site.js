@@ -318,6 +318,71 @@
       .catch(function () { /* leave whatever's already in the HTML as-is */ });
   }
 
+  /* --- Photo galleries: click a photo to see it large -----------------------
+     One shared <dialog> for every .gallery on the page. Arrows (or the
+     keyboard's left/right keys) step through that gallery's photos; the X,
+     Esc, or a click anywhere outside the photo closes it. */
+  var galleries = document.querySelectorAll(".gallery");
+  if (galleries.length && typeof HTMLDialogElement === "function") {
+    var box = document.createElement("dialog");
+    box.className = "lightbox";
+    box.setAttribute("aria-label", "Photo viewer");
+    box.innerHTML =
+      '<figure class="lightbox__figure"><img class="lightbox__img" alt=""><figcaption class="lightbox__cap"></figcaption></figure>' +
+      '<button type="button" class="lightbox__btn lightbox__close" aria-label="Close photo">' +
+        '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button>' +
+      '<button type="button" class="lightbox__btn lightbox__prev" aria-label="Previous photo">' +
+        '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg></button>' +
+      '<button type="button" class="lightbox__btn lightbox__next" aria-label="Next photo">' +
+        '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg></button>';
+    document.body.appendChild(box);
+
+    var boxImg = box.querySelector(".lightbox__img");
+    var boxCap = box.querySelector(".lightbox__cap");
+    var set = [], at = 0;
+
+    var show = function (i) {
+      at = (i + set.length) % set.length;
+      var img = set[at];
+      var cap = img.closest("figure") && img.closest("figure").querySelector("figcaption");
+      boxImg.src = img.currentSrc || img.src;
+      boxImg.alt = img.alt;
+      boxCap.textContent = cap ? cap.textContent : "";
+      boxCap.hidden = !cap;
+    };
+    var step = function (d) { if (set.length > 1) show(at + d); };
+
+    box.querySelector(".lightbox__close").addEventListener("click", function () { box.close(); });
+    box.querySelector(".lightbox__prev").addEventListener("click", function () { step(-1); });
+    box.querySelector(".lightbox__next").addEventListener("click", function () { step(1); });
+    box.addEventListener("click", function (e) { if (e.target === box || e.target.classList.contains("lightbox__figure")) box.close(); });
+    box.addEventListener("keydown", function (e) {
+      if (e.key === "ArrowLeft") step(-1);
+      if (e.key === "ArrowRight") step(1);
+    });
+    box.addEventListener("close", function () { document.documentElement.classList.remove("has-lightbox"); });
+
+    galleries.forEach(function (g) {
+      var imgs = Array.prototype.slice.call(g.querySelectorAll("img"));
+      imgs.forEach(function (img, i) {
+        img.tabIndex = 0;
+        img.setAttribute("role", "button");
+        img.setAttribute("aria-label", "View larger: " + img.alt);
+        var open = function () {
+          set = imgs;
+          box.classList.toggle("is-single", imgs.length < 2);
+          show(i);
+          box.showModal();
+          document.documentElement.classList.add("has-lightbox");
+        };
+        img.addEventListener("click", open);
+        img.addEventListener("keydown", function (e) {
+          if (e.key === "Enter" || e.key === " ") { e.preventDefault(); open(); }
+        });
+      });
+    });
+  }
+
   /* --- Mark the current page in the nav ------------------------------------ */
   var here = location.pathname.replace(/index\.html$/, "").replace(/\/$/, "");
   document.querySelectorAll(".nav__link").forEach(function (a) {

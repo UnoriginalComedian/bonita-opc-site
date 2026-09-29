@@ -226,5 +226,6 @@ Fixed:
   Home, Watch Live, Outreach, Events, Sermons, 404; duplicated mission
   statement removed from Visit (still on About).
 
-Open questions are listed in the session summary. The biggest: YouTube
-descriptions say Wednesday Bible study is at **7 p.m.**, while the site says 6–8.
+Follow-up the same day (per Lee): Wednesday Bible study is **7:00–8:00 p.m.**,
+updated everywhere, including every footer. Gallery photos on Events and Outreach
+now open full-size in a viewer (arrows and keyboard, Esc or click outside to close).
