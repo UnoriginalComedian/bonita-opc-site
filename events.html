@@ -112,19 +112,29 @@
         <p class="label">Coming up</p>
         <h2 style="margin-bottom:1.5rem;">Upcoming events</h2>
 
-        <div class="event">
-          <div class="event__date"><span class="m">Aug</span><span class="d">26</span></div>
-          <div class="event__body">
-            <h3>Family Bible Study &amp; Prayer</h3>
-            <p>Wednesday, August 26, 2026 &middot; Rohr Park, Gate A</p>
+        <!-- CONFIRM: this list can pull live from a Google Sheet, so
+             whoever keeps the calendar can add events without editing
+             code. Make a sheet with header row "Date, Title, Location",
+             one event per row below it (Date like 2026-10-05 or
+             "October 5, 2026"). File -> Share -> Publish to web ->
+             pick that sheet -> CSV -> Publish, then paste the resulting
+             URL in place of CONFIRM below. Until that's set, or if the
+             sheet can't be reached, the two events below show as-is. -->
+        <div id="upcoming-events" data-events-csv="CONFIRM">
+          <div class="event">
+            <div class="event__date"><span class="m">Aug</span><span class="d">26</span></div>
+            <div class="event__body">
+              <h3>Family Bible Study &amp; Prayer</h3>
+              <p>Wednesday, August 26, 2026 &middot; Rohr Park, Gate A</p>
+            </div>
           </div>
-        </div>
 
-        <div class="event">
-          <div class="event__date"><span class="m">Aug</span><span class="d">31</span></div>
-          <div class="event__body">
-            <h3>Feast Day Fellowship Meal</h3>
-            <p>Sunday, August 31, 2026 &middot; Bonita OPC, after the morning service</p>
+          <div class="event">
+            <div class="event__date"><span class="m">Aug</span><span class="d">31</span></div>
+            <div class="event__body">
+              <h3>Feast Day Fellowship Meal</h3>
+              <p>Sunday, August 31, 2026 &middot; Bonita OPC, after the morning service</p>
+            </div>
           </div>
         </div>
 

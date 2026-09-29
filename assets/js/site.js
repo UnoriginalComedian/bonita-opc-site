@@ -169,6 +169,86 @@
     });
   }
 
+  /* --- Upcoming events, from a published Google Sheet ----------------------
+     Lets whoever keeps the calendar add events by editing a spreadsheet,
+     no code or admin login needed. See the CONFIRM comment in events.html
+     for how to set up and connect the sheet. Until it's connected, or if
+     it can't be reached, the events already in the HTML are left alone. */
+  var eventsEl = document.getElementById("upcoming-events");
+  if (eventsEl) {
+    var csvUrl = eventsEl.getAttribute("data-events-csv");
+    if (csvUrl && csvUrl !== "CONFIRM") {
+      fetch(csvUrl)
+        .then(function (r) { if (!r.ok) throw new Error("bad response"); return r.text(); })
+        .then(function (text) {
+          var rows = parseCsv(text);
+          if (!rows.length) return;
+          var header = rows[0].map(function (h) { return h.trim().toLowerCase(); });
+          var iDate = header.indexOf("date");
+          var iTitle = header.indexOf("title");
+          var iLoc = header.indexOf("location");
+          if (iDate === -1 || iTitle === -1) return;
+
+          var today = new Date(); today.setHours(0, 0, 0, 0);
+          var events = rows.slice(1)
+            .map(function (r) {
+              return { date: new Date(r[iDate] || ""), title: r[iTitle] || "", location: iLoc > -1 ? r[iLoc] || "" : "" };
+            })
+            .filter(function (e) { return e.title && !isNaN(e.date) && e.date >= today; })
+            .sort(function (a, b) { return a.date - b.date; });
+
+          if (!events.length) return;
+
+          var html = events.map(function (e) {
+            var month = e.date.toLocaleDateString("en-US", { month: "short" });
+            var day = e.date.getDate();
+            var full = e.date.toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric", year: "numeric" });
+            var line = full + (e.location ? " · " + escapeHtml(e.location) : "");
+            return '<div class="event"><div class="event__date"><span class="m">' + month + '</span><span class="d">' + day +
+              '</span></div><div class="event__body"><h3>' + escapeHtml(e.title) + '</h3><p>' + line + '</p></div></div>';
+          }).join("");
+          eventsEl.innerHTML = html;
+        })
+        .catch(function () { /* leave the events already in the HTML as-is */ });
+    }
+  }
+
+  function escapeHtml(s) {
+    return String(s).replace(/[&<>"']/g, function (c) {
+      return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c];
+    });
+  }
+
+  /* Minimal CSV parser: handles quoted fields (with embedded commas,
+     quotes, and newlines) without pulling in a library. */
+  function parseCsv(text) {
+    var rows = [];
+    var row = [];
+    var field = "";
+    var inQuotes = false;
+    for (var i = 0; i < text.length; i++) {
+      var c = text[i];
+      if (inQuotes) {
+        if (c === '"' && text[i + 1] === '"') { field += '"'; i++; }
+        else if (c === '"') { inQuotes = false; }
+        else { field += c; }
+      } else if (c === '"') {
+        inQuotes = true;
+      } else if (c === ",") {
+        row.push(field); field = "";
+      } else if (c === "\n" || c === "\r") {
+        if (c === "\r" && text[i + 1] === "\n") i++;
+        row.push(field); field = "";
+        if (row.length > 1 || row[0] !== "") rows.push(row);
+        row = [];
+      } else {
+        field += c;
+      }
+    }
+    if (field !== "" || row.length) { row.push(field); rows.push(row); }
+    return rows;
+  }
+
   /* --- Mark the current page in the nav ------------------------------------ */
   var here = location.pathname.replace(/index\.html$/, "").replace(/\/$/, "");
   document.querySelectorAll(".nav__link").forEach(function (a) {
