@@ -112,15 +112,11 @@
         <p class="label">Coming up</p>
         <h2 style="margin-bottom:1.5rem;">Upcoming events</h2>
 
-        <!-- CONFIRM: this list can pull live from a Google Sheet, so
-             whoever keeps the calendar can add events without editing
-             code. Make a sheet with header row "Date, Title, Location",
-             one event per row below it (Date like 2026-10-05 or
-             "October 5, 2026"). File -> Share -> Publish to web ->
-             pick that sheet -> CSV -> Publish, then paste the resulting
-             URL in place of CONFIRM below. Until that's set, or if the
-             sheet can't be reached, the two events below show as-is. -->
-        <div id="upcoming-events" data-events-csv="CONFIRM">
+        <!-- Live events come from the admin page at
+             https://bonita-events-admin.joelpchism.workers.dev/admin —
+             add, edit, or remove them there, no code involved. If that
+             can't be reached, the two events below show as a fallback. -->
+        <div id="upcoming-events" data-events-api="https://bonita-events-admin.joelpchism.workers.dev/api/events">
           <div class="event">
             <div class="event__date"><span class="m">Aug</span><span class="d">26</span></div>
             <div class="event__body">

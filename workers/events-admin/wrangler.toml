@@ -1,0 +1,7 @@
+name = "bonita-events-admin"
+main = "src/index.js"
+compatibility_date = "2024-09-01"
+
+kv_namespaces = [
+  { binding = "EVENTS", id = "a2a30c59e3d042fc9508c3084f68ecfc" }
+]
