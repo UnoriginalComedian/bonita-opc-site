@@ -15,6 +15,22 @@
    Re-skin the whole site from the tokens below.
    ========================================================================== */
 
+/* --- 0. Page transitions ---------------------------------------------------
+   Cross-fades page-to-page navigation instead of the default hard cut, using
+   the browser's native View Transitions API — no JS, no router, nothing to
+   go wrong. Currently Chrome/Edge/Opera; other browsers just keep the
+   ordinary instant navigation they already have, no worse than before. */
+@view-transition {
+  navigation: auto;
+}
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-group(*),
+  ::view-transition-old(*),
+  ::view-transition-new(*) {
+    animation: none !important;
+  }
+}
+
 /* --- 1. Tokens ----------------------------------------------------------- */
 
 :root {
@@ -241,23 +257,6 @@ a:hover { color: var(--tile-deep); }
 .textlink { font-weight: 700; text-decoration: underline; text-decoration-thickness: 1px; }
 
 /* --- 6. Masthead --------------------------------------------------------- */
-
-/* Deliberately quiet — a passing mention, not a banner shouting for
-   attention. Dismissible; site.js remembers that choice. */
-.announce {
-  position: relative; background: var(--plaster-deep); color: var(--muted);
-  font-size: .85rem; padding: .5rem 2.25rem; text-align: center;
-  border-bottom: 1px solid var(--rule);
-}
-.announce a { color: var(--tile); text-decoration: underline; text-underline-offset: 2px; }
-.announce a:hover { color: var(--tile-deep); }
-.announce__close {
-  position: absolute; top: 0; right: .4rem; height: 100%;
-  display: grid; place-items: center; width: 2rem;
-  background: none; border: 0; color: var(--muted); font-size: 1.15rem;
-  line-height: 1; cursor: pointer; opacity: .6;
-}
-.announce__close:hover { opacity: 1; color: var(--ink); }
 
 .site-header {
   position: sticky; top: 0; z-index: 100;

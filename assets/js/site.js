@@ -27,29 +27,6 @@
     });
   }
 
-  /* --- Dismissible announce bar --------------------------------------------
-     Kept quiet on purpose (see the CSS), and skippable — once dismissed it
-     stays gone for that visitor, on every page, until they clear storage. */
-  var announce = document.querySelector(".announce");
-  if (announce) {
-    var announceDismissed = false;
-    try { announceDismissed = localStorage.getItem("bopc-announce-dismissed") === "1"; } catch (e) {}
-    if (announceDismissed) {
-      announce.remove();
-    } else {
-      var announceClose = document.createElement("button");
-      announceClose.type = "button";
-      announceClose.className = "announce__close";
-      announceClose.setAttribute("aria-label", "Dismiss this message");
-      announceClose.textContent = "×";
-      announceClose.addEventListener("click", function () {
-        announce.remove();
-        try { localStorage.setItem("bopc-announce-dismissed", "1"); } catch (e) {}
-      });
-      announce.appendChild(announceClose);
-    }
-  }
-
   /* --- Watch Live: show something real instead of "video unavailable" ------
      YouTube's live_stream embed just sits on an error-looking placeholder
      when nothing's live. Swap it for the channel's most recent upload
