@@ -105,6 +105,15 @@
      autoplay/loop on a <video> ignores prefers-reduced-motion on its own,
      so we pause it by hand and let the poster frame stand in as a still. */
 
+  /* --- Homepage film: respect reduced motion ------------------------------
+     The video autoplays muted; visitors who ask for less motion keep the
+     poster frame (the altar and open Bible) instead. */
+  var heroVideo = document.getElementById("heroVideo");
+  if (heroVideo && window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+    heroVideo.removeAttribute("autoplay");
+    heroVideo.pause();
+  }
+
   /* --- Homepage pictures: church, Bible, then the congregation -------------
      The track slides one picture to the left every few seconds. The dots
      jump to a picture (and restart the timer); a swipe works on phones.
@@ -453,7 +462,7 @@
     if (adminLoaded) { if (then) then(); return; }
     adminLoaded = true;
     var tag = document.createElement("script");
-    tag.src = "/assets/js/admin-inline.js?v=20260930g";
+    tag.src = "/assets/js/admin-inline.js?v=20260930h";
     tag.onload = function () { if (then) then(); };
     document.body.appendChild(tag);
   }

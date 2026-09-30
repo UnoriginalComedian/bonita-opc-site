@@ -12,7 +12,7 @@
   if (!document.querySelector('link[href*="admin-inline.css"]')) {
     var css = document.createElement("link");
     css.rel = "stylesheet";
-    css.href = "/assets/css/admin-inline.css?v=20260930g";
+    css.href = "/assets/css/admin-inline.css?v=20260930h";
     document.head.appendChild(css);
   }
   var KEY = "bopc-admin-pw";
