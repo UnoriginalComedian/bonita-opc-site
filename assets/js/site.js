@@ -105,6 +105,60 @@
      autoplay/loop on a <video> ignores prefers-reduced-motion on its own,
      so we pause it by hand and let the poster frame stand in as a still. */
 
+  /* --- Homepage pictures: church, Bible, then the congregation -------------
+     The track slides one picture to the left every few seconds. The dots
+     jump to a picture (and restart the timer); a swipe works on phones.
+     Reduced-motion visitors keep the first picture unless they tap a dot. */
+  var heroTrack = document.getElementById("heroTrack");
+  var heroDots = document.querySelectorAll("#heroDots button");
+  if (heroTrack && heroDots.length) {
+    var slideCount = heroTrack.children.length;
+    var slideAt = 0, slideTimer = null;
+    var calm = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    // A copy of the first picture sits at the end, so the loop keeps moving
+    // forward (last -> church) instead of sweeping back across every picture.
+    var loopCopy = heroTrack.children[0].cloneNode(true);
+    loopCopy.alt = ""; loopCopy.setAttribute("aria-hidden", "true"); loopCopy.removeAttribute("fetchpriority");
+    heroTrack.appendChild(loopCopy);
+    var moveTo = function (pos, animate) {
+      heroTrack.style.transition = animate ? "" : "none";
+      heroTrack.style.transform = "translateX(" + (-100 * pos) + "%)";
+      if (!animate) void heroTrack.offsetWidth; // apply the jump before re-enabling motion
+    };
+    var markDot = function () {
+      heroDots.forEach(function (d, j) {
+        if (j === slideAt) d.setAttribute("aria-current", "true"); else d.removeAttribute("aria-current");
+      });
+    };
+    var showSlide = function (k) {
+      if (k === slideCount && slideAt === slideCount - 1 && !calm) {
+        moveTo(slideCount, true);          // slide forward onto the copy of the church
+        slideAt = 0; markDot();
+        setTimeout(function () { moveTo(0, false); heroTrack.style.transition = ""; }, 1350);
+        return;
+      }
+      slideAt = (k + slideCount) % slideCount;
+      moveTo(slideAt, true);
+      markDot();
+    };
+    var startTimer = function () {
+      clearInterval(slideTimer);
+      if (!calm) slideTimer = setInterval(function () { if (!document.hidden) showSlide(slideAt + 1); }, 7000);
+    };
+    heroDots.forEach(function (d, j) {
+      d.addEventListener("click", function () { showSlide(j); startTimer(); });
+    });
+    var touchX = null;
+    heroTrack.parentNode.parentNode.addEventListener("touchstart", function (e) { touchX = e.touches[0].clientX; }, { passive: true });
+    heroTrack.parentNode.parentNode.addEventListener("touchend", function (e) {
+      if (touchX === null) return;
+      var dx = e.changedTouches[0].clientX - touchX;
+      touchX = null;
+      if (Math.abs(dx) > 50) { showSlide(slideAt + (dx < 0 ? 1 : -1)); startTimer(); }
+    }, { passive: true });
+    startTimer();
+  }
+
   /* --- Reveal on scroll ---------------------------------------------------- */
   var reveals = document.querySelectorAll(".reveal");
   var reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -399,7 +453,7 @@
     if (adminLoaded) { if (then) then(); return; }
     adminLoaded = true;
     var tag = document.createElement("script");
-    tag.src = "/assets/js/admin-inline.js?v=20260930d";
+    tag.src = "/assets/js/admin-inline.js?v=20260930g";
     tag.onload = function () { if (then) then(); };
     document.body.appendChild(tag);
   }

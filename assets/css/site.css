@@ -341,17 +341,24 @@ body.home .site-header.is-stuck {
 .hero__media { position: absolute; inset: 0; z-index: -2; overflow: hidden; }
 .hero__media img, .hero__media video { width: 100%; height: 100%; object-fit: cover; object-position: 50% 72%; }
 
-/* Leads the hero, then fades to reveal the video beneath (see the comment
-   in index.html). Sits above the video within the media layer; the shared
-   .hero::after scrim above both keeps contrast consistent through the fade. */
-.hero__lead {
-  position: absolute; inset: 0; z-index: 1;
-  opacity: 1; transition: opacity 1.4s ease;
+/* Homepage pictures: a horizontal track of full-bleed slides (site.js moves
+   it). The .hero::after scrim sits above every slide, so the verse stays
+   readable on each one. */
+.hero__track { display: flex; width: 100%; height: 100%; transition: transform 1.3s cubic-bezier(.65, 0, .35, 1); }
+.hero__media .hero__slide { flex: 0 0 100%; min-width: 100%; height: 100%; object-fit: cover; }
+.hero__dots {
+  position: absolute; z-index: 2; right: max(var(--gutter), 1rem); bottom: clamp(1.25rem, 3vw, 2rem);
+  display: flex; gap: .55rem;
 }
-.hero__lead.is-hidden { opacity: 0; pointer-events: none; }
-@media (prefers-reduced-motion: reduce) {
-  .hero__lead { transition: none; }
+.hero__dots button {
+  width: 11px; height: 11px; padding: 0; border-radius: 50%; cursor: pointer;
+  background: rgba(255,255,255,.35); border: 1px solid rgba(255,255,255,.75);
+  transition: background-color .3s, transform .3s;
 }
+.hero__dots button:hover { background: rgba(255,255,255,.7); }
+.hero__dots button[aria-current="true"] { background: #fff; transform: scale(1.2); }
+.hero__dots button:focus-visible { outline: 2px solid var(--brass-onDark); outline-offset: 3px; }
+@media (prefers-reduced-motion: reduce) { .hero__track { transition: none; } }
 .hero::after {
   content: ""; position: absolute; inset: 0; z-index: -1;
   background:
@@ -486,6 +493,28 @@ body.home .site-header.is-stuck {
 }
 h2[id], h3[id] { scroll-margin-top: 110px; }
 .mission .lede { font-size: clamp(1.2rem, 1.7vw, 1.42rem); line-height: 1.55; color: var(--ink); }
+
+/* Soli Deo Gloria band: the five solas and a short quote. */
+.solas__list {
+  list-style: none; margin: clamp(1.75rem, 4vw, 2.5rem) 0 0; padding: 0;
+  display: grid; gap: 1px; background: var(--band-rule);
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 11.5rem), 1fr));
+  border: 1px solid var(--band-rule);
+}
+.solas__list li { background: var(--band-ground); padding: 1.4rem 1rem; text-align: center; }
+.solas__latin { display: block; font-family: var(--font-display); font-weight: 600; font-size: clamp(1.3rem, 2vw, 1.55rem); color: #fff; line-height: 1.2; }
+.solas__en { display: block; margin-top: .35rem; font-style: italic; color: var(--brass-onDark); font-size: 1.05rem; }
+.solas .section-head { text-align: center; }
+.solas__list li:last-child .solas__latin { color: var(--brass-onDark); }
+@media (max-width: 600px) {
+  .solas__list { grid-template-columns: 1fr 1fr; }
+  .solas__list li { padding: 1.1rem .6rem; }
+  .solas__list li:last-child { grid-column: 1 / -1; }
+}
+.solas__quote { max-width: 40rem; margin: clamp(2rem, 5vw, 3rem) auto 0; text-align: center; }
+.solas__quote blockquote { margin: 0; }
+.solas__quote p { font-family: var(--font-display); font-style: italic; font-size: clamp(1.25rem, 2.2vw, 1.6rem); line-height: 1.45; color: #fff; margin: 0; }
+.solas__quote figcaption { margin-top: .75rem; font-variant-caps: small-caps; letter-spacing: .08em; color: var(--brass-onDark); }
 
 .order__day {
   margin: 1.1rem 0 0; padding-bottom: .3rem; border-bottom: 1px solid var(--rule-strong);

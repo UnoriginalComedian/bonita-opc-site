@@ -24,7 +24,7 @@
 <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Vollkorn:ital,wght@0,400..700;1,400..600&family=Alegreya+Sans:ital,wght@0,400;0,500;0,700;1,400&display=swap" onload="this.onload=null;this.rel='stylesheet'">
 <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Vollkorn:ital,wght@0,400..700;1,400..600&family=Alegreya+Sans:ital,wght@0,400;0,500;0,700;1,400&display=swap"></noscript>
 <link rel="preload" as="image" href="assets/img/bible-table.jpg" fetchpriority="high">
-<link rel="stylesheet" href="assets/css/site.css?v=20260930d">
+<link rel="stylesheet" href="assets/css/site.css?v=20260930g">
 
 <!-- Tells Google the who/where/when of the church. Keep it in step with the
      visible page; search results and map cards read from this. -->
@@ -95,12 +95,24 @@
 
 <section class="hero hero--video" aria-label="Welcome">
   <div class="hero__media">
-    <!-- Per Lee (elder, site approval): the Bible stays as the only image here.
-         The footage that used to fade in showed people, which the elders didn't
-         want on the homepage; it now lives on outreach.html as its own player.
-         TODO: swap assets/img/bible-table.jpg (licensed stock) for a real photo
-         of one of Bonita's own pew Bibles when there's one. -->
-    <img class="hero__lead" id="heroBible" src="assets/img/bible-table.jpg" alt="An open Bible." width="1200" height="800" fetchpriority="high">
+    <!-- Per Lee and Melba (elders' review): the pictures flow sideways, church
+         first, then the Bible, then a couple of the congregation. The rest of
+         the people photos live on the Events page (quick link "Photos").
+         site.js advances it; reduced-motion visitors get no auto-advance.
+         TODO: swap bible-table.jpg (licensed stock) for a photo of one of
+         Bonita's own pew Bibles when there's one. -->
+    <div class="hero__track" id="heroTrack">
+      <img class="hero__slide" src="assets/img/church-building-t.jpg" alt="The Bonita OPC building on Central Avenue." width="1000" height="750" fetchpriority="high" style="object-position:50% 88%;">
+      <img class="hero__slide" src="assets/img/bible-table.jpg" alt="An open Bible." width="1200" height="802" fetchpriority="low" decoding="async">
+      <img class="hero__slide" src="assets/img/taste-of-bonita-group.jpg" alt="Members of the congregation at the Taste of Bonita outreach." width="1400" height="933" fetchpriority="low" decoding="async" style="object-position:50% 40%;">
+      <img class="hero__slide" src="assets/img/taste-of-bonita-crowd-wide.jpg" alt="Neighbors gathered at long tables at the Taste of Bonita festival." width="1400" height="933" fetchpriority="low" decoding="async">
+    </div>
+  </div>
+  <div class="hero__dots" id="heroDots" role="group" aria-label="Pictures">
+    <button type="button" aria-label="Our church" aria-current="true"></button>
+    <button type="button" aria-label="The Bible"></button>
+    <button type="button" aria-label="Our people"></button>
+    <button type="button" aria-label="Our neighbors"></button>
   </div>
   <div class="wrap hero__inner">
     <blockquote class="hero__verse">
@@ -136,10 +148,10 @@
         <span class="quicklink__title">Prayer requests</span>
         <span class="quicklink__sub">Email an elder to add to the prayer list</span>
       </a>
-      <a class="quicklink" href="https://maps.google.com/?q=5111+Central+Ave,+Bonita,+CA+91902" target="_blank" rel="noopener">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21s7-7.2 7-12a7 7 0 1 0-14 0c0 4.8 7 12 7 12z"/><circle cx="12" cy="9" r="2.5"/></svg>
-        <span class="quicklink__title">Directions</span>
-        <span class="quicklink__sub">5111 Central Avenue, Bonita</span>
+      <a class="quicklink" href="events.html#taste-of-bonita">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4.5" width="18" height="15" rx="1.5"/><circle cx="9" cy="10" r="1.8"/><path d="M21 16l-5-5-8 8.5"/></svg>
+        <span class="quicklink__title">Photos</span>
+        <span class="quicklink__sub">Our congregation out in Bonita</span>
       </a>
     </nav>
 
@@ -189,6 +201,29 @@
       </div>
 
     </div>
+  </div>
+</section>
+
+
+<section class="section section--deep solas" aria-labelledby="solas-title">
+  <div class="wrap">
+    <div class="section-head center">
+      <p class="label">Soli Deo Gloria</p>
+      <h2 id="solas-title">To God alone be the glory</h2>
+      <p class="lede" style="margin-inline:auto;">The five solas of the Reformation, held by this congregation and
+      the Orthodox Presbyterian Church.</p>
+    </div>
+    <ol class="solas__list">
+      <li><span class="solas__latin">Sola Scriptura</span><span class="solas__en">Scripture alone</span></li>
+      <li><span class="solas__latin">Sola Gratia</span><span class="solas__en">Grace alone</span></li>
+      <li><span class="solas__latin">Sola Fide</span><span class="solas__en">Faith alone</span></li>
+      <li><span class="solas__latin">Solus Christus</span><span class="solas__en">Christ alone</span></li>
+      <li><span class="solas__latin">Soli Deo Gloria</span><span class="solas__en">To the glory of God alone</span></li>
+    </ol>
+    <figure class="solas__quote">
+      <blockquote><p>&ldquo;You stand before God as if you were Christ, because Christ stood before God as if he were you.&rdquo;</p></blockquote>
+      <figcaption>Charles Spurgeon</figcaption>
+    </figure>
   </div>
 </section>
 
@@ -370,6 +405,6 @@
 </footer>
 
 <script>document.getElementById("yr").textContent = new Date().getFullYear();</script>
-<script src="assets/js/site.js?v=20260930d" defer></script>
+<script src="assets/js/site.js?v=20260930g" defer></script>
 </body>
 </html>
