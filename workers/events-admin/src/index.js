@@ -139,6 +139,13 @@ export default {
     const url = new URL(request.url);
     const origin = request.headers.get("Origin");
 
+    // Never serve the admin or the API over plain http (the password travels in
+    // a header); send the visitor to the https:// address instead.
+    if (url.protocol === "http:") {
+      url.protocol = "https:";
+      return Response.redirect(url.toString(), 301);
+    }
+
     if (request.method === "OPTIONS") {
       return new Response(null, { headers: corsHeaders(origin) });
     }
