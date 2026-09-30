@@ -60,7 +60,7 @@ const COLLECTIONS = {
    site reads everywhere," as opposed to the growing lists (events, news). */
 const SINGLETONS = {
   "sermon-note": { defaults: { description: "" } },
-  "site-settings": { defaults: { bibleStudyLocation: "" } },
+  "site-settings": { defaults: { bibleStudyLocation: "", bibleStudyTime: "" } },
 };
 
 async function handleSingleton(request, env, origin) {
@@ -76,8 +76,15 @@ async function handleSingleton(request, env, origin) {
   if (request.method === "PUT") {
     if (!checkAuth(request, env)) return json({ error: "unauthorized" }, { status: 401 }, origin);
     const body = await request.json().catch(() => null);
+    // Merge: a field the request leaves out keeps its saved value, so saving
+    // just the location can't wipe the time (and vice versa). "" clears it.
+    const rawPrev = await env.EVENTS.get(key);
+    const prev = rawPrev ? JSON.parse(rawPrev) : {};
     const value = {};
-    Object.keys(config.defaults).forEach((f) => { value[f] = (body && body[f]) || config.defaults[f]; });
+    Object.keys(config.defaults).forEach((f) => {
+      const v = body && Object.prototype.hasOwnProperty.call(body, f) ? body[f] : prev[f];
+      value[f] = typeof v === "string" ? v.trim().slice(0, 200) : config.defaults[f];
+    });
     await env.EVENTS.put(key, JSON.stringify(value));
     return json(value, {}, origin);
   }
@@ -693,15 +700,18 @@ function sermonPage() {
 
 function settingsPage() {
   const body = `
-    <h2 style="margin-top:0;">Wednesday Bible study location</h2>
+    <h2 style="margin-top:0;">Wednesday Bible study</h2>
     <div class="panel">
       <p style="margin-top:0;color:var(--muted);font-size:.92rem;">Shows up in several spots
       across the site — the footer on every page and the weekly schedule on the Events
       page. Change it here and it updates everywhere at once. This only affects the current,
       ongoing Wednesday meeting — it does not change any past event already recorded on
       the Events page.</p>
-      <label for="bibleStudyLocation">Current location</label>
+      <label for="bibleStudyTime">Time</label>
+      <input type="text" id="bibleStudyTime" placeholder="7:00\u20138:00 p.m.">
+      <label for="bibleStudyLocation">Location</label>
       <input type="text" id="bibleStudyLocation" placeholder="the church">
+      <p style="margin-top:0;color:var(--muted);font-size:.85rem;">Leave either one blank to show the usual (7:00\u20138:00 p.m., at the church).</p>
       <p id="settingsFormError" class="error" hidden></p>
       <p id="settingsSaved" class="error" style="color:var(--green);" hidden>Saved.</p>
       <button id="settingsSaveBtn">Save</button>
@@ -710,6 +720,7 @@ function settingsPage() {
   const script = `
   window.onAdminReady = function () {
     var locEl = document.getElementById("bibleStudyLocation");
+    var timeEl = document.getElementById("bibleStudyTime");
     var saveBtn = document.getElementById("settingsSaveBtn");
     var formError = document.getElementById("settingsFormError");
     var saved = document.getElementById("settingsSaved");
@@ -717,12 +728,13 @@ function settingsPage() {
 
     fetch(api).then(function (r) { return r.json(); }).then(function (s) {
       locEl.value = s.bibleStudyLocation || "";
+      timeEl.value = s.bibleStudyTime || "";
     });
 
     saveBtn.addEventListener("click", function () {
       formError.hidden = true;
       saved.hidden = true;
-      fetch(api, { method: "PUT", headers: authHeaders(), body: JSON.stringify({ bibleStudyLocation: locEl.value.trim() }) })
+      fetch(api, { method: "PUT", headers: authHeaders(), body: JSON.stringify({ bibleStudyLocation: locEl.value.trim(), bibleStudyTime: timeEl.value.trim() }) })
         .then(function (r) {
           if (!r.ok) throw new Error();
           saved.hidden = false;

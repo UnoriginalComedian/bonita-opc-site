@@ -283,20 +283,25 @@
   }
   refreshContent();
 
-  /* --- Site-wide settings: Bible study location -----------------------------
-     One value, set at bonitaopc.org/admin/settings, shown in every footer
-     plus the Events page's weekly schedule. If it's never been set, or the
-     Worker can't be reached, every one of these spots just keeps the
-     "the church" text already written into the HTML. */
-  var locationEls = document.querySelectorAll(".js-bible-location");
-  if (locationEls.length) {
-    fetch("https://bonitaopc.org/api/site-settings")
+  /* --- Site-wide settings: Wednesday Bible study time and place -------------
+     Set at bonitaopc.org/admin/settings or with the Wednesday box's buttons on
+     the Events page. Shown in every footer, the homepage, Plan Your Visit, and
+     the Events schedule. A blank value (or an unreachable Worker) keeps the
+     usual text already written into the HTML. */
+  function applyBibleStudy(s) {
+    [[".js-bible-location", "bibleStudyLocation"], [".js-bible-time", "bibleStudyTime"]].forEach(function (pair) {
+      document.querySelectorAll(pair[0]).forEach(function (el) {
+        if (!el.hasAttribute("data-default")) el.setAttribute("data-default", el.textContent);
+        el.textContent = (s && s[pair[1]]) || el.getAttribute("data-default");
+      });
+    });
+  }
+  window.bopcApplyBibleStudy = applyBibleStudy;
+  if (document.querySelector(".js-bible-location, .js-bible-time")) {
+    fetch("https://bonitaopc.org/api/site-settings", { cache: "no-store" })
       .then(function (r) { if (!r.ok) throw new Error("bad response"); return r.json(); })
-      .then(function (s) {
-        if (!s.bibleStudyLocation) return;
-        locationEls.forEach(function (el) { el.textContent = s.bibleStudyLocation; });
-      })
-      .catch(function () { /* leave "the church" as-is */ });
+      .then(applyBibleStudy)
+      .catch(function () { /* keep the usual text */ });
   }
 
   /* --- Most recent sermon description ---------------------------------------
@@ -394,7 +399,7 @@
     if (adminLoaded) { if (then) then(); return; }
     adminLoaded = true;
     var tag = document.createElement("script");
-    tag.src = "/assets/js/admin-inline.js?v=20260929c";
+    tag.src = "/assets/js/admin-inline.js?v=20260930a";
     tag.onload = function () { if (then) then(); };
     document.body.appendChild(tag);
   }

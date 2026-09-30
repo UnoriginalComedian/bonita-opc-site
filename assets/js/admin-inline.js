@@ -12,7 +12,7 @@
   if (!document.querySelector('link[href*="admin-inline.css"]')) {
     var css = document.createElement("link");
     css.rel = "stylesheet";
-    css.href = "/assets/css/admin-inline.css?v=20260929c";
+    css.href = "/assets/css/admin-inline.css?v=20260930a";
     document.head.appendChild(css);
   }
   var KEY = "bopc-admin-pw";
@@ -328,24 +328,36 @@
 
   var locSpan = document.querySelector(".panel .js-bible-location");
   if (locSpan) {
-    locSpan.closest(".panel").appendChild(editButton("Change location", function () {
+    // One editor for either Wednesday setting; a save sends only its own
+    // field, and the server keeps the other one as it was.
+    var editBibleStudy = function (field, title, label, usual, done) {
       fetch(API + "/site-settings", { cache: "no-store" }).then(function (r) { return r.json(); }).then(function (s) {
         openForm({
-          title: "Wednesday Bible study location",
-          message: "Shown in the footer of every page and on this schedule. Leave it blank to show “the church”.",
-          fields: [{ name: "bibleStudyLocation", label: "Location", placeholder: "the church" }],
+          title: title,
+          message: "Shown on every page of the website. Leave it blank to show the usual (" + usual + ").",
+          fields: [{ name: field, label: label, placeholder: usual }],
           values: s,
           onSubmit: function (v) {
-            return api("PUT", "/site-settings", v).then(function () {
-              document.querySelectorAll(".js-bible-location").forEach(function (el) {
-                el.textContent = v.bibleStudyLocation || "the church";
-              });
-              say("Saved. Every page now shows the new location.");
+            return api("PUT", "/site-settings", v).then(function (saved) {
+              if (window.bopcApplyBibleStudy) window.bopcApplyBibleStudy(saved);
+              say(done);
             });
           }
         });
       });
+    };
+    var panel = locSpan.closest(".panel");
+    var row = document.createElement("div");
+    row.className = "adm-edit-row";
+    row.appendChild(editButton("Change time", function () {
+      editBibleStudy("bibleStudyTime", "Wednesday Bible study time", "Time", "7:00\u20138:00 p.m.",
+        "Saved. Every page now shows the new time.");
     }));
+    row.appendChild(editButton("Change location", function () {
+      editBibleStudy("bibleStudyLocation", "Wednesday Bible study location", "Location", "the church",
+        "Saved. Every page now shows the new location.");
+    }));
+    panel.appendChild(row);
   }
 
   /* --- Sermon caption (sermons page) ---------------------------------------- */
