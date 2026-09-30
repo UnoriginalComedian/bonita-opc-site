@@ -399,7 +399,7 @@
     if (adminLoaded) { if (then) then(); return; }
     adminLoaded = true;
     var tag = document.createElement("script");
-    tag.src = "/assets/js/admin-inline.js?v=20260930a";
+    tag.src = "/assets/js/admin-inline.js?v=20260930d";
     tag.onload = function () { if (then) then(); };
     document.body.appendChild(tag);
   }
