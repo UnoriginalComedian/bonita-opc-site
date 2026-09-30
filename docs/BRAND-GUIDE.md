@@ -111,7 +111,7 @@ pages:
 
 - **Real people, real building, over stock.** `church-building-t.jpg` (the actual
   sanctuary) is the strongest asset the church owns — everything stock
-  (`hymnal.jpg`, `bible-table.jpg`, `beach-sunset.jpg`) is a placeholder, not a
+  (`hymnal.jpg`, `beach-sunset.jpg`) is a placeholder, not a
   destination. See §"Photography" in the project README for licensing notes on those
   three.
 - The single highest-leverage thing the church can do for this brand: photos of their

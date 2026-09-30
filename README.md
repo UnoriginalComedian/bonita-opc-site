@@ -218,7 +218,7 @@ entire site, light and dark.
 
 - `church-building-t.jpg` — the actual church. The hero image, and the best asset they have.
 - `chism.jpg`, `skidmore.jpg`, `weld.jpg`, `york.jpg`, `0d314f1f-…jpg` — the elders and deacon.
-- `hymnal.jpg`, `bible-table.jpg`, `beach-sunset.jpg` — **licensed stock photos.** The
+- `hymnal.jpg`, `beach-sunset.jpg` — **licensed stock photos.** The
   EXIF says Adobe Stock (`©Melanie`, `©Halfpoint`) and `©2016 David Levin Photography`.
   They are on the church's site already, so a licence presumably exists — but confirm it
   covers continued use before launch.
