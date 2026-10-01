@@ -504,7 +504,7 @@ h2[id], h3[id] { scroll-margin-top: 110px; }
 .solas__list li { background: var(--band-ground); padding: 1.4rem 1rem; text-align: center; }
 .solas__latin { display: block; font-family: var(--font-display); font-weight: 600; font-size: clamp(1.3rem, 2vw, 1.55rem); color: #fff; line-height: 1.2; }
 .solas__en { display: block; margin-top: .35rem; font-style: italic; color: var(--brass-onDark); font-size: 1.05rem; }
-.solas .section-head { text-align: center; }
+.solas .section-head { text-align: center; margin-inline: auto; }
 .solas__list li:last-child .solas__latin { color: var(--brass-onDark); }
 @media (max-width: 600px) {
   .solas__list { grid-template-columns: 1fr 1fr; }
