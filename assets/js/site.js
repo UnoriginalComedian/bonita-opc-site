@@ -462,7 +462,7 @@
     if (adminLoaded) { if (then) then(); return; }
     adminLoaded = true;
     var tag = document.createElement("script");
-    tag.src = "/assets/js/admin-inline.js?v=20260930i";
+    tag.src = "/assets/js/admin-inline.js?v=20260930j";
     tag.onload = function () { if (then) then(); };
     document.body.appendChild(tag);
   }

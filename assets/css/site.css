@@ -492,6 +492,8 @@ body.home .site-header.is-stuck {
   .quicklink__sub { display: none; }
 }
 h2[id], h3[id] { scroll-margin-top: 110px; }
+/* A single photo dropped into a page (no caption). */
+.photo { display: block; width: 100%; height: auto; margin-top: clamp(1.5rem, 3vw, 2rem); border: 1px solid var(--rule-strong); }
 .mission .lede { font-size: clamp(1.2rem, 1.7vw, 1.42rem); line-height: 1.55; color: var(--ink); }
 
 /* Soli Deo Gloria band: the five solas and a short quote. */
