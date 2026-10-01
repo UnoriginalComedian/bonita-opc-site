@@ -146,11 +146,22 @@ export default {
     const url = new URL(request.url);
     const origin = request.headers.get("Origin");
 
-    // Never serve the admin or the API over plain http (the password travels in
-    // a header); send the visitor to the https:// address instead.
-    if (url.protocol === "http:") {
+    // Never serve anything over plain http, and always use the bare domain:
+    // http://, www., or both all get one permanent redirect to
+    // https://bonitaopc.org/... before any page loads.
+    if (url.protocol === "http:" || url.hostname === "www.bonitaopc.org") {
       url.protocol = "https:";
+      url.hostname = "bonitaopc.org";
       return Response.redirect(url.toString(), 301);
+    }
+
+    // Public pages (everything that isn't /admin or /api) pass straight through
+    // to GitHub Pages; the Worker only adds HSTS so browsers stay on https.
+    if (!/^\/(admin|api)(\/|$)/.test(url.pathname)) {
+      const res = await fetch(request);
+      const out = new Response(res.body, res);
+      out.headers.set("Strict-Transport-Security", "max-age=31536000");
+      return out;
     }
 
     if (request.method === "OPTIONS") {

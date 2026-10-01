@@ -9,5 +9,10 @@ kv_namespaces = [
 routes = [
   { pattern = "bonitaopc.org/admin", zone_name = "bonitaopc.org" },
   { pattern = "bonitaopc.org/admin/*", zone_name = "bonitaopc.org" },
-  { pattern = "bonitaopc.org/api/*", zone_name = "bonitaopc.org" }
+  { pattern = "bonitaopc.org/api/*", zone_name = "bonitaopc.org" },
+  # Every other page too, only so plain http:// visits get a real redirect to
+  # https:// (and an HSTS header); the pages themselves pass straight through
+  # to GitHub Pages untouched.
+  { pattern = "bonitaopc.org/*", zone_name = "bonitaopc.org" },
+  { pattern = "www.bonitaopc.org/*", zone_name = "bonitaopc.org" }
 ]
